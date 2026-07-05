@@ -1132,7 +1132,7 @@
     if(pass.length < 8){ errEl.textContent = 'Le mot de passe doit faire au moins 8 caractères.'; errEl.style.display = 'block'; return; }
     if(pass !== pass2){ errEl.textContent = 'Les mots de passe ne correspondent pas.'; errEl.style.display = 'block'; return; }
     const {error} = await _supa.auth.updateUser({ password: pass });
-    if(error){ errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+    if(error){ errEl.textContent = error.message || 'Une erreur est survenue. Réessaie.'; errEl.style.display = 'block'; return; }
     okEl.style.display = 'block';
     setTimeout(()=>{ switchView('member'); }, 2000);
   }
@@ -1179,7 +1179,15 @@
       email, password: pass,
       options: { data: { prenom, nom, telephone: tel } }
     });
-    if(error){ errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+    if(error){
+      const msg = error.message || error.error_description || '';
+      if(msg.toLowerCase().includes('already') || msg.toLowerCase().includes('existe')){
+        errEl.textContent = 'Un compte existe déjà avec cet email. Connecte-toi.';
+      } else {
+        errEl.textContent = msg || 'Une erreur est survenue. Vérifie tes informations.';
+      }
+      errEl.style.display = 'block'; return;
+    }
     sendWelcomeMail(prenom, email, pass);
     if(_pendingPlan){
       okEl.textContent = '✅ Compte créé ! Redirection vers le paiement…';
