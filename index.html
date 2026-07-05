@@ -246,15 +246,6 @@
     color:var(--gold-bright); font-family:'Space Mono',monospace; font-size:0.65rem;
     padding:3px 9px; border-radius:20px; letter-spacing:0.08em; text-transform:uppercase;
   }
-  .tampon-gagne{
-    position:absolute; top:50%; left:50%;
-    transform:translate(-50%,-50%) rotate(-18deg);
-    border:3px solid #7CC9A0; color:#7CC9A0;
-    font-family:'Anton',sans-serif; font-size:1.7rem; letter-spacing:0.2em;
-    padding:4px 18px; border-radius:4px; opacity:0.82;
-    pointer-events:none; z-index:5; white-space:nowrap;
-    text-shadow:0 0 12px rgba(124,201,160,0.25);
-  }
 
   /* ---------- PRICING ---------- */
   .pricing-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:28px;}
@@ -822,7 +813,6 @@
   function renderPick(p){
     const tagLabel = p.label || (p.statut === 'win' ? 'Gagné ✅' : p.statut === 'lose' ? 'Perdu ❌' : 'En cours');
     const scoreHTML = p.score ? `<div style="font-family:'Anton',sans-serif;font-size:1.1rem;color:var(--gold);margin:6px 0 2px;">${p.score}</div>` : '';
-    const tamponnHTML = p.statut === 'win' ? `<div class="tampon-gagne">GAGNÉ</div>` : '';
     const sportBadge = getSportBadge(p.date);
 
     // Rendu spécial pour les combinés
@@ -855,8 +845,7 @@
     return `<div class="pick-card locked">
         ${inner}
         ${chip}
-        ${tamponnHTML}
-      </div>`;
+              </div>`;
   }
 
   async function loadPronostics(){
