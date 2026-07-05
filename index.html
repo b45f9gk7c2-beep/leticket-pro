@@ -712,12 +712,12 @@
         <div id="member-plan-action" style="padding:10px 16px;display:flex;flex-direction:column;gap:8px;"></div>
       </div>
 
-      <!-- Mes Analyses -->
-      <div id="member-analyses-section" style="display:none;margin-bottom:14px;">
-        <div style="background:#f7f4e9;border-radius:6px;overflow:hidden;">
-          <div style="padding:10px 16px;background:#ede9d8;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#888;">Mes analyses</div>
-          <div id="member-analyses-list" style="display:flex;flex-direction:column;gap:0;"></div>
-        </div>
+      <!-- Bouton Mes Analyses -->
+      <div id="member-analyses-btn-wrap" style="display:none;margin-bottom:14px;">
+        <button onclick="openAnalyses()" style="width:100%;background:linear-gradient(160deg,var(--night-2),#0d2a20);color:var(--gold-bright);border:1px solid rgba(201,162,39,0.4);padding:12px;border-radius:4px;font-weight:700;font-size:0.88rem;cursor:pointer;letter-spacing:0.03em;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Mes analyses &amp; pronostics
+        </button>
       </div>
 
       <!-- Actions -->
@@ -759,6 +759,22 @@
   </div>
 </div>
 
+
+<!-- ════ POPUP ANALYSES ════ -->
+<div id="analysesBg" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(11,31,26,0.88);backdrop-filter:blur(6px);overflow-y:auto;padding:24px 16px;">
+  <div style="max-width:560px;margin:0 auto;">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div style="font-family:'Anton',sans-serif;font-size:1.5rem;color:var(--gold-bright);letter-spacing:0.04em;">MES ANALYSES</div>
+        <div id="analyses-subtitle" style="font-size:0.75rem;color:rgba(244,241,232,0.5);font-family:'Space Mono',monospace;margin-top:2px;"></div>
+      </div>
+      <button onclick="closeAnalyses()" style="background:rgba(244,241,232,0.08);border:1px solid rgba(244,241,232,0.2);color:var(--paper);width:36px;height:36px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
+    </div>
+    <!-- Liste -->
+    <div id="analyses-list" style="display:flex;flex-direction:column;gap:14px;"></div>
+  </div>
+</div>
 
 <div class="cookie-bar" id="cookieBar">
   <p>Ce site utilise uniquement des cookies techniques nécessaires à son fonctionnement (connexion, session). Aucun cookie publicitaire n'est utilisé. <a href="politique-confidentialite.html">En savoir plus</a></p>
@@ -1212,39 +1228,56 @@
       }
     }
 
-    // ── Section Mes Analyses ──────────────────────────────────────────
-    const analysesSection = document.getElementById('member-analyses-section');
-    const analysesList    = document.getElementById('member-analyses-list');
-    if(analysesSection && analysesList && plan !== 'none'){
-      // Filtrer les picks accessibles selon le plan
-      const accessible = DEFAULT_PICKS.filter(p => {
-        if(!p.analyse) return false;
-        if(plan === 'admin' || plan === 'vip') return true;
-        if(plan === 'standard') return p.type === 'standard';
-        return false;
-      });
-      if(accessible.length){
-        analysesSection.style.display = 'block';
-        const statutColor = s => s === 'win' ? '#2d8f55' : s === 'lose' ? '#B5483C' : '#888';
-        const statutLabel = s => s === 'win' ? 'Gagné ✅' : s === 'lose' ? 'Perdu ❌' : 'En cours';
-        analysesList.innerHTML = accessible.map((p, i) => `
-          <div style="padding:14px 16px;${i < accessible.length-1 ? 'border-bottom:1px solid #e8e3d0;' : ''}">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;">
-              <div>
-                <div style="font-weight:700;font-size:0.86rem;color:var(--ink);">${p.match}</div>
-                <div style="font-size:0.72rem;color:#aaa;margin-top:2px;font-family:'Space Mono',monospace;">${p.date}</div>
-              </div>
-              <span style="flex-shrink:0;font-size:0.72rem;font-weight:700;color:${statutColor(p.statut)};white-space:nowrap;">${p.label || statutLabel(p.statut)}</span>
+    // ── Bouton Mes Analyses ──────────────────────────────────────────
+    const analysesBtnWrap = document.getElementById('member-analyses-btn-wrap');
+    if(analysesBtnWrap) analysesBtnWrap.style.display = (plan !== 'none') ? 'block' : 'none';
+  }
+
+  function openAnalyses(){
+    const plan = window._userPlan || 'none';
+    const accessible = DEFAULT_PICKS.filter(p => {
+      if(!p.analyse) return false;
+      if(plan === 'admin' || plan === 'vip') return true;
+      if(plan === 'standard') return p.type === 'standard';
+      return false;
+    });
+    const sub = document.getElementById('analyses-subtitle');
+    if(sub) sub.textContent = plan === 'vip' || plan === 'admin' ? 'Accès VIP — tous les sports' : 'Accès Standard — Tennis';
+
+    const list = document.getElementById('analyses-list');
+    if(list){
+      const statutColor = s => s === 'win' ? '#4ade80' : s === 'lose' ? '#f87171' : 'rgba(244,241,232,0.45)';
+      const statutBg    = s => s === 'win' ? 'rgba(74,222,128,0.12)' : s === 'lose' ? 'rgba(248,113,113,0.12)' : 'rgba(244,241,232,0.06)';
+      const statutLabel = s => s === 'win' ? 'Gagné ✅' : s === 'lose' ? 'Perdu ❌' : 'En cours';
+      list.innerHTML = accessible.map(p => `
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(244,241,232,0.1);border-radius:8px;overflow:hidden;">
+          <!-- Card header -->
+          <div style="padding:14px 16px 12px;border-bottom:1px solid rgba(244,241,232,0.08);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px;">
+              <div style="font-family:'Anton',sans-serif;font-size:1rem;color:var(--paper);letter-spacing:0.02em;">${p.match}</div>
+              <span style="flex-shrink:0;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:20px;background:${statutBg(p.statut)};color:${statutColor(p.statut)};border:1px solid ${statutColor(p.statut)}33;white-space:nowrap;">${p.label || statutLabel(p.statut)}</span>
             </div>
-            <div style="font-size:0.82rem;font-weight:600;color:var(--pitch);margin-bottom:8px;">${p.marche} · Cote ${p.cote}</div>
-            <div style="font-size:0.81rem;color:#555;line-height:1.65;background:#fff;border-left:3px solid var(--gold);padding:10px 12px;border-radius:0 4px 4px 0;">${p.analyse}</div>
-          </div>`).join('');
-      } else {
-        analysesSection.style.display = 'none';
-      }
-    } else if(analysesSection){
-      analysesSection.style.display = 'none';
+            <div style="font-size:0.72rem;color:rgba(244,241,232,0.4);font-family:'Space Mono',monospace;">${p.date}</div>
+          </div>
+          <!-- Marché + cote -->
+          <div style="padding:10px 16px;border-bottom:1px solid rgba(244,241,232,0.08);display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:0.82rem;font-weight:600;color:var(--gold-bright);">${p.marche}</span>
+            <span style="font-family:'Space Mono',monospace;font-size:0.8rem;color:rgba(244,241,232,0.6);">Cote <b style="color:var(--paper);">${p.cote}</b></span>
+          </div>
+          <!-- Analyse -->
+          <div style="padding:14px 16px;">
+            <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(244,241,232,0.35);margin-bottom:8px;">Analyse</div>
+            <p style="font-size:0.84rem;color:rgba(244,241,232,0.8);line-height:1.7;margin:0;">${p.analyse}</p>
+          </div>
+        </div>`).join('');
     }
+    document.getElementById('analysesBg').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAnalyses(){
+    document.getElementById('analysesBg').style.display = 'none';
+    document.body.style.overflow = '';
   }
 
   function prefillEditInfo(user){
