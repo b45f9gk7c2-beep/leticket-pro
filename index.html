@@ -693,9 +693,9 @@
 <section id="pronostics">
   <div class="wrap">
     <div class="section-head">
-      <div class="eyebrow">Pronostics actifs</div>
-      <h2>Sélections du moment</h2>
-      <p>Tickets du jour et à venir, séparés par abonnement. Les matchs déjà joués disparaissent automatiquement.</p>
+      <div class="eyebrow">Historique public</div>
+      <h2>Les derniers résultats</h2>
+      <p>Chaque ticket gagné est affiché ici publiquement. La transparence sur les résultats, c'est la base de la confiance.</p>
     </div>
     <div class="history-grid" id="historyGrid">
       <p class="mono" style="opacity:0.5; font-size:0.85rem;">Chargement des pronostics…</p>
@@ -924,13 +924,6 @@
         <div id="member-plan-action" style="padding:10px 16px;display:flex;flex-direction:column;gap:8px;"></div>
       </div>
 
-      <!-- Bouton Mes Analyses -->
-      <div id="member-analyses-btn-wrap" style="display:none;margin-bottom:14px;">
-        <button onclick="openAnalyses()" style="width:100%;background:linear-gradient(160deg,var(--night-2),#0d2a20);color:var(--gold-bright);border:1px solid rgba(201,162,39,0.4);padding:12px;border-radius:4px;font-weight:700;font-size:0.88rem;cursor:pointer;letter-spacing:0.03em;display:flex;align-items:center;justify-content:center;gap:8px;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-          Mes analyses &amp; pronostics
-        </button>
-      </div>
 
       <!-- Actions -->
       <div style="display:flex;flex-direction:column;gap:8px;">
@@ -1106,53 +1099,13 @@
     </div>`;
   }
 
+  // Section principale : uniquement les tickets gagnants (track record public)
   function renderAllPicks(picks){
-    // Seulement les tickets actifs (pas gagnés/perdus)
-    const activePicks = picks.filter(p => p.statut === 'en-cours');
-
-    // Détection du jour courant
-    const now = new Date();
-    const months = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
-    const todayStr = `${now.getDate()} ${months[now.getMonth()]}`;
-
-    const todayPicks = activePicks.filter(p => p.date.toLowerCase().startsWith(todayStr.toLowerCase()));
-    const upcomingPicks = activePicks.filter(p => !p.date.toLowerCase().startsWith(todayStr.toLowerCase()));
-
-    function renderTierBlock(label, icon, badgeStyle, tierPicks){
-      if(!tierPicks.length) return '';
-      return `<div class="picks-tier-block">
-        <div class="picks-tier-label">
-          <span class="sport-badge" style="${badgeStyle}">${icon} ${label}</span>
-          <span class="picks-tier-desc">${label==='Standard' ? 'Inclus Standard &amp; VIP' : 'Réservé VIP uniquement'}</span>
-        </div>
-        <div class="picks-cards-row">${tierPicks.map(renderPick).join('')}</div>
-      </div>`;
+    const winPicks = picks.filter(p => p.statut === 'win');
+    if(!winPicks.length){
+      return '<p class="mono" style="opacity:0.5;font-size:0.85rem;">Les résultats gagnants s\'afficheront ici.</p>';
     }
-
-    function renderDateSection(dateLabel, sectionPicks, extraClass){
-      const std = sectionPicks.filter(p => p.type === 'standard');
-      const vip = sectionPicks.filter(p => p.type !== 'standard');
-      return `<div class="picks-section${extraClass ? ' '+extraClass : ''}">
-        <div class="picks-date-label">${dateLabel}</div>
-        ${renderTierBlock('Standard','🎯','background:rgba(31,77,58,0.35);color:#7CC9A0;border:1px solid rgba(124,201,160,0.3);',std)}
-        ${renderTierBlock('VIP','⚡','background:rgba(201,162,39,0.12);color:var(--gold-bright);border:1px solid rgba(201,162,39,0.3);',vip)}
-      </div>`;
-    }
-
-    let html = '';
-    if(todayPicks.length) html += renderDateSection(`Aujourd'hui · ${todayStr}`, todayPicks, '');
-    if(upcomingPicks.length) html += renderDateSection('À venir', upcomingPicks, 'upcoming-section');
-
-    // Strip des résultats passés (visibles publiquement)
-    const pastPicks = picks.filter(p => p.statut === 'win' || p.statut === 'lose');
-    if(pastPicks.length){
-      html += `<div class="picks-section">
-        <div class="picks-date-label" style="font-size:1.05rem;color:rgba(244,241,232,0.5);">📈 Résultats récents</div>
-        <div class="picks-cards-row">${pastPicks.map(renderWinCard).join('')}</div>
-      </div>`;
-    }
-
-    return html || '<p class="mono" style="opacity:0.5;font-size:0.85rem;">Aucun pronostic actif pour le moment.</p>';
+    return `<div class="picks-cards-row">${winPicks.map(renderWinCard).join('')}</div>`;
   }
 
   async function loadPronostics(){
@@ -1366,7 +1319,11 @@
           if(p.combi) return applyESPNCombi(p, events);
           return applyESPN(p, events);
         });
-        histGrid.innerHTML = renderAllPicks(updatedPicks);
+        // Mettre à jour uniquement la section des résultats gagnants
+        const winOnly = updatedPicks.filter(p => p.statut === 'win');
+        histGrid.innerHTML = winOnly.length
+          ? `<div class="picks-cards-row">${winOnly.map(renderWinCard).join('')}</div>`
+          : '<p class="mono" style="opacity:0.5;font-size:0.85rem;">Les résultats gagnants s\'afficheront ici.</p>';
         // Ré-appliquer l'accès déverrouillé après re-rendu
         const _plan = window._userPlan;
         if(_plan === 'vip' || _plan === 'admin'){
@@ -1572,9 +1529,6 @@
       }
     }
 
-    // ── Bouton Mes Analyses ──────────────────────────────────────────
-    const analysesBtnWrap = document.getElementById('member-analyses-btn-wrap');
-    if(analysesBtnWrap) analysesBtnWrap.style.display = (plan !== 'none') ? 'block' : 'none';
   }
 
   function openAnalyses(){
@@ -1712,15 +1666,27 @@
     }
   }
 
-  function openPronostics(){
+  async function openPronostics(){
     const plan = window._userPlan || 'none';
-    const allPicks = DEFAULT_PICKS;
+
+    // Charger les pronos depuis le storage (même source que la page principale)
+    let allPicks = DEFAULT_PICKS;
+    try{
+      if(window.storage){
+        const res = await window.storage.get('pronostics:list', true);
+        if(res && res.value){
+          const parsed = JSON.parse(res.value);
+          if(Array.isArray(parsed) && parsed.length){ allPicks = parsed; }
+        }
+      }
+    }catch(e){}
+
     const stdPicks = allPicks.filter(p => p.type === 'standard');
     const vipPicks = allPicks.filter(p => p.type !== 'standard');
 
     const sub = document.getElementById('prono-popup-subtitle');
     if(sub) sub.textContent = plan === 'none' ? 'Abonnez-vous pour accéder aux analyses complètes'
-      : plan === 'standard' ? 'Abonnement Standard actif — Tennis'
+      : plan === 'standard' ? 'Abonnement Standard actif'
       : 'Abonnement VIP actif — accès complet';
 
     const stdList = document.getElementById('prono-list-std');
