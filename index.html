@@ -87,28 +87,30 @@
   .nav-links a{opacity:0.8; transition:opacity .2s, color .2s; position:relative;}
   .nav-links a:hover{opacity:1; color:var(--gold-bright);}
   .nav-ghost{
-    background:transparent; color:rgba(244,241,232,0.7); padding:9px 16px;
-    font-weight:500; font-size:0.86rem; border-radius:var(--radius);
-    border:none; cursor:pointer;
-    transition:color .2s;
+    background:rgba(244,241,232,0.10); color:var(--paper); padding:9px 22px;
+    font-weight:700; font-size:0.88rem; border-radius:var(--radius);
+    border:1px solid rgba(244,241,232,0.55); cursor:pointer; letter-spacing:0.03em;
+    box-shadow:0 2px 10px rgba(0,0,0,0.25);
+    transition:border-color .2s, background .2s, color .2s, box-shadow .2s;
   }
-  .nav-ghost:hover{color:var(--paper);}
+  .nav-ghost:hover{color:var(--gold-bright); border-color:var(--gold); background:rgba(201,162,39,0.10); box-shadow:0 4px 18px rgba(201,162,39,0.18);}
   .nav-membre{
     background:rgba(244,241,232,0.07); color:var(--paper); padding:9px 18px;
     font-weight:600; font-size:0.86rem; border-radius:var(--radius);
-    border:1px solid rgba(244,241,232,0.2); cursor:pointer;
+    border:1px solid rgba(244,241,232,0.18); cursor:pointer;
     transition:border-color .2s, background .2s;
   }
-  .nav-membre:hover{border-color:rgba(244,241,232,0.5); background:rgba(244,241,232,0.12);}
+  .nav-membre:hover{border-color:rgba(244,241,232,0.45); background:rgba(244,241,232,0.11);}
   .nav-cta{
-    background:linear-gradient(135deg, #F0CC45 0%, var(--gold) 100%);
-    color:var(--night); padding:11px 26px;
-    font-weight:800; font-size:0.92rem; border-radius:var(--radius);
-    border:none; cursor:pointer; letter-spacing:0.02em;
-    transition:transform .15s, box-shadow .2s;
-    box-shadow:0 3px 16px rgba(201,162,39,0.4);
+    background:linear-gradient(160deg, var(--gold-bright) 0%, var(--gold) 100%);
+    color:var(--night); padding:11px 28px;
+    font-family:'Anton',sans-serif; font-size:0.92rem;
+    letter-spacing:0.07em; text-transform:uppercase;
+    border-radius:var(--radius); border:none; cursor:pointer;
+    transition:transform .15s, box-shadow .2s, opacity .15s;
+    box-shadow:0 3px 16px rgba(201,162,39,0.38);
   }
-  .nav-cta:hover{transform:translateY(-2px); box-shadow:0 8px 28px rgba(201,162,39,0.55);}
+  .nav-cta:hover{transform:translateY(-2px); box-shadow:0 8px 28px rgba(201,162,39,0.55); opacity:0.93;}
   .burger{display:none; flex-direction:column; gap:4px; cursor:pointer; background:none; border:none;}
   .burger span{width:24px; height:2px; background:var(--paper);}
 
@@ -411,7 +413,7 @@
       <a href="#faq">FAQ</a>
     </div>
     <div>
-      <button class="nav-cta" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">⚡ S'abonner</button>
+      <button class="nav-cta" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">S'abonner</button>
     </div>
   </nav>
 </header>
@@ -509,8 +511,8 @@
         <div class="price"><b>14,99€</b><span>/ mois</span></div>
         <ul>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>2 pronostics par semaine</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Historique complet et cotes</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Notification e-mail</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Alerte par mail dès qu'un pronostic est publié</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Analyse et cote simple</li>
         </ul>
         <button onclick="startCheckout('standard')">Choisir Standard</button>
       </div>
@@ -522,20 +524,10 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Tous les pronostics, tous les sports</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Analyse détaillée par match</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Alertes en temps réel</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Accès prioritaire au support</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Canal Telegram privé VIP</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Accès prioritaire aux pronostics</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Canal VIP — analyses et cotes</li>
         </ul>
         <button onclick="startCheckout('vip')">Choisir VIP</button>
-        <div style="margin-top:16px; background:linear-gradient(135deg,#0d1f2d 0%,#0a1929 100%); border:1px solid rgba(41,182,246,0.25); border-radius:8px; padding:16px 18px; display:flex; align-items:center; gap:14px;">
-          <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#29B6F6,#0288D1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/></svg>
-          </div>
-          <div style="flex:1;">
-            <div style="font-weight:700;font-size:0.88rem;color:#F4F1E8;margin-bottom:2px;">Canal Telegram VIP 🔒</div>
-            <div style="font-size:0.76rem;color:rgba(244,241,232,0.5);font-family:'Space Mono',monospace;">Picks exclusifs · Discussions privées</div>
-          </div>
-          <a href="https://t.me/+0b8B2FO4exdmMGZk" target="_blank" rel="noopener" style="flex-shrink:0;background:linear-gradient(135deg,#29B6F6,#0288D1);color:#fff;font-weight:700;font-size:0.78rem;padding:8px 14px;border-radius:6px;text-decoration:none;letter-spacing:0.03em;white-space:nowrap;">Rejoindre →</a>
-        </div>
       </div>
     </div>
   </div>
@@ -683,16 +675,57 @@
       <div class="switch">Déjà abonné ? <a href="#" onclick="switchView('login'); return false;">Se connecter</a></div>
     </div>
     <div id="memberView" style="display:none;">
-      <h3>Espace Membre</h3>
-      <p class="sub" id="member-welcome"></p>
-      <div id="member-plan-box" style="margin:18px 0; padding:14px 16px; border-radius:6px; background:rgba(11,31,26,0.5); border:1px solid var(--line); text-align:center;">
-        <div id="member-plan" style="font-family:'Space Mono',monospace; font-size:0.82rem; margin-bottom:4px;"></div>
-        <div id="member-plan-action"></div>
+      <!-- En-tête profil -->
+      <div style="display:flex;align-items:center;gap:14px;padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid #ddd8c4;">
+        <div id="member-avatar" style="width:46px;height:46px;border-radius:50%;background:var(--pitch);display:flex;align-items:center;justify-content:center;color:#F4F1E8;font-family:'Anton';font-size:1.2rem;flex-shrink:0;">?</div>
+        <div>
+          <div id="member-name-display" style="font-weight:700;font-size:1rem;color:var(--ink);"></div>
+          <div id="member-email-display" style="font-size:0.78rem;color:#888;margin-top:2px;"></div>
+        </div>
       </div>
-      <button class="submit" onclick="doLogout()" style="background:#B5483C; margin-top:4px;">Se déconnecter</button>
-      <div style="margin-top:12px; text-align:center;">
-        <a href="#" onclick="switchView('changepass'); return false;" style="color:rgba(22,36,30,0.5); font-size:0.82rem; text-decoration:underline;">Changer mon mot de passe</a>
+
+      <!-- Infos personnelles -->
+      <div style="background:#f7f4e9;border-radius:6px;padding:14px 16px;margin-bottom:14px;">
+        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#888;margin-bottom:10px;">Mes informations</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #e8e3d0;">
+          <span style="font-size:0.84rem;color:#666;">Téléphone</span>
+          <span id="member-tel-display" style="font-size:0.84rem;font-weight:600;color:var(--ink);">—</span>
+        </div>
+        <div style="padding-top:8px;text-align:right;">
+          <a href="#" onclick="switchView('editinfo'); return false;" style="font-size:0.78rem;color:var(--pitch);font-weight:600;text-decoration:underline;">Modifier mes informations</a>
+        </div>
       </div>
+
+      <!-- Abonnement -->
+      <div style="background:#f7f4e9;border-radius:6px;padding:14px 16px;margin-bottom:16px;">
+        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#888;margin-bottom:10px;">Mon abonnement</div>
+        <div id="member-plan" style="font-size:0.9rem;font-weight:700;margin-bottom:12px;"></div>
+        <div id="member-plan-action" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button class="submit" onclick="doLogout()" style="background:#B5483C;">Se déconnecter</button>
+        <div style="text-align:center;margin-top:4px;">
+          <a href="#" onclick="switchView('changepass'); return false;" style="font-size:0.8rem;color:#aaa;text-decoration:underline;">Changer mon mot de passe</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vue modification infos -->
+    <div id="editinfoView" style="display:none;">
+      <h3>Mes informations</h3>
+      <p class="sub">Modifie tes coordonnées.</p>
+      <label for="ei-prenom">Prénom</label>
+      <input id="ei-prenom" type="text" placeholder="Ton prénom">
+      <label for="ei-nom">Nom</label>
+      <input id="ei-nom" type="text" placeholder="Ton nom">
+      <label for="ei-tel">Téléphone</label>
+      <input id="ei-tel" type="tel" placeholder="+33 6 00 00 00 00">
+      <div id="ei-error" style="color:#B5483C;font-size:0.82rem;margin-top:8px;display:none;"></div>
+      <div id="ei-success" style="color:#2d8f55;font-size:0.82rem;margin-top:8px;display:none;">✅ Informations mises à jour !</div>
+      <button class="submit" onclick="doEditInfo()" style="margin-top:16px;">Enregistrer</button>
+      <div class="switch"><a href="#" onclick="switchView('member'); return false;">← Retour</a></div>
     </div>
     <div id="changepassView" style="display:none;">
       <h3>Nouveau mot de passe</h3>
@@ -1012,6 +1045,23 @@
           return applyESPN(p, events);
         });
         histGrid.innerHTML = updatedPicks.map(renderPick).join('');
+        // Ré-appliquer l'accès déverrouillé après re-rendu
+        const _plan = window._userPlan;
+        if(_plan === 'vip' || _plan === 'admin'){
+          document.querySelectorAll('.pick-card.locked').forEach(el=>{
+            el.querySelector('.lock-overlay')?.remove();
+            const inn = el.querySelector('.pick-inner');
+            if(inn) inn.style.filter = 'none';
+            el.classList.remove('locked');
+          });
+        } else if(_plan === 'standard'){
+          document.querySelectorAll('.pick-card.locked[data-plan="standard"]').forEach(el=>{
+            el.querySelector('.lock-overlay')?.remove();
+            const inn = el.querySelector('.pick-inner');
+            if(inn) inn.style.filter = 'none';
+            el.classList.remove('locked');
+          });
+        }
       }
 
     }catch(e){ console.warn('ESPN CDM error:', e); }
@@ -1088,34 +1138,89 @@
   }
 
   function updateMemberView(user){
-    const prenom = user.user_metadata?.prenom || user.email.split('@')[0];
-    const el = document.getElementById('member-welcome');
-    if(el) el.textContent = 'Bonjour ' + prenom + ' 👋';
-    const planEl = document.getElementById('member-plan');
+    const meta    = user.user_metadata || {};
+    const prenom  = meta.prenom || user.email.split('@')[0];
+    const nom     = meta.nom || '';
+    const tel     = meta.telephone || '—';
+    const initial = prenom.charAt(0).toUpperCase();
+
+    // Avatar + nom + email
+    const avatarEl = document.getElementById('member-avatar');
+    if(avatarEl) avatarEl.textContent = initial;
+    const nameEl = document.getElementById('member-name-display');
+    if(nameEl) nameEl.textContent = prenom + (nom ? ' ' + nom : '');
+    const emailEl = document.getElementById('member-email-display');
+    if(emailEl) emailEl.textContent = user.email;
+    const telEl = document.getElementById('member-tel-display');
+    if(telEl) telEl.textContent = tel;
+
+    // Abonnement
+    const plan    = window._userPlan || 'none';
+    const planEl  = document.getElementById('member-plan');
     const actionEl = document.getElementById('member-plan-action');
-    const plan = window._userPlan;
+
     if(planEl){
-      if(plan === 'admin')    planEl.innerHTML = '<span style="color:var(--gold-bright);font-weight:700;">👑 Admin — accès total</span>';
-      else if(plan === 'vip') planEl.innerHTML = '<span style="color:var(--gold-bright);font-weight:700;">⚡ Abonnement VIP actif</span>';
-      else if(plan === 'standard') planEl.innerHTML = '<span style="color:#7CC9A0;font-weight:700;">🎯 Abonnement Standard actif</span>';
-      else                    planEl.innerHTML = '<span style="color:rgba(22,36,30,0.5);">Aucun abonnement actif</span>';
+      const badges = {
+        admin:    '<span style="display:inline-flex;align-items:center;gap:6px;background:rgba(201,162,39,0.12);color:#C9A227;border:1px solid rgba(201,162,39,0.3);padding:5px 12px;border-radius:20px;font-size:0.78rem;font-family:\'Space Mono\',monospace;">👑 ADMIN — Accès total</span>',
+        vip:      '<span style="display:inline-flex;align-items:center;gap:6px;background:rgba(201,162,39,0.1);color:var(--gold-bright);border:1px solid rgba(224,185,58,0.35);padding:5px 12px;border-radius:20px;font-size:0.78rem;font-family:\'Space Mono\',monospace;">⚡ VIP — 29,99€/mois</span>',
+        standard: '<span style="display:inline-flex;align-items:center;gap:6px;background:rgba(31,77,58,0.15);color:#7CC9A0;border:1px solid rgba(124,201,160,0.3);padding:5px 12px;border-radius:20px;font-size:0.78rem;font-family:\'Space Mono\',monospace;">🎯 Standard — 14,99€/mois</span>',
+        none:     '<span style="color:#aaa;font-size:0.86rem;">Aucun abonnement actif</span>',
+      };
+      planEl.innerHTML = badges[plan] || badges.none;
     }
+
     if(actionEl){
       if(plan === 'none'){
-        actionEl.innerHTML = `<button onclick="closeModal(); startCheckout('vip');" style="margin-top:10px;background:var(--gold);color:var(--night);border:none;padding:9px 20px;border-radius:4px;font-weight:700;cursor:pointer;font-size:0.84rem;">S'abonner maintenant →</button>`;
+        actionEl.innerHTML = `
+          <button onclick="closeModal();document.getElementById('tarifs').scrollIntoView({behavior:'smooth'});" style="width:100%;background:linear-gradient(160deg,#2a6e4e,#1a4d35);color:#F4F1E8;border:1px solid rgba(124,201,160,0.25);padding:11px;border-radius:4px;font-weight:700;cursor:pointer;font-size:0.88rem;">Choisir un abonnement →</button>`;
       } else if(plan === 'standard'){
-        actionEl.innerHTML = `<button onclick="closeModal(); startCheckout('vip');" style="margin-top:10px;background:transparent;color:var(--gold-bright);border:1px solid rgba(224,185,58,0.4);padding:7px 16px;border-radius:4px;font-weight:600;cursor:pointer;font-size:0.8rem;">Passer en VIP →</button>`;
+        actionEl.innerHTML = `
+          <button onclick="closeModal();startCheckout('vip');" style="width:100%;background:linear-gradient(160deg,#2a6e4e,#1a4d35);color:#F4F1E8;border:none;padding:10px;border-radius:4px;font-weight:700;cursor:pointer;font-size:0.85rem;">Passer en VIP — 29,99€/mois →</button>
+          <button onclick="if(confirm('Confirmer l\\'annulation de ton abonnement Standard ?')) alert('Pour annuler, contacte-nous à contact@leticket.pro');" style="width:100%;background:transparent;color:#B5483C;border:1px solid rgba(181,72,60,0.3);padding:9px;border-radius:4px;font-weight:600;cursor:pointer;font-size:0.82rem;">Annuler mon abonnement</button>`;
+      } else if(plan === 'vip'){
+        actionEl.innerHTML = `
+          <button onclick="if(confirm('Confirmer l\\'annulation de ton abonnement VIP ?')) alert('Pour annuler, contacte-nous à contact@leticket.pro');" style="width:100%;background:transparent;color:#B5483C;border:1px solid rgba(181,72,60,0.3);padding:9px;border-radius:4px;font-weight:600;cursor:pointer;font-size:0.82rem;">Annuler mon abonnement</button>`;
       } else {
         actionEl.innerHTML = '';
       }
     }
   }
 
+  function prefillEditInfo(user){
+    const meta = user.user_metadata || {};
+    const pi = document.getElementById('ei-prenom');
+    const ni = document.getElementById('ei-nom');
+    const ti = document.getElementById('ei-tel');
+    if(pi) pi.value = meta.prenom || '';
+    if(ni) ni.value = meta.nom || '';
+    if(ti) ti.value = meta.telephone || '';
+    const err = document.getElementById('ei-error');
+    const ok  = document.getElementById('ei-success');
+    if(err) err.style.display = 'none';
+    if(ok)  ok.style.display  = 'none';
+  }
+
+  async function doEditInfo(){
+    const prenom = document.getElementById('ei-prenom').value.trim();
+    const nom    = document.getElementById('ei-nom').value.trim();
+    const tel    = document.getElementById('ei-tel').value.trim();
+    const errEl  = document.getElementById('ei-error');
+    const okEl   = document.getElementById('ei-success');
+    errEl.style.display = 'none'; okEl.style.display = 'none';
+    if(!prenom || !nom){ errEl.textContent = 'Prénom et nom requis.'; errEl.style.display = 'block'; return; }
+    const {error} = await _supa.auth.updateUser({ data:{ prenom, nom, telephone: tel } });
+    if(error){ errEl.textContent = error.message || 'Erreur lors de la mise à jour.'; errEl.style.display = 'block'; return; }
+    // Mettre à jour l'objet local
+    if(window._currentUser) window._currentUser.user_metadata = {...(window._currentUser.user_metadata||{}), prenom, nom, telephone: tel};
+    okEl.style.display = 'block';
+    setTimeout(()=>{ switchView('member'); }, 1500);
+  }
+
   function resetNav(){
     window._currentUser = null;
     window._userPlan = 'none';
     const btn = document.querySelector('.nav-membre');
-    if(btn){ btn.textContent = 'Espace membre'; btn.style.color = ''; }
+    if(btn){ btn.textContent = 'Inscription'; btn.style.color = ''; btn.onclick = function(){ openModal('signup'); }; }
     const adminLi = document.getElementById('footer-admin-link');
     if(adminLi) adminLi.style.display = 'none';
   }
@@ -1127,10 +1232,9 @@
     document.querySelector('#signupView .sub').textContent = 'Rejoins LE TICKET et accède aux pronos.';
     document.getElementById('modalBg').classList.add('show');
     _supa.auth.getSession().then(({data:{session}})=>{
-      if(session && view === 'login'){
+      if(session){
+        if(!window._currentUser) window._currentUser = session.user;
         switchView('member');
-        const prenom = session.user.user_metadata?.prenom || session.user.email;
-        document.getElementById('member-welcome').textContent = 'Bonjour ' + prenom + ' 👋';
       } else {
         switchView(view);
       }
@@ -1138,12 +1242,12 @@
   }
   function closeModal(){ document.getElementById('modalBg').classList.remove('show'); }
   function switchView(view){
-    document.getElementById('loginView').style.display      = view === 'login'      ? 'block' : 'none';
-    document.getElementById('signupView').style.display     = view === 'signup'     ? 'block' : 'none';
-    document.getElementById('memberView').style.display     = view === 'member'     ? 'block' : 'none';
-    document.getElementById('resetView').style.display      = view === 'reset'      ? 'block' : 'none';
-    document.getElementById('changepassView').style.display = view === 'changepass' ? 'block' : 'none';
+    ['login','signup','member','reset','changepass','editinfo'].forEach(v=>{
+      const el = document.getElementById(v+'View');
+      if(el) el.style.display = v === view ? 'block' : 'none';
+    });
     if(view === 'member' && window._currentUser) updateMemberView(window._currentUser);
+    if(view === 'editinfo' && window._currentUser) prefillEditInfo(window._currentUser);
   }
 
   async function doChangePass(){
