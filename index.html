@@ -17,14 +17,13 @@
   const EMAILJS_TEMPLATE_ID = 'REMPLACE_PAR_TON_TEMPLATE_ID';
   emailjs.init(EMAILJS_PUBLIC_KEY);
 
-  function sendWelcomeMail(prenom, email, password){
+  function sendWelcomeMail(prenom, email){
     if(!EMAILJS_SERVICE_ID || EMAILJS_SERVICE_ID.startsWith('REMPLACE')) return;
     if(typeof emailjs === 'undefined') return;
     emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
       to_name:  prenom,
       to_email: email,
       user_email: email,
-      user_password: password,
     }).catch(e => console.warn('EmailJS:', e));
   }
 </script>
@@ -617,7 +616,7 @@
   <a href="#" id="mobile-analyses-link" class="gold" onclick="closeMobileNav();openAnalyses();return false;" style="display:none;">Analyses</a>
   <div style="width:100%;height:1px;background:rgba(244,241,232,0.12);margin:4px 0;"></div>
   <button id="mobile-login-btn" onclick="closeMobileNav();openModal('login');" style="background:rgba(244,241,232,0.08);color:var(--paper);border:1px solid rgba(244,241,232,0.3);padding:14px 36px;border-radius:6px;font-size:1rem;font-weight:700;cursor:pointer;width:80%;max-width:260px;">Se connecter</button>
-  <button onclick="closeMobileNav();openModal('signup');" style="background:rgba(244,241,232,0.12);color:var(--paper);border:1px solid rgba(244,241,232,0.25);padding:14px 36px;border-radius:6px;font-size:1rem;font-weight:700;cursor:pointer;width:80%;max-width:260px;">Inscription</button>
+  <button id="mobile-signup-btn" onclick="closeMobileNav();openModal('signup');" style="background:rgba(244,241,232,0.12);color:var(--paper);border:1px solid rgba(244,241,232,0.25);padding:14px 36px;border-radius:6px;font-size:1rem;font-weight:700;cursor:pointer;width:80%;max-width:260px;">Inscription</button>
   <button class="nav-cta" onclick="closeMobileNav();document.getElementById('tarifs').scrollIntoView({behavior:'smooth'});" style="font-size:1rem;padding:14px 36px;width:80%;max-width:260px;">S'abonner</button>
 </div>
 
@@ -1431,11 +1430,12 @@
     const loginBtn = document.querySelector('.nav-ghost');
     const prenom = user.user_metadata?.prenom || user.email.split('@')[0];
     if(btn){ btn.textContent = '👤 ' + prenom; btn.style.color = 'var(--gold-bright)'; btn.onclick = function(){ openModal('member'); }; }
-    // Cacher "Se connecter", afficher le pseudo
+    // Cacher "Se connecter" et "Inscription", afficher le pseudo
     if(loginBtn) loginBtn.style.display = 'none';
-    // Mobile : cacher le bouton "Se connecter" du burger
     const mobileLogin = document.getElementById('mobile-login-btn');
     if(mobileLogin) mobileLogin.style.display = 'none';
+    const mobileSignup = document.getElementById('mobile-signup-btn');
+    if(mobileSignup) mobileSignup.style.display = 'none';
 
     const plan = user.user_metadata?.plan || 'none';
     const isAdmin = ADMIN_EMAILS.includes(user.email);
@@ -1791,9 +1791,10 @@
     // Réafficher "Se connecter"
     const loginBtn = document.querySelector('.nav-ghost');
     if(loginBtn) loginBtn.style.display = '';
-    // Mobile : réafficher le bouton "Se connecter" du burger
     const mobileLogin = document.getElementById('mobile-login-btn');
     if(mobileLogin) mobileLogin.style.display = '';
+    const mobileSignup = document.getElementById('mobile-signup-btn');
+    if(mobileSignup) mobileSignup.style.display = '';
     const adminLi = document.getElementById('footer-admin-link');
     if(adminLi) adminLi.style.display = 'none';
     const navA = document.getElementById('nav-analyses-link');
@@ -1881,38 +1882,69 @@
     const prenom = document.getElementById('su-prenom').value.trim();
     const nom = document.getElementById('su-nom').value.trim();
     const tel = document.getElementById('su-tel').value.trim();
-    const email = document.getElementById('su-email').value.trim();
+    const email = document.getElementById('su-email').value.trim().toLowerCase();
     const pass = document.getElementById('su-pass').value;
     const errEl = document.getElementById('su-error');
     const okEl = document.getElementById('su-success');
     errEl.style.display = 'none'; okEl.style.display = 'none';
-    if(!prenom || !nom || !tel || !email || !pass){ errEl.textContent = 'Remplis tous les champs obligatoires (y compris le téléphone).'; errEl.style.display = 'block'; return; }
-    if(pass.length < 8){ errEl.textContent = 'Le mot de passe doit faire au moins 8 caractères.'; errEl.style.display = 'block'; return; }
+
+    // Validations
+    if(!prenom || !nom || !tel || !email || !pass){
+      errEl.textContent = 'Tous les champs sont obligatoires.';
+      errEl.style.display = 'block'; return;
+    }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      errEl.textContent = 'Adresse e-mail invalide.';
+      errEl.style.display = 'block'; return;
+    }
+    if(tel.replace(/[\s\-\+\(\)]/g,'').length < 8){
+      errEl.textContent = 'Numéro de téléphone invalide.';
+      errEl.style.display = 'block'; return;
+    }
+    if(pass.length < 8){
+      errEl.textContent = 'Le mot de passe doit faire au moins 8 caractères.';
+      errEl.style.display = 'block'; return;
+    }
+
     if(btn){ btn.disabled = true; btn.textContent = 'Création…'; }
-    const {error} = await _supa.auth.signUp({
+
+    const {data, error} = await _supa.auth.signUp({
       email, password: pass,
       options: { data: { prenom, nom, telephone: tel } }
     });
+
+    if(btn){ btn.disabled = false; btn.textContent = 'Créer mon compte'; }
+
     if(error){
-      if(btn){ btn.disabled = false; btn.textContent = 'Créer mon compte'; }
       const msg = error.message || error.error_description || '';
-      if(msg.toLowerCase().includes('already') || msg.toLowerCase().includes('existe')){
+      if(msg.toLowerCase().includes('already') || msg.toLowerCase().includes('existe') || msg.toLowerCase().includes('registered')){
         errEl.textContent = 'Un compte existe déjà avec cet email. Connecte-toi.';
       } else {
-        errEl.textContent = msg || 'Une erreur est survenue. Vérifie tes informations.';
+        errEl.textContent = msg || 'Une erreur est survenue. Réessaie.';
       }
       errEl.style.display = 'block'; return;
     }
-    if(btn){ btn.disabled = false; btn.textContent = 'Créer mon compte'; }
-    sendWelcomeMail(prenom, email, pass);
+
+    // Supabase retourne identities:[] si l'email existe déjà (sans erreur explicite)
+    if(data?.user && (!data.user.identities || data.user.identities.length === 0)){
+      errEl.textContent = 'Un compte existe déjà avec cet email. Connecte-toi.';
+      errEl.style.display = 'block'; return;
+    }
+
+    sendWelcomeMail(prenom, email);
+
     if(_pendingPlan){
       okEl.textContent = '✅ Compte créé ! Redirection vers le paiement…';
       okEl.style.display = 'block';
       setTimeout(()=>{ window.location.href = PLANS[_pendingPlan].url; }, 1500);
     } else {
-      okEl.textContent = '✅ Compte créé ! Vérifie ton email pour confirmer.';
+      okEl.textContent = '✅ Compte créé ! Vérifie ton email pour activer ton compte.';
       okEl.style.display = 'block';
-      setTimeout(()=>{ closeModal(); document.getElementById('tarifs').scrollIntoView({behavior:'smooth'}); }, 2500);
+      // Vider le formulaire
+      ['su-prenom','su-nom','su-tel','su-email','su-pass'].forEach(id=>{
+        const el = document.getElementById(id); if(el) el.value = '';
+      });
+      setTimeout(()=>{ closeModal(); }, 3000);
     }
   }
 
