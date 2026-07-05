@@ -87,18 +87,21 @@
   .nav-links a{opacity:0.8; transition:opacity .2s, color .2s; position:relative;}
   .nav-links a:hover{opacity:1; color:var(--gold-bright);}
   .nav-cta{
-    background:var(--gold); color:var(--night); padding:10px 20px;
-    font-weight:700; font-size:0.88rem; border-radius:var(--radius);
-    transition:background .2s, transform .15s;
+    background:linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 100%);
+    color:var(--night); padding:11px 24px;
+    font-weight:700; font-size:0.9rem; border-radius:var(--radius);
+    border:none; cursor:pointer;
+    transition:opacity .2s, transform .15s, box-shadow .2s;
+    box-shadow:0 2px 12px rgba(201,162,39,0.3);
   }
-  .nav-cta:hover{background:var(--gold-bright); transform:translateY(-1px);}
+  .nav-cta:hover{opacity:0.92; transform:translateY(-2px); box-shadow:0 6px 22px rgba(201,162,39,0.45);}
   .nav-membre{
-    background:transparent; color:var(--gold-bright); padding:8px 16px;
-    font-weight:600; font-size:0.82rem; border-radius:var(--radius);
-    border:1px solid rgba(224,185,58,0.35); cursor:pointer;
+    background:rgba(244,241,232,0.07); color:var(--paper); padding:9px 18px;
+    font-weight:600; font-size:0.86rem; border-radius:var(--radius);
+    border:1px solid rgba(244,241,232,0.2); cursor:pointer;
     transition:border-color .2s, background .2s;
   }
-  .nav-membre:hover{border-color:var(--gold-bright); background:rgba(201,162,39,0.08);}
+  .nav-membre:hover{border-color:rgba(244,241,232,0.5); background:rgba(244,241,232,0.12);}
   .burger{display:none; flex-direction:column; gap:4px; cursor:pointer; background:none; border:none;}
   .burger span{width:24px; height:2px; background:var(--paper);}
 
@@ -403,34 +406,28 @@
       </div>
     </div>
     <div class="ticket-wrap">
-      <div class="ticket" style="position:relative; overflow:hidden;">
-        <div style="
-          position:absolute; inset:0; z-index:10;
-          backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
-          background:linear-gradient(160deg, rgba(11,31,26,0.15) 0%, rgba(11,31,26,0.75) 60%);
-          display:flex; flex-direction:column; align-items:center; justify-content:center;
-          gap:10px; border-radius:inherit;
-        ">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-          <span style="font-family:'Anton',sans-serif; font-size:1.1rem; color:#E0B93A; letter-spacing:0.06em; text-transform:uppercase;">Réservé VIP</span>
-          <span style="font-family:'Space Mono',monospace; font-size:0.72rem; color:rgba(244,241,232,0.75); text-align:center; max-width:180px; line-height:1.5;">Abonne-toi pour accéder aux pronostics du jour</span>
-          <button onclick="startCheckout('vip')" style="margin-top:6px; background:var(--gold); color:var(--night); border:none; padding:10px 22px; border-radius:2px; font-weight:700; font-size:0.82rem; cursor:pointer; font-family:'Inter',sans-serif;">Accès VIP — 29,99€/mois</button>
-        </div>
+      <div class="ticket" style="box-shadow:0 30px 60px -10px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,0,0,0.05), 0 0 40px rgba(31,120,70,0.35);">
         <div class="ticket-top">
-          <span class="tnum">COMBINÉ · VIP</span>
+          <span class="tnum">COMBINÉ · VIP ⚡</span>
           <span class="tbrand">LE TICKET</span>
         </div>
         <div class="ticket-match">Canada — Maroc</div>
-        <div class="ticket-meta"><span>CDM 2026 · 16e finale</span><span>Auj. 19h00</span></div>
+        <div class="ticket-meta">
+          <span>CDM 2026 · 16e finale</span>
+          <span style="color:#2d8f55; font-weight:700;">0 — 3 ✅</span>
+        </div>
         <div class="ticket-row"><span>Marché</span><b>Qualification Maroc</b></div>
         <div class="ticket-row"><span>Cote</span><b>1.32</b></div>
         <div style="border-top:1px dashed rgba(0,0,0,0.2); margin:10px 0;"></div>
         <div class="ticket-match" style="font-size:1.1rem;">Paraguay — France</div>
-        <div class="ticket-meta"><span>CDM 2026 · 16e finale</span><span>Auj. 23h00</span></div>
+        <div class="ticket-meta">
+          <span>CDM 2026 · 16e finale</span>
+          <span style="color:#2d8f55; font-weight:700;">0 — 1 ✅</span>
+        </div>
         <div class="ticket-row"><span>Marché</span><b>Buteur Mbappé</b></div>
         <div class="ticket-row"><span>Cote</span><b>1.50</b></div>
-        <div class="ticket-cote"><span class="label">Cote totale</span><span class="val">1.98</span></div>
-        <div class="stamp" style="top:40%;">EN COURS</div>
+        <div class="ticket-cote"><span class="label">Cote totale</span><span class="val" style="color:#2d8f55;">1.98</span></div>
+        <div class="stamp" style="top:42%; border-color:#2a7a50; color:#2a7a50; mix-blend-mode:normal;">GAGNÉ ✓</div>
         <div class="ticket-perf"></div>
       </div>
     </div>
@@ -454,68 +451,8 @@
       <h2>Coupe du Monde 2026 <span class="cdm-badge">3 juillet</span></h2>
       <p>Résultats officiels et matchs à venir — nos pronostics sur ces matchs sont réservés aux abonnés.</p>
     </div>
-    <div class="cdm-grid">
-      <!-- 02/07 -->
-      <div class="match-card">
-        <div class="match-group">16e de finale · 2 juil.</div>
-        <div class="match-teams">Espagne — Autriche</div>
-        <div class="match-footer"><div class="match-score">3 — 0</div><span class="match-tag done">Terminé</span></div>
-      </div>
-      <!-- 03/07 -->
-      <div class="match-card">
-        <div class="match-group">16e de finale · 3 juil.</div>
-        <div class="match-teams">Portugal — Croatie</div>
-        <div class="match-footer"><div class="match-score">2 — 1</div><span class="match-tag done">Terminé</span></div>
-      </div>
-      <div class="match-card">
-        <div class="match-group">16e de finale · 3 juil.</div>
-        <div class="match-teams">Suisse — Algérie</div>
-        <div class="match-footer"><div class="match-score">2 — 0</div><span class="match-tag done">Terminé</span></div>
-      </div>
-      <div class="match-card">
-        <div class="match-group">16e de finale · 3 juil.</div>
-        <div class="match-teams">Australie — Égypte</div>
-        <div class="match-footer"><div class="match-score">1 — 1 (tab)</div><span class="match-tag done">Terminé</span></div>
-      </div>
-      <!-- 04/07 -->
-      <div class="match-card">
-        <div class="match-group">16e de finale · 4 juil.</div>
-        <div class="match-teams">Argentine — Cap-Vert</div>
-        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">Aujourd'hui</span></div>
-      </div>
-      <div class="match-card">
-        <div class="match-group">16e de finale · 4 juil.</div>
-        <div class="match-teams">Colombie — Ghana</div>
-        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">Aujourd'hui</span></div>
-      </div>
-      <div class="match-card">
-        <div class="match-group">16e de finale · 4 juil.</div>
-        <div class="match-teams">Canada — Maroc</div>
-        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">Aujourd'hui</span></div>
-      </div>
-      <div class="match-card">
-        <div class="match-group">16e de finale · 4 juil.</div>
-        <div class="match-teams">Paraguay — France</div>
-        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">Aujourd'hui</span></div>
-      </div>
-      <!-- 05/07 -->
-      <div class="match-card">
-        <div class="match-group">16e de finale · 5 juil.</div>
-        <div class="match-teams">Brésil — Norvège</div>
-        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">À venir</span></div>
-      </div>
-      <!-- 06/07 -->
-      <div class="match-card">
-        <div class="match-group">16e de finale · 6 juil.</div>
-        <div class="match-teams">Mexique — Angleterre</div>
-        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">À venir</span></div>
-      </div>
-      <!-- 07/07 -->
-      <div class="match-card">
-        <div class="match-group">16e de finale · 7 juil.</div>
-        <div class="match-teams">États-Unis — Belgique</div>
-        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">À venir</span></div>
-      </div>
+    <div class="cdm-grid" id="cdmGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:20px;color:rgba(244,241,232,0.4);font-family:'Space Mono',monospace;font-size:0.8rem;">Chargement des scores en direct...</div>
     </div>
   </div>
 </div>
@@ -837,7 +774,7 @@
       <span class="result-tag ${p.statut}" style="margin-top:10px;">${tagLabel}</span>`;
 
     if(!p.locked){
-      return `<div class="pick-card" style="position:relative;">${inner}${tamponnHTML}</div>`;
+      return `<div class="pick-card" style="position:relative;">${inner}</div>`;
     }
     const chip = p.type === 'standard'
       ? `<div class="vip-chip" style="background:rgba(31,77,58,0.25);border-color:rgba(124,201,160,0.4);color:#7CC9A0;">🎯 Abonnés</div>`
@@ -866,6 +803,194 @@
     grid.innerHTML = picks.map(renderPick).join('');
   }
   loadPronostics();
+
+  // ----- Scores CDM 2026 en direct (ESPN) -----
+  const TEAM_FR = {
+    'Brazil':'Brésil','Norway':'Norvège','Mexico':'Mexique','England':'Angleterre',
+    'France':'France','Paraguay':'Paraguay','Canada':'Canada','Morocco':'Maroc',
+    'Argentina':'Argentine','Cape Verde':'Cap-Vert','Colombia':'Colombie','Ghana':'Ghana',
+    'Spain':'Espagne','Austria':'Autriche','Portugal':'Portugal','Croatia':'Croatie',
+    'Switzerland':'Suisse','Algeria':'Algérie','Australia':'Australie','Egypt':'Égypte',
+    'United States':'États-Unis','Belgium':'Belgique','USA':'États-Unis','Uruguay':'Uruguay',
+    'Ecuador':'Équateur','Japan':'Japon','Netherlands':'Pays-Bas','Germany':'Allemagne',
+    'Italy':'Italie','Senegal':'Sénégal','Ivory Coast':'Côte d\'Ivoire',
+    'South Korea':'Corée du Sud','Saudi Arabia':'Arabie Saoudite',
+    'Serbia':'Serbie','Denmark':'Danemark','Poland':'Pologne','Ukraine':'Ukraine',
+    'Tunisia':'Tunisie','Cameroon':'Cameroun','Nigeria':'Nigéria',
+    'United Arab Emirates':'Émirats Arabes','Qatar':'Qatar','Iran':'Iran',
+    'New Zealand':'Nouvelle-Zélande','Venezuela':'Venezuela','Bolivia':'Bolivie',
+    'Peru':'Pérou','Chile':'Chili','Costa Rica':'Costa Rica','Panama':'Panama',
+    'Honduras':'Honduras','El Salvador':'El Salvador','Jamaica':'Jamaïque',
+    'Trinidad & Tobago':'Trinité-et-Tobago','Haiti':'Haïti','Cuba':'Cuba',
+  };
+  const TEAM_EN = {};
+  Object.entries(TEAM_FR).forEach(([en,fr])=>{ TEAM_EN[fr]=en; });
+
+  // Traductions phases
+  const ROUND_FR = {
+    'round-of-16':'16e de finale','quarterfinal':'Quart de finale',
+    'semifinal':'Demi-finale','final':'Finale','third-place':'Troisième place',
+    'Round of 16':'16e de finale','Quarterfinal':'Quart de finale',
+    'Semifinal':'Demi-finale','Final':'Finale',
+  };
+  function roundFR(str){
+    if(!str) return 'CDM 2026';
+    for(const [k,v] of Object.entries(ROUND_FR)){
+      if(str.toLowerCase().includes(k.toLowerCase())) return v;
+    }
+    return str;
+  }
+
+  // Détermine le vainqueur d'un événement ESPN terminé
+  function getWinnerEN(event){
+    const comp = event.competitions[0];
+    if(!comp.status.type.completed) return null;
+    const home = comp.competitors.find(c=>c.homeAway==='home');
+    const away = comp.competitors.find(c=>c.homeAway==='away');
+    // ESPN marque winner:true sur le vainqueur (y compris aux tirs au but)
+    const winComp = comp.competitors.find(c=>c.winner===true);
+    if(winComp) return winComp.team.displayName;
+    const hs = parseFloat(home.score||0), as = parseFloat(away.score||0);
+    if(hs>as) return home.team.displayName;
+    if(as>hs) return away.team.displayName;
+    return null;
+  }
+
+  // Cherche l'événement ESPN correspondant à un pick
+  function findEvent(pick, events){
+    const teams = (pick.match||'').split('—').map(t=>t.trim());
+    const teamsEN = teams.map(t=>TEAM_EN[t]||t);
+    return events.find(ev=>{
+      const names = ev.competitions[0].competitors.map(c=>c.team.displayName);
+      return teamsEN.every(t=>names.includes(t));
+    });
+  }
+
+  // Met à jour un pick en fonction des données ESPN
+  function applyESPN(pick, events){
+    if(pick.statut!=='en-cours') return pick; // déjà résolu
+    const ev = findEvent(pick, events);
+    if(!ev) return pick;
+    const comp = ev.competitions[0];
+    const home = comp.competitors.find(c=>c.homeAway==='home')||comp.competitors[0];
+    const away = comp.competitors.find(c=>c.homeAway==='away')||comp.competitors[1];
+    const homeNameFR = TEAM_FR[home.team.displayName]||home.team.displayName;
+    const awayNameFR = TEAM_FR[away.team.displayName]||away.team.displayName;
+    const scoreLine = `${homeNameFR} ${home.score} — ${away.score} ${awayNameFR}`;
+    const state = comp.status.type.state;
+
+    if(comp.status.type.completed){
+      // Match terminé : détermine gagné/perdu
+      const marche = (pick.marche||'').toLowerCase();
+      if(marche.includes('qualification')){
+        const teamFR = Object.keys(TEAM_EN).find(fr=>marche.includes(fr.toLowerCase()));
+        const teamEN = teamFR ? TEAM_EN[teamFR] : null;
+        const winner = getWinnerEN(ev);
+        const won = teamEN && winner && winner===teamEN;
+        return { ...pick,
+          statut: won?'win':'lose',
+          label: won?'Gagné ✅':'Perdu ❌',
+          score: scoreLine,
+        };
+      }
+      // Pour les autres marchés (buteur etc.) : afficher juste le score
+      return { ...pick, score: scoreLine, label:'Terminé' };
+    }
+
+    if(state==='in'){
+      // Match en cours : afficher le score live
+      const detail = comp.status.type.shortDetail||'En direct';
+      return { ...pick,
+        score: scoreLine,
+        label: `🔴 ${detail}`,
+      };
+    }
+    return pick;
+  }
+
+  // Met à jour le combiné
+  function applyESPNCombi(pick, events){
+    if(pick.statut!=='en-cours') return pick;
+    const legs = (pick.combi||[]).map(leg=>
+      applyESPN({match:leg.match, marche:leg.marche, statut:'en-cours'}, events)
+    );
+    if(legs.some(l=>l.statut==='lose')) return {...pick, statut:'lose', label:'Perdu ❌'};
+    if(legs.every(l=>l.statut==='win'))  return {...pick, statut:'win',  label:'Gagné ✅'};
+    const liveScores = legs.filter(l=>l.score).map(l=>l.score).join(' | ');
+    if(liveScores) return {...pick, label:'🔴 En direct'};
+    return pick;
+  }
+
+  // Rafraîchissement principal
+  async function fetchCDMScores(){
+    try{
+      const res = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard');
+      const data = await res.json();
+      const events = data.events||[];
+
+      // ── 1. Grille CDM ──────────────────────────────────────────────
+      const grid = document.getElementById('cdmGrid');
+      if(grid && events.length){
+        const now = new Date();
+        const live      = events.filter(e=>e.competitions[0].status.type.state==='in');
+        const done      = events.filter(e=>e.competitions[0].status.type.completed)
+                                .sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,2);
+        const upcoming  = events.filter(e=>e.competitions[0].status.type.state==='pre')
+                                .sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,3);
+        let display = [...live,...done,...upcoming].slice(0,5);
+        if(!display.length) display = events.slice(0,5);
+
+        grid.innerHTML = display.map(ev=>{
+          const comp  = ev.competitions[0];
+          const home  = comp.competitors.find(c=>c.homeAway==='home')||comp.competitors[0];
+          const away  = comp.competitors.find(c=>c.homeAway==='away')||comp.competitors[1];
+          const st    = comp.status;
+          const homeFR = TEAM_FR[home.team.displayName]||home.team.displayName;
+          const awayFR = TEAM_FR[away.team.displayName]||away.team.displayName;
+          const isLive = st.type.state==='in';
+          const isDone = st.type.completed;
+          let scoreHTML, tagHTML;
+          if(isLive){
+            scoreHTML = `<div class="match-score">${home.score} — ${away.score}</div>`;
+            tagHTML   = `<span class="match-tag" style="background:rgba(181,72,60,0.2);color:#E08376;border:1px solid var(--lose);">🔴 ${st.type.shortDetail||'En direct'}</span>`;
+          } else if(isDone){
+            scoreHTML = `<div class="match-score">${home.score} — ${away.score}</div>`;
+            tagHTML   = `<span class="match-tag done">Terminé</span>`;
+          } else {
+            const heure = new Date(ev.date).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Paris'});
+            scoreHTML = `<div class="match-score" style="font-size:0.9rem;opacity:0.35;">— —</div>`;
+            tagHTML   = `<span class="match-tag soon">${heure}</span>`;
+          }
+          const dateStr  = new Date(ev.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short',timeZone:'Europe/Paris'});
+          const noteHead = (ev.notes||[]).find(n=>n.type==='event')?.headline||'';
+          const roundStr = roundFR(noteHead)||'CDM 2026';
+          return `<div class="match-card">
+            <div class="match-group">${roundStr} · ${dateStr}</div>
+            <div class="match-teams">${homeFR} — ${awayFR}</div>
+            <div class="match-footer">${scoreHTML}${tagHTML}</div>
+          </div>`;
+        }).join('');
+
+        // Badge date
+        const badge = document.querySelector('.cdm-badge');
+        if(badge) badge.textContent = new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+      }
+
+      // ── 2. Mise à jour auto des pronos ────────────────────────────
+      const histGrid = document.getElementById('historyGrid');
+      if(histGrid){
+        const updatedPicks = DEFAULT_PICKS.map(p=>{
+          if(p.combi) return applyESPNCombi(p, events);
+          return applyESPN(p, events);
+        });
+        histGrid.innerHTML = updatedPicks.map(renderPick).join('');
+      }
+
+    }catch(e){ console.warn('ESPN CDM error:', e); }
+  }
+
+  fetchCDMScores();
+  setInterval(fetchCDMScores, 60000);
 
   // ----- Supabase -----
   const _supa = supabase.createClient(
