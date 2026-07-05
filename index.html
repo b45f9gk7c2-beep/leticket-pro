@@ -1861,9 +1861,27 @@
     errEl.style.display = 'none';
     if(!email || !pass){ errEl.textContent = 'Remplis tous les champs.'; errEl.style.display = 'block'; return; }
     if(btn){ btn.disabled = true; btn.textContent = 'Connexion…'; }
-    const {error} = await _supa.auth.signInWithPassword({email, password: pass});
+    let loginError;
+    try{
+      const res = await _supa.auth.signInWithPassword({email, password: pass});
+      loginError = res.error;
+    }catch(e){
+      if(btn){ btn.disabled = false; btn.textContent = 'Se connecter'; }
+      errEl.textContent = 'Problème de connexion. Vérifie ta connexion internet.';
+      errEl.style.display = 'block'; return;
+    }
     if(btn){ btn.disabled = false; btn.textContent = 'Se connecter'; }
-    if(error){ errEl.textContent = 'Email ou mot de passe incorrect.'; errEl.style.display = 'block'; return; }
+    if(loginError){
+      const msg = _parseSupabaseError(loginError);
+      if(/email.not.confirmed|not confirmed|confirme/i.test(msg)){
+        errEl.textContent = 'Email non confirmé. Vérifie ta boîte mail et clique sur le lien d\'activation.';
+      } else if(/invalid.credentials|incorrect|wrong/i.test(msg)){
+        errEl.textContent = 'Email ou mot de passe incorrect.';
+      } else {
+        errEl.textContent = 'Email ou mot de passe incorrect.';
+      }
+      errEl.style.display = 'block'; return;
+    }
     if(_pendingPlan){
       window.location.href = PLANS[_pendingPlan].url;
     } else {
@@ -1871,18 +1889,38 @@
     }
   }
 
-  async function doSignup(){
-    const btn = document.getElementById('su-btn');
-    const prenom = document.getElementById('su-prenom').value.trim();
-    const nom = document.getElementById('su-nom').value.trim();
-    const tel = document.getElementById('su-tel').value.trim();
-    const email = document.getElementById('su-email').value.trim().toLowerCase();
-    const pass = document.getElementById('su-pass').value;
-    const errEl = document.getElementById('su-error');
-    const okEl = document.getElementById('su-success');
-    errEl.style.display = 'none'; okEl.style.display = 'none';
+  function _clearSignupForm(){
+    ['su-prenom','su-nom','su-tel','su-email','su-pass'].forEach(id=>{
+      const el = document.getElementById(id); if(el) el.value = '';
+    });
+  }
 
-    // Validations
+  function _parseSupabaseError(error){
+    if(!error) return '';
+    try{
+      let msg = error.message || error.msg || error.error_description || error.error || '';
+      if(typeof msg !== 'string') msg = '';
+      // Supprimer les objets JSON bruts "{}", "[]", etc.
+      msg = msg.replace(/^\{.*\}$/, '').replace(/^\[.*\]$/, '').trim();
+      return msg;
+    }catch(e){ return ''; }
+  }
+
+  async function doSignup(){
+    const btn   = document.getElementById('su-btn');
+    const errEl = document.getElementById('su-error');
+    const okEl  = document.getElementById('su-success');
+
+    const prenom = document.getElementById('su-prenom').value.trim();
+    const nom    = document.getElementById('su-nom').value.trim();
+    const tel    = document.getElementById('su-tel').value.trim();
+    const email  = document.getElementById('su-email').value.trim().toLowerCase();
+    const pass   = document.getElementById('su-pass').value;
+
+    errEl.style.display = 'none';
+    okEl.style.display  = 'none';
+
+    // ── Validations locales ──────────────────────────────────────────
     if(!prenom || !nom || !tel || !email || !pass){
       errEl.textContent = 'Tous les champs sont obligatoires.';
       errEl.style.display = 'block'; return;
@@ -1891,8 +1929,8 @@
       errEl.textContent = 'Adresse e-mail invalide.';
       errEl.style.display = 'block'; return;
     }
-    if(tel.replace(/[\s\-\+\(\)]/g,'').length < 8){
-      errEl.textContent = 'Numéro de téléphone invalide.';
+    if(tel.replace(/[\s\-\+\(\)\.]/g,'').length < 8){
+      errEl.textContent = 'Numéro de téléphone invalide (minimum 8 chiffres).';
       errEl.style.display = 'block'; return;
     }
     if(pass.length < 8){
@@ -1900,46 +1938,75 @@
       errEl.style.display = 'block'; return;
     }
 
-    if(btn){ btn.disabled = true; btn.textContent = 'Création…'; }
+    // ── Appel Supabase ───────────────────────────────────────────────
+    if(btn){ btn.disabled = true; btn.textContent = 'Création en cours…'; }
 
-    const {data, error} = await _supa.auth.signUp({
-      email, password: pass,
-      options: { data: { prenom, nom, telephone: tel } }
-    });
+    let data, error;
+    try{
+      const res = await _supa.auth.signUp({
+        email, password: pass,
+        options: { data: { prenom, nom, telephone: tel } }
+      });
+      data  = res.data;
+      error = res.error;
+    }catch(e){
+      if(btn){ btn.disabled = false; btn.textContent = 'Créer mon compte'; }
+      errEl.textContent = 'Problème de connexion. Vérifie ta connexion internet et réessaie.';
+      errEl.style.display = 'block'; return;
+    }
 
     if(btn){ btn.disabled = false; btn.textContent = 'Créer mon compte'; }
 
+    // ── Gestion des erreurs Supabase ─────────────────────────────────
     if(error){
-      const rawMsg = typeof error.message === 'string' ? error.message : '';
-      const msg = rawMsg.replace(/^\{.*\}$/, '').trim(); // Supprime les objets JSON bruts comme "{}"
-      if(msg.toLowerCase().includes('already') || msg.toLowerCase().includes('existe') || msg.toLowerCase().includes('registered')){
+      const msg = _parseSupabaseError(error);
+      if(/already|existe|registered/i.test(msg)){
         errEl.textContent = 'Un compte existe déjà avec cet email. Connecte-toi.';
+      } else if(/rate.limit|too.many|exceeded/i.test(msg)){
+        errEl.textContent = 'Trop de tentatives. Attends quelques minutes et réessaie.';
+      } else if(/password/i.test(msg)){
+        errEl.textContent = 'Mot de passe trop faible. Essaie une combinaison plus complexe.';
+      } else if(/email/i.test(msg)){
+        errEl.textContent = 'Adresse e-mail invalide ou non acceptée.';
       } else {
-        errEl.textContent = msg || 'Une erreur est survenue. Vérifie ta connexion et réessaie.';
+        errEl.textContent = 'Impossible de créer le compte. Vérifie ta connexion et réessaie.';
       }
       errEl.style.display = 'block'; return;
     }
 
-    // Supabase retourne identities:[] si l'email existe déjà (sans erreur explicite)
+    // ── Email déjà utilisé (sans erreur explicite de Supabase) ───────
     if(data?.user && (!data.user.identities || data.user.identities.length === 0)){
       errEl.textContent = 'Un compte existe déjà avec cet email. Connecte-toi.';
       errEl.style.display = 'block'; return;
     }
 
+    // ── Succès ───────────────────────────────────────────────────────
     sendWelcomeMail(prenom, email);
+    _clearSignupForm();
 
-    if(_pendingPlan){
-      okEl.textContent = '✅ Compte créé ! Redirection vers le paiement…';
-      okEl.style.display = 'block';
-      setTimeout(()=>{ window.location.href = PLANS[_pendingPlan].url; }, 1500);
+    // Si session disponible immédiatement (confirmation email désactivée dans Supabase)
+    if(data?.session){
+      updateNavForUser(data.session.user);
+      if(_pendingPlan && PLANS[_pendingPlan]){
+        okEl.textContent = '✅ Compte créé ! Redirection vers le paiement…';
+        okEl.style.display = 'block';
+        setTimeout(()=>{ window.location.href = PLANS[_pendingPlan].url; }, 1200);
+      } else {
+        okEl.textContent = '✅ Compte créé et connecté ! Bienvenue ' + prenom + ' 🎉';
+        okEl.style.display = 'block';
+        setTimeout(()=>{ closeModal(); }, 2000);
+      }
     } else {
-      okEl.textContent = '✅ Compte créé ! Vérifie ton email pour activer ton compte.';
-      okEl.style.display = 'block';
-      // Vider le formulaire
-      ['su-prenom','su-nom','su-tel','su-email','su-pass'].forEach(id=>{
-        const el = document.getElementById(id); if(el) el.value = '';
-      });
-      setTimeout(()=>{ closeModal(); }, 3000);
+      // Confirmation email requise
+      if(_pendingPlan && PLANS[_pendingPlan]){
+        okEl.textContent = '✅ Compte créé ! Vérifie ton email, puis reviens te connecter.';
+        okEl.style.display = 'block';
+        setTimeout(()=>{ closeModal(); }, 3000);
+      } else {
+        okEl.textContent = '✅ Compte créé ! Vérifie ton email pour activer ton compte.';
+        okEl.style.display = 'block';
+        setTimeout(()=>{ closeModal(); }, 3000);
+      }
     }
   }
 
