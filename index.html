@@ -372,23 +372,42 @@
   }
   .modal-bg.show{display:flex;}
   .modal{
-    background:var(--paper); color:var(--ink); border-radius:6px; padding:36px; max-width:380px; width:100%;
-    position:relative;
+    background:#faf8f2;color:var(--ink);border-radius:16px;padding:40px 36px 36px;max-width:420px;width:100%;
+    position:relative;box-shadow:0 24px 64px rgba(0,0,0,0.5),0 0 0 1px rgba(201,162,39,0.18);
   }
-  .modal h3{font-family:'Inter'; font-weight:700; font-size:1.3rem; margin-bottom:6px;}
-  .modal p.sub{color:#5b5b52; font-size:0.9rem; margin-bottom:24px;}
-  .modal label{display:block; font-size:0.8rem; font-weight:600; margin-bottom:6px; margin-top:14px;}
+  .modal h3{font-family:'Anton',sans-serif;font-weight:400;font-size:1.75rem;letter-spacing:0.02em;text-transform:uppercase;line-height:1;margin-bottom:8px;color:var(--ink);}
+  .modal p.sub{color:#7a7060;font-size:0.87rem;margin-bottom:20px;line-height:1.5;}
+  .modal label{display:block;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;margin-top:16px;color:#5a5042;}
   .modal input{
-    width:100%; padding:12px 14px; border:1px solid #d8d3c0; border-radius:4px; font-family:'Inter'; font-size:0.94rem; background:#fff;
+    width:100%;padding:13px 16px;border:1.5px solid #ddd8c5;border-radius:8px;
+    font-family:'Inter';font-size:0.94rem;background:#fff;color:var(--ink);
+    transition:border-color .2s,box-shadow .2s;
   }
+  .modal input:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 3px rgba(201,162,39,0.12);}
   .modal .submit{
-    width:100%; margin-top:22px; background:var(--pitch); color:#fff; padding:14px; border:none; border-radius:4px; font-weight:700; cursor:pointer; transition:background .2s;
+    width:100%;margin-top:20px;background:var(--pitch);color:#fff;padding:15px;border:none;
+    border-radius:8px;font-weight:700;font-size:0.94rem;letter-spacing:0.02em;cursor:pointer;
+    transition:background .2s,box-shadow .2s,transform .1s;box-shadow:0 4px 16px rgba(31,77,58,0.32);
   }
-  .modal .submit:hover{background:#27604a;}
-  .modal .close{position:absolute; top:18px; right:18px; cursor:pointer; background:none; border:none; font-size:1.3rem; color:#888; line-height:1;}
-  .modal .switch{text-align:center; margin-top:16px; font-size:0.86rem; color:#5b5b52;}
-  .modal .switch a{color:var(--pitch); font-weight:600;}
-  .modal .demo-note{font-family:'Space Mono'; font-size:0.72rem; color:#8a8567; margin-top:16px; line-height:1.5; border-top:1px dashed #d8d3c0; padding-top:14px;}
+  .modal .submit:hover{background:#27604a;box-shadow:0 6px 22px rgba(31,77,58,0.45);transform:translateY(-1px);}
+  .modal .submit:active{transform:translateY(0);}
+  .modal .close{
+    position:absolute;top:16px;right:16px;cursor:pointer;background:#eae7db;border:none;
+    font-size:0.95rem;color:#6b6453;width:30px;height:30px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s;
+  }
+  .modal .close:hover{background:var(--gold);color:var(--night);}
+  .modal .switch{text-align:center;margin-top:18px;font-size:0.84rem;color:#7a7060;}
+  .modal .switch a{color:var(--pitch);font-weight:700;}
+  .modal .demo-note{font-family:'Space Mono';font-size:0.72rem;color:#8a8567;margin-top:16px;line-height:1.5;border-top:1px dashed #d8d3c0;padding-top:14px;}
+  .modal-brand-bar{display:flex;align-items:center;gap:8px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #e8e3d0;}
+  .modal-brand-bar .stub{width:6px;height:14px;background:var(--gold);transform:skewX(-12deg);flex-shrink:0;}
+  .modal-brand-bar span{font-family:'Anton',sans-serif;font-size:0.8rem;letter-spacing:0.1em;color:#a09278;text-transform:uppercase;}
+  .modal-name-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .modal-name-row>div>label{margin-top:0;}
+  .modal-social-proof{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;font-size:0.75rem;color:#a09278;}
+  .modal-social-proof .stars{color:var(--gold-bright);}
+  .modal-divider{height:1px;background:#e8e3d0;margin:6px 0 4px;}
 
   /* ---------- FOOTER ---------- */
   footer{border-top:1px solid var(--line); padding:60px 0 36px; background:var(--night-2);}
@@ -463,7 +482,7 @@
     .footer-grid{grid-template-columns:1fr;}
     .price-card{padding:26px 22px;}
     .testi-grid{grid-template-columns:1fr;}
-    .faq-q{font-size:0.95rem; padding:14px 16px;}
+    .faq-q{font-size:0.95rem; padding:18px 0;}
     nav{padding:12px 20px;}
   }
 
@@ -527,8 +546,8 @@
   .pick-card:hover{border-color:rgba(201,162,39,0.5)!important;box-shadow:0 8px 32px rgba(0,0,0,0.35);}
 
   /* ---- TESTIMONIAL HOVER ---- */
-  .testi{transition:border-color .2s,transform .25s;}
-  .testi:hover{border-color:rgba(201,162,39,0.25);transform:translateY(-3px);}
+  .testi{transition:border-color .2s,transform .25s,box-shadow .25s;}
+  .testi:hover{border-color:rgba(201,162,39,0.3);transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,0.3);}
 
   /* ---- MATCH CARD HOVER ---- */
   .match-card{transition:border-color .2s,transform .2s;}
@@ -542,9 +561,11 @@
     background-size:1200px 100%;animation:shimmer 1.8s infinite linear;
   }
 
-  /* ---- SMOOTH SCROLL NAV ---- */
-  .nav-links a,.nav-cta,.btn-primary,.btn-ghost{
+  /* ---- SMOOTH SCROLL NAV + TOUCH ---- */
+  .nav-links a,.nav-cta,.btn-primary,.btn-ghost,
+  button,.submit,.modal .close,.faq-q,.price-card button{
     -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation; /* supprime le délai 300ms double-tap iOS */
   }
 
   /* ---- LOCK OVERLAY BUTTON ---- */
@@ -698,7 +719,7 @@
     <div class="section-head">
       <div class="eyebrow">Abonnement</div>
       <h2>Un accès, deux formules</h2>
-      <p>Sans engagement. Annulable en un clic depuis l'espace membre.</p>
+      <p>Sans engagement. Résiliable à tout moment sur simple demande.</p>
     </div>
     <div class="pricing-grid">
       <div class="price-card">
@@ -735,12 +756,36 @@
       <h2>Ce qu'en disent les abonnés</h2>
     </div>
     <div class="testi-grid">
-      <div class="testi"><p>"Franchement j'étais sceptique au départ mais les pronos sont vraiment bien argumentés. J'ai suivi 3 semaines et c'est rentable."</p><div class="who">— Rose, abonnée VIP</div></div>
-      <div class="testi"><p>"Les analyses sont sérieuses et les picks bien ciblés. La CDM 2026 a été une belle série de pronos gagnants."</p><div class="who">— Mathieu, abonné VIP</div></div>
-      <div class="testi"><p>"Le fait que les résultats soient visibles même quand c'est perdu ça m'a convaincu. C'est honnête."</p><div class="who">— James, abonné VIP</div></div>
-      <div class="testi"><p>"J'ai testé d'autres services avant, c'est clairement le meilleur rapport qualité-prix que j'ai trouvé."</p><div class="who">— Lucas, abonné Standard</div></div>
-      <div class="testi"><p>"Les cotes sont réalistes, pas des trucs impossibles à trouver. On peut vraiment les jouer."</p><div class="who">— Dume, abonné VIP</div></div>
-      <div class="testi"><p>"Depuis que je suis abonné VIP, je prends le temps de lire chaque analyse avant de miser. La qualité et le sérieux sont vraiment au rendez-vous."</p><div class="who">— Kevin, abonné VIP</div></div>
+      <div class="testi">
+        <div style="color:var(--gold-bright);font-size:0.9rem;margin-bottom:10px;letter-spacing:1px;">★★★★★</div>
+        <p>"Franchement j'étais sceptique au départ — j'avais déjà essayé des services de pronos qui ne tenaient pas leurs promesses. Ici les analyses sont vraiment argumentées, on comprend le raisonnement derrière chaque pick. Après 3 semaines d'abonnement VIP c'est clairement rentable."</p>
+        <div class="who">— Rose, abonnée VIP · depuis 2 mois</div>
+      </div>
+      <div class="testi">
+        <div style="color:var(--gold-bright);font-size:0.9rem;margin-bottom:10px;letter-spacing:1px;">★★★★★</div>
+        <p>"La CDM 2026 a été une excellente période. Les picks étaient bien ciblés, les combinés VIP vraiment bien construits. J'ai suivi chaque analyse et le taux de réussite sur le tournoi a été impressionnant. Je recommande sans hésiter."</p>
+        <div class="who">— Mathieu, abonné VIP · depuis 3 mois</div>
+      </div>
+      <div class="testi">
+        <div style="color:var(--gold-bright);font-size:0.9rem;margin-bottom:10px;letter-spacing:1px;">★★★★★</div>
+        <p>"Ce qui m'a convaincu c'est l'honnêteté : les résultats perdants sont affichés comme les gagnants. Aucun service bidon ne fait ça. Le suivi est transparent, les analyses sont sérieuses. C'est exactement ce que je cherchais."</p>
+        <div class="who">— James, abonné VIP · depuis 1 mois</div>
+      </div>
+      <div class="testi">
+        <div style="color:var(--gold-bright);font-size:0.9rem;margin-bottom:10px;letter-spacing:1px;">★★★★★</div>
+        <p>"J'avais testé 3 autres services avant LE TICKET. Aucun n'avait ce niveau de détail dans les analyses. L'abonnement Standard à 14,99€ c'est vraiment le meilleur rapport qualité-prix du marché. Je réfléchis à passer VIP pour les combinés."</p>
+        <div class="who">— Lucas, abonné Standard · depuis 6 semaines</div>
+      </div>
+      <div class="testi">
+        <div style="color:var(--gold-bright);font-size:0.9rem;margin-bottom:10px;letter-spacing:1px;">★★★★★</div>
+        <p>"Ce que j'apprécie c'est que les cotes recommandées sont réalistes — on les trouve vraiment sur les opérateurs habituels. Pas du 10.00 introuvable. Les picks VIP sont jouables, les analyses font gagner du temps de recherche."</p>
+        <div class="who">— Dume, abonné VIP · depuis 2 mois</div>
+      </div>
+      <div class="testi">
+        <div style="color:var(--gold-bright);font-size:0.9rem;margin-bottom:10px;letter-spacing:1px;">★★★★★</div>
+        <p>"Depuis que je suis abonné VIP, j'ai complètement changé ma façon de parier. Je lis chaque analyse avant de miser, je comprends les facteurs clés. La qualité du contenu est vraiment au rendez-vous et le canal Telegram permet de ne rien rater."</p>
+        <div class="who">— Kevin, abonné VIP · depuis 4 mois</div>
+      </div>
     </div>
   </div>
 </section>
@@ -754,7 +799,7 @@
     <div class="faq-list">
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Est-ce que je peux annuler à tout moment ?<span class="plus">+</span></button>
-        <div class="faq-a"><p>Oui, sans condition. L'abonnement se résilie en un clic depuis ton espace membre, sans préavis, sans frais de résiliation et sans engagement de durée. Tu conserves l'accès à tous les pronostics jusqu'à la fin de la période déjà réglée. Aucun prélèvement supplémentaire ne sera effectué après ta demande d'annulation. Conformément au droit européen de la consommation, tu bénéficies également d'un délai de rétractation de 14 jours à compter de ta souscription.</p></div>
+        <div class="faq-a"><p>Oui, sans condition ni engagement. Tu peux résilier à tout moment en envoyant un simple email à contact@leticket.pro depuis l'adresse de ton compte. La résiliation est traitée sous 24h. Tu conserves l'accès à tous les pronostics jusqu'à la fin de la période déjà réglée. Aucun prélèvement supplémentaire ne sera effectué après ta demande. Conformément au droit européen de la consommation, tu bénéficies également d'un délai de rétractation de 14 jours à compter de ta souscription.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Garantissez-vous des gains ?<span class="plus">+</span></button>
@@ -770,7 +815,7 @@
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Mes données personnelles sont-elles protégées ?<span class="plus">+</span></button>
-        <div class="faq-a"><p>Oui. Tes données personnelles (nom, email, téléphone) sont collectées uniquement pour la gestion de ton compte et ne sont jamais revendues à des tiers. Conformément au RGPD, tu peux à tout moment demander l'accès, la modification ou la suppression de tes données en nous contactant. Les données sont stockées de manière sécurisée via Supabase, hébergé en Europe.</p></div>
+        <div class="faq-a"><p>Oui. Tes données personnelles (nom et email) sont collectées uniquement pour la gestion de ton compte et ne sont jamais revendues à des tiers. Conformément au RGPD, tu peux à tout moment demander l'accès, la modification ou la suppression de tes données en nous contactant à contact@leticket.pro. Les données sont stockées de manière sécurisée via Supabase, hébergé en Europe.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Quelle est la différence entre Standard et VIP ?<span class="plus">+</span></button>
@@ -829,46 +874,93 @@
   <div class="modal">
     <button class="close" onclick="closeModal()">&times;</button>
     <div id="loginView">
+      <div class="modal-brand-bar"><div class="stub"></div><span>LE TICKET</span></div>
       <h3>Connexion</h3>
       <p class="sub">Accède à tes pronostics réservés.</p>
       <label for="li-email">E-mail</label>
-      <input id="li-email" type="email" placeholder="toi@exemple.fr" onkeydown="if(event.key==='Enter') document.getElementById('li-pass').focus()">
+      <input id="li-email" type="email" inputmode="email" autocomplete="email" placeholder="toi@exemple.fr" onkeydown="if(event.key==='Enter') document.getElementById('li-pass').focus()">
       <label for="li-pass">Mot de passe</label>
-      <input id="li-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()">
-      <div id="li-error" style="color:#B5483C; font-size:0.82rem; margin-top:8px; display:none;"></div>
-      <button class="submit" id="li-btn" onclick="doLogin()">Se connecter</button>
-      <div style="text-align:right; margin-top:6px; margin-bottom:14px;">
-        <a href="#" onclick="switchView('reset'); return false;" style="font-size:0.82rem; color:var(--pitch); font-weight:600; text-decoration:underline;">Mot de passe oublié ?</a>
+      <input id="li-pass" type="password" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()">
+      <div id="li-error" style="color:#B5483C;font-size:0.82rem;margin-top:8px;display:none;"></div>
+      <button class="submit" id="li-btn" onclick="doLogin()">Se connecter →</button>
+      <div style="text-align:center;margin-top:10px;">
+        <a href="#" onclick="switchView('reset'); return false;" style="font-size:0.8rem;color:#a09278;text-decoration:underline;">Mot de passe oublié ?</a>
       </div>
+      <div class="modal-divider"></div>
       <div class="switch">Pas encore de compte ? <a href="#" onclick="switchView('signup'); return false;">S'inscrire</a></div>
     </div>
     <div id="resetView" style="display:none;">
+      <div class="modal-brand-bar"><div class="stub"></div><span>LE TICKET</span></div>
       <h3>Mot de passe oublié</h3>
-      <p class="sub">Entre ton e-mail, on t'envoie un lien pour réinitialiser ton mot de passe.</p>
+      <p class="sub">Entre ton e-mail, on t'envoie un lien de réinitialisation.</p>
       <label for="re-email">E-mail</label>
-      <input id="re-email" type="email" placeholder="toi@exemple.fr" onkeydown="if(event.key==='Enter') doReset()">
-      <div id="re-error" style="color:#B5483C; font-size:0.82rem; margin-top:8px; display:none;"></div>
-      <div id="re-success" style="color:#7CC9A0; font-size:0.82rem; margin-top:8px; display:none;">✅ Email envoyé ! Vérifie ta boîte mail.</div>
-      <button class="submit" id="re-btn" onclick="doReset()">Envoyer le lien</button>
+      <input id="re-email" type="email" inputmode="email" autocomplete="email" placeholder="toi@exemple.fr" onkeydown="if(event.key==='Enter') doReset()">
+      <div id="re-error" style="color:#B5483C;font-size:0.82rem;margin-top:8px;display:none;"></div>
+      <div id="re-success" style="color:#2d8f55;font-size:0.82rem;margin-top:8px;display:none;">✅ Email envoyé ! Vérifie ta boîte mail.</div>
+      <button class="submit" id="re-btn" onclick="doReset()">Envoyer le lien →</button>
       <div class="switch"><a href="#" onclick="switchView('login'); return false;">← Retour à la connexion</a></div>
     </div>
     <div id="signupView" style="display:none;">
+      <div class="modal-brand-bar"><div class="stub"></div><span>LE TICKET</span></div>
       <h3>Créer un compte</h3>
       <p class="sub">Rejoins LE TICKET et accède aux pronos.</p>
-      <label for="su-prenom">Prénom</label>
-      <input id="su-prenom" type="text" placeholder="Ton prénom">
-      <label for="su-nom">Nom</label>
-      <input id="su-nom" type="text" placeholder="Ton nom">
-      <label for="su-tel">Téléphone <span style="color:#B5483C;">*</span></label>
-      <input id="su-tel" type="tel" placeholder="+33 6 00 00 00 00" required>
+      <div class="modal-name-row">
+        <div>
+          <label for="su-prenom">Prénom</label>
+          <input id="su-prenom" type="text" autocomplete="given-name" placeholder="Ton prénom">
+        </div>
+        <div>
+          <label for="su-nom">Nom</label>
+          <input id="su-nom" type="text" autocomplete="family-name" placeholder="Ton nom">
+        </div>
+      </div>
       <label for="su-email">E-mail</label>
-      <input id="su-email" type="email" placeholder="toi@exemple.fr">
+      <input id="su-email" type="email" inputmode="email" autocomplete="email" placeholder="toi@exemple.fr">
       <label for="su-pass">Mot de passe</label>
-      <input id="su-pass" type="password" placeholder="8 caractères minimum" onkeydown="if(event.key==='Enter') doSignup()">
-      <div id="su-error" style="color:#B5483C; font-size:0.82rem; margin-top:8px; display:none;"></div>
-      <div id="su-success" style="color:#7CC9A0; font-size:0.82rem; margin-top:8px; display:none;">✅ Compte créé ! Vérifie ton email pour confirmer.</div>
-      <button class="submit" id="su-btn" onclick="doSignup()">Créer mon compte</button>
+      <input id="su-pass" type="password" autocomplete="new-password" placeholder="8 caractères minimum" onkeydown="if(event.key==='Enter') doSignup()">
+      <div id="su-error" style="color:#B5483C;font-size:0.82rem;margin-top:8px;display:none;"></div>
+      <div id="su-success" style="color:#2d8f55;font-size:0.82rem;margin-top:8px;display:none;"></div>
+      <button class="submit" id="su-btn" onclick="doSignup()">Créer mon compte →</button>
+      <div class="modal-social-proof"><span class="stars">★★★★★</span><span>Des dizaines de membres nous font confiance</span></div>
       <div class="switch">Déjà abonné ? <a href="#" onclick="switchView('login'); return false;">Se connecter</a></div>
+    </div>
+
+    <!-- Vue résiliation abonnement -->
+    <div id="cancelView" style="display:none;">
+      <div style="text-align:center;padding:8px 0 10px;">
+        <div style="font-size:2.4rem;margin-bottom:12px;">⚠️</div>
+        <h3 style="margin:0 0 8px;font-size:1.1rem;">Résilier mon abonnement</h3>
+        <p class="sub" style="margin-bottom:20px;font-size:0.83rem;">Pour résilier, envoie-nous un email depuis l'adresse de ton compte.</p>
+      </div>
+      <div style="background:#f7f4e9;border-radius:8px;padding:14px 16px;margin-bottom:18px;font-size:0.83rem;line-height:1.8;color:#333;border:1px solid #e8e3d0;">
+        <div style="font-weight:700;margin-bottom:6px;color:#1F4D3A;">Objet :</div>
+        <div style="font-family:'Space Mono',monospace;font-size:0.78rem;background:#fff;padding:8px 12px;border-radius:4px;border:1px solid #ddd;margin-bottom:12px;">Résiliation abonnement LE TICKET</div>
+        <div style="font-weight:700;margin-bottom:6px;color:#1F4D3A;">Corps :</div>
+        <div style="font-family:'Space Mono',monospace;font-size:0.78rem;background:#fff;padding:8px 12px;border-radius:4px;border:1px solid #ddd;line-height:1.6;">Bonjour,<br>Je souhaite résilier mon abonnement.<br>Email du compte : <span id="cancel-email-display" style="color:#1F4D3A;font-weight:700;"></span></div>
+      </div>
+      <div style="font-size:0.78rem;color:#888;text-align:center;margin-bottom:16px;">La résiliation est traitée sous 24h. Ton accès reste ouvert jusqu'à la fin de la période payée.</div>
+      <a id="cancel-mailto-btn" href="#" style="display:block;width:100%;background:#B5483C;color:#fff;border:none;padding:11px;border-radius:4px;font-weight:700;cursor:pointer;font-size:0.88rem;text-align:center;text-decoration:none;box-sizing:border-box;">📧 Envoyer l'email de résiliation</a>
+      <div class="switch" style="margin-top:12px;"><a href="#" onclick="switchView('member'); return false;">← Retour à mon compte</a></div>
+    </div>
+
+    <!-- Vue confirmation email (après inscription si email confirmation activée) -->
+    <div id="confirmView" style="display:none;">
+      <div style="text-align:center;padding:8px 0 16px;">
+        <div style="font-size:2.8rem;margin-bottom:14px;">📧</div>
+        <h3 style="margin:0 0 8px;font-size:1.15rem;">Vérifie ta boîte mail</h3>
+        <p id="confirm-email-display" class="sub" style="margin-bottom:20px;font-size:0.83rem;"></p>
+        <div style="background:#f7f4e9;border-radius:8px;padding:14px 16px;text-align:left;margin-bottom:18px;font-size:0.82rem;line-height:1.8;color:#555;border:1px solid #e8e3d0;">
+          1️⃣ Ouvre ta boîte mail<br>
+          2️⃣ Cherche un email de <strong>LE TICKET</strong><br>
+          3️⃣ Clique sur le lien d'activation<br>
+          4️⃣ Reviens ici pour te connecter<br>
+          <br>
+          <strong>📁 Pas reçu ? Vérifie le dossier Spam !</strong>
+        </div>
+        <div id="confirm-resend-msg" style="font-size:0.82rem;margin-bottom:12px;display:none;"></div>
+        <button class="submit" onclick="doResendConfirm()" style="margin-bottom:10px;">📨 Renvoyer l'email d'activation</button>
+        <div class="switch"><a href="#" onclick="switchView('login'); return false;">J'ai confirmé → me connecter</a></div>
+      </div>
     </div>
     <div id="memberView" style="display:none;">
       <!-- En-tête profil -->
@@ -887,11 +979,6 @@
         <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid #e8e3d0;">
           <span style="font-size:0.8rem;color:#888;font-weight:600;">E-mail</span>
           <span id="member-email-display" style="font-size:0.82rem;font-weight:600;color:var(--ink);text-align:right;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-        </div>
-        <!-- Téléphone -->
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;">
-          <span style="font-size:0.8rem;color:#888;font-weight:600;">Téléphone</span>
-          <span id="member-tel-display" style="font-size:0.82rem;font-weight:600;color:var(--ink);">—</span>
         </div>
         <!-- Modifier -->
         <div style="padding:10px 16px;border-top:1px solid #e8e3d0;text-align:right;">
@@ -926,8 +1013,6 @@
       <input id="ei-prenom" type="text" placeholder="Ton prénom">
       <label for="ei-nom">Nom</label>
       <input id="ei-nom" type="text" placeholder="Ton nom">
-      <label for="ei-tel">Téléphone</label>
-      <input id="ei-tel" type="tel" placeholder="+33 6 00 00 00 00">
       <div id="ei-error" style="color:#B5483C;font-size:0.82rem;margin-top:8px;display:none;"></div>
       <div id="ei-success" style="color:#2d8f55;font-size:0.82rem;margin-top:8px;display:none;">✅ Informations mises à jour !</div>
       <button class="submit" onclick="doEditInfo()" style="margin-top:16px;">Enregistrer</button>
@@ -937,9 +1022,9 @@
       <h3>Nouveau mot de passe</h3>
       <p class="sub">Choisis un nouveau mot de passe pour ton compte.</p>
       <label for="cp-pass">Nouveau mot de passe</label>
-      <input id="cp-pass" type="password" placeholder="8 caractères minimum">
+      <input id="cp-pass" type="password" autocomplete="new-password" placeholder="8 caractères minimum">
       <label for="cp-pass2">Confirmer le mot de passe</label>
-      <input id="cp-pass2" type="password" placeholder="Répète le mot de passe">
+      <input id="cp-pass2" type="password" autocomplete="new-password" placeholder="Répète le mot de passe">
       <div id="cp-error" style="color:#B5483C; font-size:0.82rem; margin-top:8px; display:none;"></div>
       <div id="cp-success" style="color:#7CC9A0; font-size:0.82rem; margin-top:8px; display:none;">✅ Mot de passe modifié avec succès !</div>
       <button class="submit" onclick="doChangePass()">Enregistrer</button>
@@ -1397,6 +1482,7 @@
       const isAdmin = ADMIN_EMAILS.includes(user.email);
       if(!isAdmin && newPlan !== oldPlan){
         window._currentUser = user;
+        _bannerShown = false; // Réinitialiser pour que la bannière de bienvenue apparaisse après upgrade
         updateNavForUser(user);
         if(document.getElementById('modalBg').classList.contains('show'))
           updateMemberView(user);
@@ -1502,7 +1588,6 @@
     const meta    = user.user_metadata || {};
     const prenom  = meta.prenom || user.email.split('@')[0];
     const nom     = meta.nom || '';
-    const tel     = meta.telephone || '—';
     const initial = prenom.charAt(0).toUpperCase();
 
     // Avatar + nom + email
@@ -1512,8 +1597,6 @@
     if(nameEl) nameEl.textContent = prenom + (nom ? ' ' + nom : '');
     const emailEl = document.getElementById('member-email-display');
     if(emailEl) emailEl.textContent = user.email;
-    const telEl = document.getElementById('member-tel-display');
-    if(telEl) telEl.textContent = tel;
 
     // Abonnement
     const plan    = window._userPlan || 'none';
@@ -1537,10 +1620,10 @@
       } else if(plan === 'standard'){
         actionEl.innerHTML = `
           <button onclick="closeModal();startCheckout('vip');" style="width:100%;background:linear-gradient(160deg,#2a6e4e,#1a4d35);color:#F4F1E8;border:none;padding:10px;border-radius:4px;font-weight:700;cursor:pointer;font-size:0.85rem;">Passer en VIP — 29,99€/mois →</button>
-          <button onclick="if(confirm('Confirmer l\\'annulation de ton abonnement Standard ?')) alert('Pour annuler, contacte-nous à contact@leticket.pro');" style="width:100%;background:transparent;color:#B5483C;border:1px solid rgba(181,72,60,0.3);padding:9px;border-radius:4px;font-weight:600;cursor:pointer;font-size:0.82rem;">Résilier mon abonnement</button>`;
+          <button onclick="switchView('cancel');" style="width:100%;background:transparent;color:#B5483C;border:1px solid rgba(181,72,60,0.3);padding:9px;border-radius:4px;font-weight:600;cursor:pointer;font-size:0.82rem;">Résilier mon abonnement</button>`;
       } else if(plan === 'vip'){
         actionEl.innerHTML = `
-          <button onclick="if(confirm('Confirmer l\\'annulation de ton abonnement VIP ?')) alert('Pour annuler, contacte-nous à contact@leticket.pro');" style="width:100%;background:transparent;color:#B5483C;border:1px solid rgba(181,72,60,0.3);padding:9px;border-radius:4px;font-weight:600;cursor:pointer;font-size:0.82rem;">Résilier mon abonnement</button>`;
+          <button onclick="switchView('cancel');" style="width:100%;background:transparent;color:#B5483C;border:1px solid rgba(181,72,60,0.3);padding:9px;border-radius:4px;font-weight:600;cursor:pointer;font-size:0.82rem;">Résilier mon abonnement</button>`;
       } else {
         actionEl.innerHTML = '';
       }
@@ -1741,10 +1824,8 @@
     const meta = user.user_metadata || {};
     const pi = document.getElementById('ei-prenom');
     const ni = document.getElementById('ei-nom');
-    const ti = document.getElementById('ei-tel');
     if(pi) pi.value = meta.prenom || '';
     if(ni) ni.value = meta.nom || '';
-    if(ti) ti.value = meta.telephone || '';
     const err = document.getElementById('ei-error');
     const ok  = document.getElementById('ei-success');
     if(err) err.style.display = 'none';
@@ -1754,16 +1835,14 @@
   async function doEditInfo(){
     const prenom = document.getElementById('ei-prenom').value.trim();
     const nom    = document.getElementById('ei-nom').value.trim();
-    const tel    = document.getElementById('ei-tel').value.trim();
     const errEl  = document.getElementById('ei-error');
     const okEl   = document.getElementById('ei-success');
     errEl.style.display = 'none'; okEl.style.display = 'none';
     if(!prenom || !nom){ errEl.textContent = 'Prénom et nom requis.'; errEl.style.display = 'block'; return; }
-    if(tel && tel.replace(/[\s\-\+\(\)]/g,'').length < 8){ errEl.textContent = 'Numéro de téléphone invalide.'; errEl.style.display = 'block'; return; }
-    const {error} = await _supa.auth.updateUser({ data:{ prenom, nom, telephone: tel } });
+    const {error} = await _supa.auth.updateUser({ data:{ prenom, nom } });
     if(error){ errEl.textContent = error.message || 'Erreur lors de la mise à jour.'; errEl.style.display = 'block'; return; }
     // Mettre à jour l'objet local
-    if(window._currentUser) window._currentUser.user_metadata = {...(window._currentUser.user_metadata||{}), prenom, nom, telephone: tel};
+    if(window._currentUser) window._currentUser.user_metadata = {...(window._currentUser.user_metadata||{}), prenom, nom};
     okEl.style.display = 'block';
     setTimeout(()=>{ switchView('member'); }, 1500);
   }
@@ -1816,14 +1895,33 @@
       }
     });
   }
-  function closeModal(){ document.getElementById('modalBg').classList.remove('show'); }
+  function closeModal(){
+    document.getElementById('modalBg').classList.remove('show');
+    // Vider tous les messages de succès pour la prochaine ouverture
+    ['su-success','re-success','cp-success','ei-success'].forEach(id=>{
+      const el = document.getElementById(id); if(el) el.style.display='none';
+    });
+  }
   function switchView(view){
-    ['login','signup','member','reset','changepass','editinfo'].forEach(v=>{
+    ['login','signup','member','reset','changepass','editinfo','confirm','cancel'].forEach(v=>{
       const el = document.getElementById(v+'View');
       if(el) el.style.display = v === view ? 'block' : 'none';
     });
     if(view === 'member' && window._currentUser) updateMemberView(window._currentUser);
     if(view === 'editinfo' && window._currentUser) prefillEditInfo(window._currentUser);
+    if(view === 'cancel' && window._currentUser){
+      const emailEl = document.getElementById('cancel-email-display');
+      if(emailEl) emailEl.textContent = window._currentUser.email || '';
+      const mailtoBtn = document.getElementById('cancel-mailto-btn');
+      const plan = window._userPlan || '';
+      const planLabel = plan === 'vip' ? 'VIP (29,99€/mois)' : 'Standard (14,99€/mois)';
+      const body = encodeURIComponent('Bonjour,\nJe souhaite résilier mon abonnement ' + planLabel + '.\nEmail du compte : ' + (window._currentUser.email || '') + '\n\nCordialement.');
+      if(mailtoBtn) mailtoBtn.href = 'mailto:contact@leticket.pro?subject=' + encodeURIComponent('Résiliation abonnement LE TICKET') + '&body=' + body;
+    }
+    // Vider les erreurs des formulaires à chaque changement de vue
+    ['li-error','su-error','re-error','cp-error','ei-error'].forEach(id=>{
+      const el = document.getElementById(id); if(el){ el.style.display='none'; el.innerHTML=''; }
+    });
   }
 
   async function doChangePass(){
@@ -1836,8 +1934,10 @@
     if(pass !== pass2){ errEl.textContent = 'Les mots de passe ne correspondent pas.'; errEl.style.display = 'block'; return; }
     const {error} = await _supa.auth.updateUser({ password: pass });
     if(error){ errEl.textContent = error.message || 'Une erreur est survenue. Réessaie.'; errEl.style.display = 'block'; return; }
+    document.getElementById('cp-pass').value = '';
+    document.getElementById('cp-pass2').value = '';
     okEl.style.display = 'block';
-    setTimeout(()=>{ switchView('member'); }, 2000);
+    setTimeout(()=>{ okEl.style.display='none'; switchView('member'); }, 2000);
   }
 
   async function doReset(){
@@ -1850,7 +1950,59 @@
       redirectTo: 'https://leticket.pro'
     });
     if(error){ errEl.textContent = error.message || error.error_description || 'Une erreur est survenue. Vérifie ton adresse e-mail.'; errEl.style.display = 'block'; return; }
+    document.getElementById('re-email').value = '';
     okEl.style.display = 'block';
+    setTimeout(()=>{ okEl.style.display='none'; }, 5000);
+  }
+
+  async function doResendConfirm(){
+    // Récupérer l'email depuis la vue confirm ou la vue login
+    const email = window._pendingConfirmEmail
+      || document.getElementById('li-email')?.value?.trim()?.toLowerCase()
+      || '';
+    const msgEl = document.getElementById('confirm-resend-msg');
+    if(!email){
+      if(msgEl){ msgEl.textContent = 'Adresse email introuvable. Recommence l\'inscription.'; msgEl.style.color='#B5483C'; msgEl.style.display='block'; }
+      return;
+    }
+    try{
+      const { error } = await _supa.auth.resend({ type: 'signup', email });
+      if(msgEl){
+        if(error){
+          msgEl.textContent = 'Impossible de renvoyer. Attends 1 minute et réessaie.';
+          msgEl.style.color = '#B5483C';
+        } else {
+          msgEl.textContent = '✅ Email renvoyé ! Vérifie ta boîte (et le dossier Spam).';
+          msgEl.style.color = '#2d8f55';
+          setTimeout(()=>{ if(msgEl){ msgEl.style.display='none'; } }, 6000);
+        }
+        msgEl.style.display = 'block';
+      }
+    }catch(e){
+      if(msgEl){ msgEl.textContent = 'Erreur réseau. Vérifie ta connexion.'; msgEl.style.color='#B5483C'; msgEl.style.display='block'; }
+    }
+  }
+
+  async function doResendConfirmFromLogin(){
+    const email = document.getElementById('li-email')?.value?.trim()?.toLowerCase() || '';
+    const errEl = document.getElementById('li-error');
+    if(!email){ if(errEl){ errEl.innerHTML = 'Entre d\'abord ton adresse e-mail ci-dessus.'; errEl.style.color='#B5483C'; errEl.style.display='block'; } return; }
+    try{
+      const { error } = await _supa.auth.resend({ type: 'signup', email });
+      if(errEl){
+        if(error){
+          errEl.innerHTML = 'Impossible de renvoyer. Attends 1 minute et réessaie.';
+          errEl.style.color = '#B5483C';
+        } else {
+          errEl.innerHTML = '✅ Email renvoyé ! Vérifie ta boîte mail et le dossier Spam.';
+          errEl.style.color = '#2d8f55';
+          setTimeout(()=>{ if(errEl){ errEl.style.color='#B5483C'; errEl.style.display='none'; } }, 6000);
+        }
+        errEl.style.display = 'block';
+      }
+    }catch(e){
+      if(errEl){ errEl.innerHTML = 'Erreur réseau. Vérifie ta connexion.'; errEl.style.color='#B5483C'; errEl.style.display='block'; }
+    }
   }
 
   async function doLogin(){
@@ -1858,8 +2010,9 @@
     const email = document.getElementById('li-email').value.trim().toLowerCase();
     const pass = document.getElementById('li-pass').value;
     const errEl = document.getElementById('li-error');
+    errEl.style.color = '#B5483C';
     errEl.style.display = 'none';
-    if(!email || !pass){ errEl.textContent = 'Remplis tous les champs.'; errEl.style.display = 'block'; return; }
+    if(!email || !pass){ errEl.innerHTML = 'Remplis tous les champs.'; errEl.style.display = 'block'; return; }
     if(btn){ btn.disabled = true; btn.textContent = 'Connexion…'; }
     let loginError;
     try{
@@ -1867,21 +2020,23 @@
       loginError = res.error;
     }catch(e){
       if(btn){ btn.disabled = false; btn.textContent = 'Se connecter'; }
-      errEl.textContent = 'Problème de connexion. Vérifie ta connexion internet.';
+      errEl.innerHTML = 'Problème de connexion. Vérifie ta connexion internet.';
       errEl.style.display = 'block'; return;
     }
     if(btn){ btn.disabled = false; btn.textContent = 'Se connecter'; }
     if(loginError){
       const msg = _parseSupabaseError(loginError);
       if(/email.not.confirmed|not confirmed|confirme/i.test(msg)){
-        errEl.textContent = 'Email non confirmé. Vérifie ta boîte mail et clique sur le lien d\'activation.';
-      } else if(/invalid.credentials|incorrect|wrong/i.test(msg)){
-        errEl.textContent = 'Email ou mot de passe incorrect.';
+        window._pendingConfirmEmail = email;
+        errEl.innerHTML = 'Email non confirmé. <a href="#" onclick="doResendConfirmFromLogin();return false;" style="color:var(--pitch);font-weight:700;text-decoration:underline;">Renvoyer l\'email</a> · Vérifie aussi le dossier Spam.';
       } else {
-        errEl.textContent = 'Email ou mot de passe incorrect.';
+        errEl.innerHTML = 'Email ou mot de passe incorrect.';
       }
       errEl.style.display = 'block'; return;
     }
+    // Vider les champs login après succès
+    document.getElementById('li-email').value = '';
+    document.getElementById('li-pass').value = '';
     if(_pendingPlan){
       window.location.href = PLANS[_pendingPlan].url;
     } else {
@@ -1890,7 +2045,7 @@
   }
 
   function _clearSignupForm(){
-    ['su-prenom','su-nom','su-tel','su-email','su-pass'].forEach(id=>{
+    ['su-prenom','su-nom','su-email','su-pass'].forEach(id=>{
       const el = document.getElementById(id); if(el) el.value = '';
     });
   }
@@ -1913,7 +2068,6 @@
 
     const prenom = document.getElementById('su-prenom').value.trim();
     const nom    = document.getElementById('su-nom').value.trim();
-    const tel    = document.getElementById('su-tel').value.trim();
     const email  = document.getElementById('su-email').value.trim().toLowerCase();
     const pass   = document.getElementById('su-pass').value;
 
@@ -1921,16 +2075,12 @@
     okEl.style.display  = 'none';
 
     // ── Validations locales ──────────────────────────────────────────
-    if(!prenom || !nom || !tel || !email || !pass){
+    if(!prenom || !nom || !email || !pass){
       errEl.textContent = 'Tous les champs sont obligatoires.';
       errEl.style.display = 'block'; return;
     }
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
       errEl.textContent = 'Adresse e-mail invalide.';
-      errEl.style.display = 'block'; return;
-    }
-    if(tel.replace(/[\s\-\+\(\)\.]/g,'').length < 8){
-      errEl.textContent = 'Numéro de téléphone invalide (minimum 8 chiffres).';
       errEl.style.display = 'block'; return;
     }
     if(pass.length < 8){
@@ -1945,7 +2095,7 @@
     try{
       const res = await _supa.auth.signUp({
         email, password: pass,
-        options: { data: { prenom, nom, telephone: tel } }
+        options: { data: { prenom, nom } }
       });
       data  = res.data;
       error = res.error;
@@ -1997,16 +2147,13 @@
         setTimeout(()=>{ closeModal(); }, 2000);
       }
     } else {
-      // Confirmation email requise
-      if(_pendingPlan && PLANS[_pendingPlan]){
-        okEl.textContent = '✅ Compte créé ! Vérifie ton email, puis reviens te connecter.';
-        okEl.style.display = 'block';
-        setTimeout(()=>{ closeModal(); }, 3000);
-      } else {
-        okEl.textContent = '✅ Compte créé ! Vérifie ton email pour activer ton compte.';
-        okEl.style.display = 'block';
-        setTimeout(()=>{ closeModal(); }, 3000);
-      }
+      // Confirmation email requise — afficher la vue dédiée
+      window._pendingConfirmEmail = email;
+      const confirmEmailEl = document.getElementById('confirm-email-display');
+      if(confirmEmailEl) confirmEmailEl.textContent = 'Un lien d\'activation a été envoyé à ' + email + '.';
+      const confirmResendMsg = document.getElementById('confirm-resend-msg');
+      if(confirmResendMsg){ confirmResendMsg.style.display='none'; }
+      switchView('confirm');
     }
   }
 
@@ -2131,6 +2278,20 @@
         'Crée ton compte pour accéder à l\'abonnement ' + PLANS[plan].label + '.';
       return;
     }
+
+    // Bloquer si l'abonné a déjà ce plan ou un plan supérieur
+    const cur = window._userPlan || 'none';
+    if(cur === 'admin' || cur === 'vip'){
+      // Déjà au niveau max — ouvrir la fiche membre
+      openModal('member');
+      return;
+    }
+    if(cur === 'standard' && plan === 'standard'){
+      // Déjà Standard — pas besoin de repayer
+      openModal('member');
+      return;
+    }
+
     const p = PLANS[plan];
     window.location.href = p.url;
 
