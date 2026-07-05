@@ -1428,8 +1428,14 @@
   function updateNavForUser(user){
     window._currentUser = user;
     const btn = document.querySelector('.nav-membre');
+    const loginBtn = document.querySelector('.nav-ghost');
     const prenom = user.user_metadata?.prenom || user.email.split('@')[0];
-    if(btn){ btn.textContent = '👤 ' + prenom; btn.style.color = 'var(--gold-bright)'; }
+    if(btn){ btn.textContent = '👤 ' + prenom; btn.style.color = 'var(--gold-bright)'; btn.onclick = function(){ openModal('member'); }; }
+    // Cacher "Se connecter", afficher le pseudo
+    if(loginBtn) loginBtn.style.display = 'none';
+    // Mobile : cacher le bouton "Se connecter" du burger
+    const mobileLogin = document.getElementById('mobile-login-btn');
+    if(mobileLogin) mobileLogin.style.display = 'none';
 
     const plan = user.user_metadata?.plan || 'none';
     const isAdmin = ADMIN_EMAILS.includes(user.email);
@@ -1779,8 +1785,15 @@
   function resetNav(){
     window._currentUser = null;
     window._userPlan = 'none';
+    // Remettre le bouton "Inscription"
     const btn = document.querySelector('.nav-membre');
     if(btn){ btn.textContent = 'Inscription'; btn.style.color = ''; btn.onclick = function(){ openModal('signup'); }; }
+    // Réafficher "Se connecter"
+    const loginBtn = document.querySelector('.nav-ghost');
+    if(loginBtn) loginBtn.style.display = '';
+    // Mobile : réafficher le bouton "Se connecter" du burger
+    const mobileLogin = document.getElementById('mobile-login-btn');
+    if(mobileLogin) mobileLogin.style.display = '';
     const adminLi = document.getElementById('footer-admin-link');
     if(adminLi) adminLi.style.display = 'none';
     const navA = document.getElementById('nav-analyses-link');
