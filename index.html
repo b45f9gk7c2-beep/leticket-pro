@@ -1703,6 +1703,13 @@
   async function openPronostics(){
     const plan = window._userPlan || 'none';
 
+    // Non-abonné → rediriger vers la section tarifs
+    if(plan === 'none'){
+      const section = document.getElementById('tarifs');
+      if(section){ section.scrollIntoView({behavior:'smooth'}); }
+      return;
+    }
+
     // Charger les pronos depuis le storage (même source que la page principale)
     let allPicks = DEFAULT_PICKS;
     try{
