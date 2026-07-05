@@ -938,21 +938,33 @@
   // Rafraîchissement principal
   async function fetchCDMScores(){
     try{
-      const res = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard');
-      const data = await res.json();
-      const events = data.events||[];
+      // Récupère aujourd'hui + les 6 prochains jours pour avoir les matchs à venir
+      const dateKeys = Array.from({length:7},(_,i)=>{
+        const d = new Date(); d.setDate(d.getDate()+i);
+        return d.toISOString().slice(0,10).replace(/-/g,'');
+      });
+      const responses = await Promise.all(
+        dateKeys.map(dk=>
+          fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${dk}`)
+            .then(r=>r.json()).catch(()=>({events:[]}))
+        )
+      );
+      // Fusionner + dédupliquer
+      const seen = new Set();
+      const events = responses.flatMap(d=>d.events||[]).filter(ev=>{
+        if(seen.has(ev.id)) return false; seen.add(ev.id); return true;
+      });
 
       // ── 1. Grille CDM ──────────────────────────────────────────────
       const grid = document.getElementById('cdmGrid');
       if(grid && events.length){
-        const now = new Date();
-        const live      = events.filter(e=>e.competitions[0].status.type.state==='in');
-        const done      = events.filter(e=>e.competitions[0].status.type.completed)
-                                .sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,2);
-        const upcoming  = events.filter(e=>e.competitions[0].status.type.state==='pre')
-                                .sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,3);
+        const live     = events.filter(e=>e.competitions[0].status.type.state==='in');
+        const done     = events.filter(e=>e.competitions[0].status.type.completed)
+                               .sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,2);
+        const upcoming = events.filter(e=>e.competitions[0].status.type.state==='pre')
+                               .sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,2);
         let display = [...live,...done,...upcoming].slice(0,5);
-        if(!display.length) display = events.slice(0,5);
+        if(!display.length) display = events.sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,5);
 
         grid.innerHTML = display.map(ev=>{
           const comp  = ev.competitions[0];
@@ -971,9 +983,11 @@
             scoreHTML = `<div class="match-score">${home.score} — ${away.score}</div>`;
             tagHTML   = `<span class="match-tag done">Terminé</span>`;
           } else {
-            const heure = new Date(ev.date).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Paris'});
+            const evDate = new Date(ev.date);
+            const heure = evDate.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Paris'});
+            const jourStr = evDate.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short',timeZone:'Europe/Paris'});
             scoreHTML = `<div class="match-score" style="font-size:0.9rem;opacity:0.35;">— —</div>`;
-            tagHTML   = `<span class="match-tag soon">${heure}</span>`;
+            tagHTML   = `<span class="match-tag soon">🕐 ${jourStr} · ${heure}</span>`;
           }
           const dateStr  = new Date(ev.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short',timeZone:'Europe/Paris'});
           const noteHead = (ev.notes||[]).find(n=>n.type==='event')?.headline||'';
