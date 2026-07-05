@@ -390,7 +390,7 @@
 
 <header>
   <nav>
-    <div style="display:flex; align-items:center; gap:16px;">
+    <div style="display:flex; align-items:center; gap:20px;">
       <div class="logo">
         <svg width="26" height="26" viewBox="0 0 68 68" xmlns="http://www.w3.org/2000/svg">
           <path fill="#C9A227" fill-rule="evenodd" d="M16,2 H52 A8,8 0 0 1 60,10 V58 A8,8 0 0 1 52,66 H16 A8,8 0 0 1 8,58 V10 A8,8 0 0 1 16,2 Z M-2,34 a9,9 0 1 0 18,0 a9,9 0 1 0 -18,0 Z M50,34 a9,9 0 1 0 18,0 a9,9 0 1 0 -18,0 Z"/>
@@ -399,7 +399,10 @@
         </svg>
         LE TICKET
       </div>
-      <button class="nav-membre" onclick="openModal('login')">Espace membre</button>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="nav-ghost" onclick="openModal('login')">Se connecter</button>
+        <button class="nav-membre" onclick="openModal('signup')">Inscription</button>
+      </div>
     </div>
     <div class="nav-links">
       <a href="#pronostics">Pronostics</a>
@@ -407,9 +410,7 @@
       <a href="#avis">Avis</a>
       <a href="#faq">FAQ</a>
     </div>
-    <div style="display:flex; gap:14px; align-items:center;">
-      <button class="nav-ghost" onclick="openModal('login')">Se connecter</button>
-      <button class="nav-membre" onclick="openModal('signup')">Inscription</button>
+    <div>
       <button class="nav-cta" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">⚡ S'abonner</button>
     </div>
   </nav>
