@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bienvenue — LE TICKET</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night: #0B1F1A;
+    --night-2: #102A22;
+    --paper: #F4F1E8;
+    --gold: #C9A227;
+    --gold-bright: #E0B93A;
+    --pitch: #1F4D3A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--night);
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  /* Glow bg */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(31,77,58,0.5) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .card {
+    background: var(--night-2);
+    border: 1px solid rgba(244,241,232,0.1);
+    border-radius: 16px;
+    max-width: 580px;
+    width: 100%;
+    padding: 48px 44px;
+    position: relative;
+    text-align: center;
+  }
+
+  /* Badge plan */
+  .plan-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 18px;
+    border-radius: 30px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .plan-badge.vip {
+    background: rgba(201,162,39,0.15);
+    border: 1px solid rgba(224,185,58,0.4);
+    color: var(--gold-bright);
+  }
+  .plan-badge.standard {
+    background: rgba(31,77,58,0.3);
+    border: 1px solid rgba(124,201,160,0.3);
+    color: #7CC9A0;
+  }
+  .badge-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    animation: pulse 1.8s infinite;
+  }
+  .vip .badge-dot { background: var(--gold-bright); }
+  .standard .badge-dot { background: #7CC9A0; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+  .logo {
+    font-family: 'Anton', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.08em;
+    color: var(--paper);
+    margin-bottom: 20px;
+    opacity: 0.6;
+  }
+
+  h1 {
+    font-family: 'Anton', sans-serif;
+    font-size: 2.8rem;
+    line-height: 1;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  h1 span { color: var(--gold-bright); }
+
+  .sub {
+    font-size: 1rem;
+    color: rgba(244,241,232,0.6);
+    line-height: 1.6;
+    margin-bottom: 36px;
+  }
+
+  /* Avantages */
+  .perks {
+    background: rgba(11,31,26,0.5);
+    border: 1px solid rgba(244,241,232,0.08);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: left;
+    margin-bottom: 28px;
+  }
+  .perks-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(244,241,232,0.4);
+    margin-bottom: 16px;
+  }
+  .perk {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(244,241,232,0.06);
+    font-size: 0.95rem;
+  }
+  .perk:last-child { border-bottom: none; }
+  .perk-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.9rem;
+  }
+  .perk-icon.gold { background: rgba(201,162,39,0.15); }
+  .perk-icon.green { background: rgba(31,77,58,0.4); }
+  .perk b { display: block; font-size: 0.92rem; margin-bottom: 2px; }
+  .perk span { font-size: 0.8rem; color: rgba(244,241,232,0.5); }
+
+  /* Boutons */
+  .btn-main {
+    display: block;
+    width: 100%;
+    background: var(--gold);
+    color: var(--night);
+    font-family: 'Anton', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-bottom: 12px;
+    transition: background .2s, transform .15s;
+  }
+  .btn-main:hover { background: var(--gold-bright); transform: translateY(-1px); }
+
+  .btn-tg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    background: rgba(41,182,246,0.1);
+    border: 1px solid rgba(41,182,246,0.3);
+    color: #29B6F6;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-bottom: 12px;
+    transition: background .2s;
+  }
+  .btn-tg:hover { background: rgba(41,182,246,0.18); }
+
+  .btn-ghost {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgba(244,241,232,0.15);
+    color: rgba(244,241,232,0.6);
+    font-size: 0.88rem;
+    padding: 13px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: border-color .2s, color .2s;
+  }
+  .btn-ghost:hover { border-color: rgba(244,241,232,0.35); color: var(--paper); }
+
+  .mention {
+    margin-top: 28px;
+    font-size: 0.76rem;
+    color: rgba(244,241,232,0.3);
+    font-family: 'Space Mono', monospace;
+    line-height: 1.6;
+  }
+
+  /* Checkmark animation */
+  .check-wrap {
+    width: 64px; height: 64px;
+    background: rgba(31,77,58,0.35);
+    border: 2px solid rgba(124,201,160,0.4);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+  }
+  .check-wrap svg { animation: popIn .4s ease; }
+  @keyframes popIn { 0%{transform:scale(0);} 70%{transform:scale(1.15);} 100%{transform:scale(1);} }
+</style>
+</head>
+<body>
+<div class="card" id="mainCard">
+  <!-- Contenu injecté par JS -->
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const plan = params.get('plan') || 'standard';
+  const isVIP = plan === 'vip';
+
+  const vipContent = `
+    <div class="logo">LE TICKET</div>
+    <div class="plan-badge vip"><span class="badge-dot"></span>Accès VIP activé</div>
+    <div class="check-wrap">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7CC9A0" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <h1>Bienvenue<br>dans le <span>VIP</span></h1>
+    <p class="sub">Ton abonnement est actif. Tu as maintenant accès à l'intégralité des pronostics, analyses et au canal Telegram privé.</p>
+    <div class="perks">
+      <div class="perks-title">Ce à quoi tu as accès</div>
+      <div class="perk">
+        <div class="perk-icon gold">🎯</div>
+        <div><b>Tous les pronostics</b><span>Foot, tennis, basket — tous les sports couverts</span></div>
+      </div>
+      <div class="perk">
+        <div class="perk-icon gold">📊</div>
+        <div><b>Analyses complètes</b><span>Raisonnement détaillé pour chaque pick</span></div>
+      </div>
+      <div class="perk">
+        <div class="perk-icon gold">⚡</div>
+        <div><b>Alertes en temps réel</b><span>Notifié dès qu'un nouveau prono est publié</span></div>
+      </div>
+      <div class="perk">
+        <div class="perk-icon gold">🔒</div>
+        <div><b>Canal Telegram privé</b><span>Discussions exclusives avec les autres membres VIP</span></div>
+      </div>
+      <div class="perk">
+        <div class="perk-icon gold">📈</div>
+        <div><b>Combinés exclusifs</b><span>Picks à cotes boostées réservés aux VIP</span></div>
+      </div>
+    </div>
+    <a href="https://t.me/+0b8B2FO4exdmMGZk" target="_blank" class="btn-tg">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#29B6F6"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/></svg>
+      Rejoindre le canal Telegram VIP
+    </a>
+    <a href="https://leticket.pro/#pronostics" class="btn-main">Voir les pronostics du jour →</a>
+    <a href="https://leticket.pro" class="btn-ghost">Retour au site</a>
+    <p class="mention">Résiliation possible à tout moment · Sans engagement<br>Une question ? Réponds à ton email de confirmation.</p>
+  `;
+
+  const standardContent = `
+    <div class="logo">LE TICKET</div>
+    <div class="plan-badge standard"><span class="badge-dot"></span>Accès Standard activé</div>
+    <div class="check-wrap">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7CC9A0" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <h1>Bienvenue sur<br><span>LE TICKET</span></h1>
+    <p class="sub">Ton abonnement Standard est actif. Tu reçois maintenant 2 pronostics argumentés chaque semaine.</p>
+    <div class="perks">
+      <div class="perks-title">Ce à quoi tu as accès</div>
+      <div class="perk">
+        <div class="perk-icon green">🎯</div>
+        <div><b>2 pronostics par semaine</b><span>Sélectionnés et argumentés pour toi</span></div>
+      </div>
+      <div class="perk">
+        <div class="perk-icon green">📊</div>
+        <div><b>Résultats transparents</b><span>Wins et pertes affichés honnêtement</span></div>
+      </div>
+      <div class="perk">
+        <div class="perk-icon green">📱</div>
+        <div><b>Accès au site membre</b><span>Tes picks disponibles sur leticket.pro</span></div>
+      </div>
+    </div>
+    <a href="https://leticket.pro/#pronostics" class="btn-main">Voir mes pronostics →</a>
+    <a href="https://leticket.pro/#tarifs" class="btn-tg" style="color:var(--gold-bright); border-color:rgba(201,162,39,0.3); background:rgba(201,162,39,0.08);">
+      ⬆️ Passer en VIP — 29,99€/mois
+    </a>
+    <a href="https://leticket.pro" class="btn-ghost">Retour au site</a>
+    <p class="mention">Résiliation possible à tout moment · Sans engagement<br>Une question ? Réponds à ton email de confirmation.</p>
+  `;
+
+  document.getElementById('mainCard').innerHTML = isVIP ? vipContent : standardContent;
+</script>
+</body>
+</html>

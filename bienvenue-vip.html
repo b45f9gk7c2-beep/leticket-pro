@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bienvenue — LE TICKET VIP</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--night:#0B1F1A;--night-2:#102A22;--paper:#F4F1E8;--gold:#C9A227;--gold-bright:#E0B93A;--pitch:#1F4D3A;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--night);color:var(--paper);font-family:'Inter',sans-serif;
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;padding:40px 20px;
+  }
+  body::before{
+    content:'';position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse 90% 55% at 50% 0%,rgba(201,162,39,0.08) 0%,rgba(31,77,58,0.4) 40%,transparent 75%);
+  }
+  .card{
+    background:var(--night-2);
+    border:1px solid rgba(201,162,39,0.2);
+    border-radius:16px;max-width:560px;width:100%;padding:48px 40px;text-align:center;
+    position:relative;box-shadow:0 0 60px rgba(201,162,39,0.06);
+  }
+  /* Ligne dorée top */
+  .card::before{
+    content:'';position:absolute;top:0;left:40px;right:40px;height:2px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    border-radius:2px;
+  }
+  .logo{font-family:'Anton',sans-serif;font-size:1rem;letter-spacing:0.1em;opacity:0.4;margin-bottom:22px;}
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(201,162,39,0.12);border:1px solid rgba(224,185,58,0.35);
+    color:var(--gold-bright);font-family:'Space Mono',monospace;font-size:0.75rem;
+    padding:6px 18px;border-radius:30px;letter-spacing:0.1em;text-transform:uppercase;
+    margin-bottom:28px;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--gold-bright);animation:pulse 1.8s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.25;}}
+  .check{
+    width:64px;height:64px;border-radius:50%;margin:0 auto 24px;
+    background:rgba(201,162,39,0.1);border:2px solid rgba(224,185,58,0.35);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .check svg{animation:pop .4s ease;}
+  @keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
+  h1{font-family:'Anton',sans-serif;font-size:2.6rem;text-transform:uppercase;line-height:1;margin-bottom:14px;}
+  h1 span{color:var(--gold-bright);}
+  .sub{font-size:0.98rem;color:rgba(244,241,232,0.55);line-height:1.65;margin-bottom:36px;}
+  .perks{
+    background:rgba(11,31,26,0.5);border:1px solid rgba(201,162,39,0.1);
+    border-radius:10px;padding:22px;text-align:left;margin-bottom:28px;
+  }
+  .perks-title{font-family:'Space Mono',monospace;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(244,241,232,0.35);margin-bottom:14px;}
+  .perk{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid rgba(244,241,232,0.06);}
+  .perk:last-child{border-bottom:none;}
+  .icon{width:30px;height:30px;border-radius:7px;background:rgba(201,162,39,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.9rem;}
+  .perk b{display:block;font-size:0.9rem;margin-bottom:2px;}
+  .perk span{font-size:0.78rem;color:rgba(244,241,232,0.45);}
+  .btn-main{
+    display:block;width:100%;background:var(--gold);color:var(--night);
+    font-family:'Anton',sans-serif;font-size:1.15rem;letter-spacing:0.05em;
+    text-transform:uppercase;padding:17px;border-radius:6px;text-decoration:none;
+    margin-bottom:12px;transition:background .2s,transform .15s;
+  }
+  .btn-main:hover{background:var(--gold-bright);transform:translateY(-1px);}
+  .btn-tg{
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    width:100%;background:rgba(41,182,246,0.08);border:1px solid rgba(41,182,246,0.28);
+    color:#29B6F6;font-weight:700;font-size:0.9rem;padding:14px;border-radius:6px;
+    text-decoration:none;margin-bottom:12px;transition:background .2s;
+  }
+  .btn-tg:hover{background:rgba(41,182,246,0.15);}
+  .btn-ghost{
+    display:block;width:100%;background:transparent;border:1px solid rgba(244,241,232,0.12);
+    color:rgba(244,241,232,0.5);font-size:0.86rem;padding:12px;border-radius:6px;
+    text-decoration:none;transition:border-color .2s,color .2s;
+  }
+  .btn-ghost:hover{border-color:rgba(244,241,232,0.3);color:var(--paper);}
+  .mention{margin-top:28px;font-family:'Space Mono',monospace;font-size:0.72rem;color:rgba(244,241,232,0.25);line-height:1.7;}
+  .step-block{
+    background:rgba(201,162,39,0.06);border:1px solid rgba(201,162,39,0.15);
+    border-radius:10px;padding:20px;text-align:left;margin-bottom:20px;
+  }
+  .step-block-title{font-family:'Space Mono',monospace;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+  .step{display:flex;align-items:center;gap:12px;font-size:0.88rem;margin-bottom:10px;}
+  .step:last-child{margin-bottom:0;}
+  .step-num{
+    width:24px;height:24px;border-radius:50%;background:var(--gold);color:var(--night);
+    font-family:'Anton',sans-serif;font-size:0.8rem;display:flex;align-items:center;
+    justify-content:center;flex-shrink:0;
+  }
+  .step span{color:rgba(244,241,232,0.7);}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">LE TICKET</div>
+  <div class="badge"><span class="dot"></span>Accès VIP activé</div>
+
+  <div class="check">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E0B93A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+  </div>
+
+  <h1>Bienvenue<br>dans le <span>VIP</span></h1>
+  <p class="sub">Ton abonnement VIP est actif. Tu as accès à l'intégralité des pronostics, analyses exclusives et au canal Telegram privé.</p>
+
+  <div class="perks">
+    <div class="perks-title">Tout ce à quoi tu as accès</div>
+    <div class="perk">
+      <div class="icon">🎯</div>
+      <div><b>Tous les pronostics sans limite</b><span>Foot, tennis, basket — tous les sports couverts chaque semaine</span></div>
+    </div>
+    <div class="perk">
+      <div class="icon">📈</div>
+      <div><b>Combinés exclusifs VIP</b><span>Picks à cotes boostées réservés uniquement aux membres VIP</span></div>
+    </div>
+    <div class="perk">
+      <div class="icon">📊</div>
+      <div><b>Analyses complètes</b><span>Raisonnement détaillé et argumenté pour chaque pick</span></div>
+    </div>
+    <div class="perk">
+      <div class="icon">⚡</div>
+      <div><b>Alertes en temps réel</b><span>Notifié immédiatement dès qu'un nouveau prono est publié</span></div>
+    </div>
+    <div class="perk">
+      <div class="icon">🔒</div>
+      <div><b>Canal Telegram privé</b><span>Discussions exclusives, questions directes, résultats en live</span></div>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-block-title">Pour commencer — 2 étapes</div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <span>Rejoins le canal Telegram VIP ci-dessous</span>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <span>Connecte-toi sur leticket.pro pour voir les pronostics du jour</span>
+    </div>
+  </div>
+
+  <a href="https://t.me/+0b8B2FO4exdmMGZk" target="_blank" class="btn-tg">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="#29B6F6"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/></svg>
+    Rejoindre le canal Telegram VIP
+  </a>
+  <a href="https://leticket.pro/#pronostics" class="btn-main">Voir les pronostics du jour →</a>
+  <a href="https://leticket.pro" class="btn-ghost">Retour au site</a>
+
+  <p class="mention">Résiliation possible à tout moment · Sans engagement<br>Des questions ? Rejoins-nous directement sur le canal Telegram.</p>
+</div>
+</body>
+</html>

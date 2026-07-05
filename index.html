@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LE TICKET — Pronostics sportifs par abonnement</title>
+<link rel="icon" type="image/svg+xml" href="logo-mark.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // ⚙️ Remplace par tes clés EmailJS (dashboard.emailjs.com)
+  const EMAILJS_PUBLIC_KEY  = 'REMPLACE_PAR_TA_CLE_PUBLIQUE';
+  const EMAILJS_SERVICE_ID  = 'REMPLACE_PAR_TON_SERVICE_ID';
+  const EMAILJS_TEMPLATE_ID = 'REMPLACE_PAR_TON_TEMPLATE_ID';
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+
+  function sendWelcomeMail(prenom, email, password){
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_name:  prenom,
+      to_email: email,
+      user_email: email,
+      user_password: password,
+    }).catch(e => console.warn('EmailJS:', e));
+  }
+</script>
+<style>
+  :root{
+    --night:#0B1F1A;
+    --night-2:#102A22;
+    --paper:#F4F1E8;
+    --paper-dim:#E7E2D2;
+    --gold:#C9A227;
+    --gold-bright:#E0B93A;
+    --pitch:#1F4D3A;
+    --lose:#B5483C;
+    --ink:#16241E;
+    --line: rgba(244,241,232,0.14);
+    --radius: 2px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--night);
+    color:var(--paper);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{
+    font-family:'Anton', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+    line-height:0.95;
+    font-weight:400;
+  }
+  .mono{font-family:'Space Mono', monospace;}
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  ::selection{background:var(--gold); color:var(--night);}
+  :focus-visible{outline:2px solid var(--gold-bright); outline-offset:3px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(11,31,26,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 28px; max-width:1180px; margin:0 auto;
+  }
+  .logo{display:flex; align-items:center; gap:10px; font-size:1.4rem;}
+  .logo .stub{
+    width:10px; height:22px; background:var(--gold);
+    transform:skewX(-12deg);
+  }
+  .nav-links{display:flex; gap:32px; font-size:0.92rem; font-weight:500;}
+  .nav-links a{opacity:0.8; transition:opacity .2s, color .2s; position:relative;}
+  .nav-links a:hover{opacity:1; color:var(--gold-bright);}
+  .nav-cta{
+    background:var(--gold); color:var(--night); padding:10px 20px;
+    font-weight:700; font-size:0.88rem; border-radius:var(--radius);
+    transition:background .2s, transform .15s;
+  }
+  .nav-cta:hover{background:var(--gold-bright); transform:translateY(-1px);}
+  .nav-membre{
+    background:transparent; color:var(--gold-bright); padding:8px 16px;
+    font-weight:600; font-size:0.82rem; border-radius:var(--radius);
+    border:1px solid rgba(224,185,58,0.35); cursor:pointer;
+    transition:border-color .2s, background .2s;
+  }
+  .nav-membre:hover{border-color:var(--gold-bright); background:rgba(201,162,39,0.08);}
+  .burger{display:none; flex-direction:column; gap:4px; cursor:pointer; background:none; border:none;}
+  .burger span{width:24px; height:2px; background:var(--paper);}
+
+  /* ---------- CDM 2026 ---------- */
+  .cdm-strip{background:var(--night-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:60px 0;}
+  .cdm-badge{display:inline-flex; align-items:center; gap:6px; background:rgba(201,162,39,0.12); border:1px solid rgba(201,162,39,0.3); color:var(--gold-bright); font-family:'Space Mono',monospace; font-size:0.72rem; padding:4px 12px; border-radius:20px; margin-left:12px; text-transform:uppercase; letter-spacing:0.06em; vertical-align:middle;}
+  .cdm-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .match-card{background:var(--night); border:1px solid var(--line); border-radius:var(--radius); padding:18px; transition:border-color .2s;}
+  .match-card:hover{border-color:rgba(201,162,39,0.3);}
+  .match-group{font-family:'Space Mono',monospace; font-size:0.68rem; color:var(--gold-bright); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; opacity:0.85;}
+  .match-teams{font-family:'Anton',sans-serif; font-size:1.05rem; letter-spacing:0.02em; margin-bottom:6px; line-height:1.1;}
+  .match-footer{display:flex; justify-content:space-between; align-items:center; margin-top:10px;}
+  .match-score{font-family:'Anton',sans-serif; font-size:1.5rem; color:var(--gold);}
+  .match-tag{font-size:0.66rem; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:0.04em;}
+  .match-tag.done{background:rgba(31,77,58,0.4); color:#7CC9A0; border:1px solid #2f6e4e;}
+  .match-tag.soon{background:rgba(201,162,39,0.1); color:var(--gold-bright); border:1px solid rgba(201,162,39,0.3);}
+  @media(max-width:980px){.cdm-grid{grid-template-columns:1fr;}}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:90px 0 70px;
+    background:
+      radial-gradient(ellipse 700px 400px at 85% 0%, rgba(31,77,58,0.55), transparent 60%),
+      var(--night);
+    overflow:hidden;
+  }
+  .hero .wrap{display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:center;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'Space Mono', monospace; font-size:0.76rem; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--gold-bright); margin-bottom:18px;
+  }
+  .eyebrow::before{content:''; width:7px; height:7px; background:var(--gold-bright); border-radius:50%; animation:pulse 1.8s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:0.3;}}
+  .hero h1{font-size:clamp(2.6rem, 5.2vw, 4.4rem); margin-bottom:22px;}
+  .hero h1 em{font-style:normal; color:var(--gold);}
+  .hero p.lead{font-size:1.08rem; color:var(--paper-dim); max-width:480px; margin-bottom:34px;}
+  .hero-ctas{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:30px;}
+  .btn-primary{
+    background:var(--gold); color:var(--night); padding:15px 28px;
+    font-weight:700; font-size:0.95rem; border-radius:var(--radius);
+    border:none; cursor:pointer; transition:background .2s, transform .15s;
+  }
+  .btn-primary:hover{background:var(--gold-bright); transform:translateY(-2px);}
+  .btn-ghost{
+    border:1px solid var(--line); padding:15px 28px; border-radius:var(--radius);
+    font-weight:600; font-size:0.95rem; transition:border-color .2s, background .2s;
+  }
+  .btn-ghost:hover{border-color:var(--gold); background:rgba(201,162,39,0.08);}
+  .trust-row{display:flex; gap:28px; font-family:'Space Mono', monospace; font-size:0.82rem; color:var(--paper-dim); flex-wrap:wrap;}
+  .trust-row b{color:var(--gold-bright); font-size:1.1rem; display:block; font-family:'Anton'; letter-spacing:0;}
+
+  /* ---------- TICKET (signature element) ---------- */
+  .ticket-wrap{position:relative; display:flex; justify-content:center; perspective:1200px;}
+  .ticket{
+    background:var(--paper);
+    color:var(--ink);
+    width:320px;
+    padding:26px 24px 30px;
+    border-radius:6px;
+    position:relative;
+    transform:rotate(3deg);
+    box-shadow:0 30px 60px -10px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,0,0,0.05);
+    animation:float 6s ease-in-out infinite;
+  }
+  @keyframes float{0%,100%{transform:rotate(3deg) translateY(0);} 50%{transform:rotate(1deg) translateY(-10px);}}
+  .ticket::before, .ticket::after{
+    content:''; position:absolute; width:22px; height:22px; background:var(--night);
+    border-radius:50%; top:50%; transform:translateY(-50%);
+  }
+  .ticket::before{left:-11px;}
+  .ticket::after{right:-11px;}
+  .ticket-top{display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px dashed rgba(0,0,0,0.25); padding-bottom:14px; margin-bottom:14px;}
+  .ticket-top .tnum{font-family:'Space Mono'; font-size:0.7rem; opacity:0.55;}
+  .ticket-top .tbrand{font-family:'Anton'; font-size:1.1rem; letter-spacing:0.04em;}
+  .ticket-match{font-family:'Anton'; font-size:1.3rem; line-height:1.15; margin-bottom:6px;}
+  .ticket-meta{display:flex; justify-content:space-between; font-family:'Space Mono'; font-size:0.78rem; opacity:0.7; margin-bottom:16px;}
+  .ticket-row{display:flex; justify-content:space-between; font-size:0.86rem; padding:6px 0; border-bottom:1px dotted rgba(0,0,0,0.15);}
+  .ticket-row b{font-family:'Space Mono';}
+  .ticket-cote{display:flex; justify-content:space-between; align-items:baseline; margin-top:14px;}
+  .ticket-cote .label{font-size:0.78rem; opacity:0.6; text-transform:uppercase; letter-spacing:0.08em;}
+  .ticket-cote .val{font-family:'Anton'; font-size:2.2rem; color:var(--pitch);}
+  .stamp{
+    position:absolute; top:52%; right:18px; transform:rotate(-18deg);
+    border:3px solid var(--gold); color:var(--gold);
+    font-family:'Anton'; font-size:1.5rem; padding:4px 14px;
+    border-radius:4px; opacity:0.92; letter-spacing:0.05em;
+    mix-blend-mode:multiply;
+  }
+  .ticket-perf{
+    position:absolute; bottom:-1px; left:0; right:0; height:14px;
+    background-image: radial-gradient(circle 7px at 16px 0, var(--night) 99%, transparent 100%);
+    background-size:32px 14px; background-repeat:repeat-x;
+  }
+
+  /* ---------- SECTION GENERIC ---------- */
+  section{padding:90px 0;}
+  .section-head{max-width:620px; margin-bottom:54px;}
+  .section-head .eyebrow{margin-bottom:14px;}
+  .section-head h2{font-size:clamp(2rem, 3.4vw, 2.8rem); margin-bottom:14px;}
+  .section-head p{color:var(--paper-dim); font-size:1.02rem;}
+
+  /* ---------- STATS STRIP ---------- */
+  .stats-strip{
+    background:var(--night-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:48px 0;
+  }
+  .stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:24px; text-align:center;}
+  .stat b{display:block; font-family:'Anton'; font-size:2.6rem; color:var(--gold-bright);}
+  .stat span{font-size:0.84rem; color:var(--paper-dim); text-transform:uppercase; letter-spacing:0.06em;}
+
+  /* ---------- HISTORIQUE (paywall preview) ---------- */
+  .history-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .pick-card{
+    background:var(--night-2); border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px; position:relative; transition:border-color .2s, transform .2s;
+  }
+  .pick-card:hover{border-color:rgba(201,162,39,0.4); transform:translateY(-3px);}
+  .pick-card .pdate{font-family:'Space Mono'; font-size:0.74rem; opacity:0.55; margin-bottom:10px;}
+  .sport-badge{display:inline-flex;align-items:center;gap:5px;font-family:'Space Mono',monospace;font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;}
+  .sport-badge.foot{background:rgba(31,77,58,0.35);color:#7CC9A0;border:1px solid rgba(124,201,160,0.3);}
+  .sport-badge.tennis{background:rgba(201,162,39,0.12);color:var(--gold-bright);border:1px solid rgba(224,185,58,0.3);}
+  .sport-badge.basket{background:rgba(200,100,30,0.15);color:#E8853A;border:1px solid rgba(232,133,58,0.3);}
+  .combi-rows{margin:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 0;}
+  .combi-row{display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;padding:5px 0;gap:8px;}
+  .combi-row span:first-child{color:rgba(244,241,232,0.7);}
+  .combi-row .combi-cote{font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--gold-bright);white-space:nowrap;}
+  .combi-total{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:0.8rem;margin-top:6px;padding-top:6px;border-top:1px solid rgba(201,162,39,0.2);}
+  .combi-total b{color:var(--gold-bright);}
+  .pick-card h4{font-family:'Inter'; font-weight:700; font-size:1.02rem; margin-bottom:10px;}
+  .pick-card .pmeta{display:flex; justify-content:space-between; font-family:'Space Mono'; font-size:0.82rem; opacity:0.75; margin-bottom:14px;}
+  .result-tag{
+    display:inline-block; font-size:0.72rem; font-weight:700; padding:4px 10px;
+    border-radius:20px; text-transform:uppercase; letter-spacing:0.04em;
+  }
+  .result-tag.win{background:rgba(31,77,58,0.4); color:#7CC9A0; border:1px solid #2f6e4e;}
+  .result-tag.lose{background:rgba(181,72,60,0.18); color:#E08376; border:1px solid var(--lose);}
+  .result-tag.en-cours{background:rgba(201,162,39,0.12); color:var(--gold-bright); border:1px solid rgba(224,185,58,0.4);}
+  .locked{ position:relative; overflow:hidden; }
+  .vip-chip{
+    display:inline-flex; align-items:center; gap:5px;
+    position:absolute; top:12px; right:12px;
+    background:rgba(201,162,39,0.15); border:1px solid rgba(224,185,58,0.4);
+    color:var(--gold-bright); font-family:'Space Mono',monospace; font-size:0.65rem;
+    padding:3px 9px; border-radius:20px; letter-spacing:0.08em; text-transform:uppercase;
+  }
+  .tampon-gagne{
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%) rotate(-18deg);
+    border:3px solid #7CC9A0; color:#7CC9A0;
+    font-family:'Anton',sans-serif; font-size:1.7rem; letter-spacing:0.2em;
+    padding:4px 18px; border-radius:4px; opacity:0.82;
+    pointer-events:none; z-index:5; white-space:nowrap;
+    text-shadow:0 0 12px rgba(124,201,160,0.25);
+  }
+
+  /* ---------- PRICING ---------- */
+  .pricing-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:28px;}
+  .price-card{
+    background:var(--night-2); border:1px solid var(--line); border-radius:6px;
+    padding:38px 32px; position:relative; transition:transform .2s, border-color .2s;
+  }
+  .price-card:hover{transform:translateY(-4px);}
+  .price-card.featured{border-color:var(--gold); background:linear-gradient(160deg, rgba(201,162,39,0.08), var(--night-2) 60%);}
+  .badge-pop{
+    position:absolute; top:-13px; right:28px; background:var(--gold); color:var(--night);
+    font-size:0.7rem; font-weight:700; padding:5px 14px; border-radius:20px; letter-spacing:0.04em; text-transform:uppercase;
+  }
+  .price-card h3{font-family:'Inter'; font-weight:700; font-size:1.2rem; margin-bottom:6px;}
+  .price-card .price{display:flex; align-items:baseline; gap:6px; margin:18px 0 24px;}
+  .price-card .price b{font-family:'Anton'; font-size:3rem;}
+  .price-card .price span{color:var(--paper-dim); font-size:0.9rem;}
+  .price-card ul{list-style:none; margin-bottom:30px; display:flex; flex-direction:column; gap:12px;}
+  .price-card li{display:flex; gap:10px; font-size:0.92rem; color:var(--paper-dim);}
+  .price-card li svg{width:16px; height:16px; flex-shrink:0; margin-top:3px; color:var(--gold-bright);}
+  .price-card button{width:100%; padding:15px; border-radius:var(--radius); border:none; font-weight:700; cursor:pointer; font-size:0.95rem; transition:transform .15s, background .2s;}
+  .price-card:not(.featured) button{background:transparent; border:1px solid var(--line); color:var(--paper);}
+  .price-card:not(.featured) button:hover{border-color:var(--gold);}
+  .price-card.featured button{background:var(--gold); color:var(--night);}
+  .price-card.featured button:hover{background:var(--gold-bright); transform:translateY(-1px);}
+
+  /* ---------- TESTIMONIALS ---------- */
+  .testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  .testi{background:var(--night-2); border:1px solid var(--line); border-radius:var(--radius); padding:26px;}
+  .testi p{font-size:0.94rem; color:var(--paper-dim); margin-bottom:16px;}
+  .testi .who{font-family:'Space Mono'; font-size:0.78rem; color:var(--gold-bright);}
+
+  /* ---------- FAQ ---------- */
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-q{
+    display:flex; justify-content:space-between; align-items:center; gap:18px;
+    padding:22px 0; cursor:pointer; font-weight:600; font-size:1.02rem; background:none; border:none; color:var(--paper); width:100%; text-align:left;
+  }
+  .faq-q .plus{font-family:'Anton'; font-size:1.4rem; color:var(--gold-bright); transition:transform .2s; flex-shrink:0;}
+  .faq-item.open .plus{transform:rotate(45deg);}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height .25s ease;}
+  .faq-a p{padding-bottom:20px; color:var(--paper-dim); font-size:0.94rem; max-width:680px;}
+
+  /* ---------- LOGIN / MEMBER MODAL ---------- */
+  .modal-bg{
+    position:fixed; inset:0; background:rgba(7,15,12,0.78); backdrop-filter:blur(4px);
+    display:none; align-items:center; justify-content:center; z-index:100; padding:20px;
+  }
+  .modal-bg.show{display:flex;}
+  .modal{
+    background:var(--paper); color:var(--ink); border-radius:6px; padding:36px; max-width:380px; width:100%;
+    position:relative;
+  }
+  .modal h3{font-family:'Inter'; font-weight:700; font-size:1.3rem; margin-bottom:6px;}
+  .modal p.sub{color:#5b5b52; font-size:0.9rem; margin-bottom:24px;}
+  .modal label{display:block; font-size:0.8rem; font-weight:600; margin-bottom:6px; margin-top:14px;}
+  .modal input{
+    width:100%; padding:12px 14px; border:1px solid #d8d3c0; border-radius:4px; font-family:'Inter'; font-size:0.94rem; background:#fff;
+  }
+  .modal .submit{
+    width:100%; margin-top:22px; background:var(--pitch); color:#fff; padding:14px; border:none; border-radius:4px; font-weight:700; cursor:pointer; transition:background .2s;
+  }
+  .modal .submit:hover{background:#27604a;}
+  .modal .close{position:absolute; top:18px; right:18px; cursor:pointer; background:none; border:none; font-size:1.3rem; color:#888; line-height:1;}
+  .modal .switch{text-align:center; margin-top:16px; font-size:0.86rem; color:#5b5b52;}
+  .modal .switch a{color:var(--pitch); font-weight:600;}
+  .modal .demo-note{font-family:'Space Mono'; font-size:0.72rem; color:#8a8567; margin-top:16px; line-height:1.5; border-top:1px dashed #d8d3c0; padding-top:14px;}
+
+  /* ---------- FOOTER ---------- */
+  footer{border-top:1px solid var(--line); padding:60px 0 36px; background:var(--night-2);}
+  .footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1.2fr; gap:36px; margin-bottom:42px;}
+  .footer-grid h5{font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--gold-bright); margin-bottom:16px;}
+  .footer-grid ul{list-style:none; display:flex; flex-direction:column; gap:10px;}
+  .footer-grid li a{color:var(--paper-dim); font-size:0.9rem; transition:color .2s;}
+  .footer-grid li a:hover{color:var(--paper);}
+  .legal-box{
+    border-top:1px solid var(--line); padding-top:28px; display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap;
+    font-size:0.78rem; color:rgba(244,241,232,0.5);
+  }
+  .legal-box .warn{
+    border:1px solid rgba(244,241,232,0.18); padding:10px 16px; border-radius:4px; font-family:'Space Mono'; font-size:0.74rem; max-width:560px;
+  }
+
+  /* ---------- COOKIE BANNER ---------- */
+  .cookie-bar{
+    position:fixed; bottom:0; left:0; right:0; z-index:200;
+    background:var(--night-2); border-top:1px solid var(--gold);
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+    padding:18px 28px; flex-wrap:wrap;
+  }
+  .cookie-bar p{font-size:0.84rem; color:var(--paper-dim); max-width:760px;}
+  .cookie-bar a{color:var(--gold-bright); text-decoration:underline;}
+  .cookie-bar button{
+    background:var(--gold); color:var(--night); border:none; padding:11px 22px;
+    border-radius:var(--radius); font-weight:700; font-size:0.86rem; cursor:pointer; white-space:nowrap;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 980px){
+    .hero .wrap{grid-template-columns:1fr; text-align:center;}
+    .hero p.lead{margin-inline:auto;}
+    .hero-ctas{justify-content:center;}
+    .trust-row{justify-content:center;}
+    .ticket-wrap{margin-top:20px;}
+    .stats-grid{grid-template-columns:repeat(2,1fr); gap:32px;}
+    .history-grid, .pricing-grid, .testi-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+    .nav-links{display:none;}
+    .burger{display:flex;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <div class="logo">
+        <svg width="26" height="26" viewBox="0 0 68 68" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#C9A227" fill-rule="evenodd" d="M16,2 H52 A8,8 0 0 1 60,10 V58 A8,8 0 0 1 52,66 H16 A8,8 0 0 1 8,58 V10 A8,8 0 0 1 16,2 Z M-2,34 a9,9 0 1 0 18,0 a9,9 0 1 0 -18,0 Z M50,34 a9,9 0 1 0 18,0 a9,9 0 1 0 -18,0 Z"/>
+          <line x1="42" y1="10" x2="42" y2="58" stroke="#0B1F1A" stroke-width="2.5" stroke-dasharray="4 4"/>
+          <g transform="translate(50,38) rotate(-16)"><path d="M-7,0 L-2,5 L8,-9" fill="none" stroke="#0B1F1A" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+        </svg>
+        LE TICKET
+      </div>
+      <button class="nav-membre" onclick="openModal('login')">Espace membre</button>
+    </div>
+    <div class="nav-links">
+      <a href="#pronostics">Pronostics</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="#avis">Avis</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <button class="nav-membre" onclick="openModal('signup')">Inscription</button>
+      <button class="nav-cta" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">S'abonner</button>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">7 pronostics publiés cette semaine</div>
+      <h1>L'analyse avant<br>le coup d'envoi.</h1>
+      <p class="lead">Des pronostics sportifs argumentés, publiés avant chaque match, avec la cote et le raisonnement complet. Pas de promesses miracles — du travail d'analyse, chaque semaine.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">Voir les abonnements</button>
+        <a href="#pronostics" class="btn-ghost">Voir un exemple de prono</a>
+      </div>
+      <div class="trust-row">
+
+        <div><b>+70%</b>taux de réussite 2026</div>
+        <div><b>3/sem</b>pronos publiés</div>
+      </div>
+    </div>
+    <div class="ticket-wrap">
+      <div class="ticket" style="position:relative; overflow:hidden;">
+        <div style="
+          position:absolute; inset:0; z-index:10;
+          backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
+          background:linear-gradient(160deg, rgba(11,31,26,0.15) 0%, rgba(11,31,26,0.75) 60%);
+          display:flex; flex-direction:column; align-items:center; justify-content:center;
+          gap:10px; border-radius:inherit;
+        ">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          <span style="font-family:'Anton',sans-serif; font-size:1.1rem; color:#E0B93A; letter-spacing:0.06em; text-transform:uppercase;">Réservé VIP</span>
+          <span style="font-family:'Space Mono',monospace; font-size:0.72rem; color:rgba(244,241,232,0.75); text-align:center; max-width:180px; line-height:1.5;">Abonne-toi pour accéder aux pronostics du jour</span>
+          <button onclick="startCheckout('vip')" style="margin-top:6px; background:var(--gold); color:var(--night); border:none; padding:10px 22px; border-radius:2px; font-weight:700; font-size:0.82rem; cursor:pointer; font-family:'Inter',sans-serif;">Accès VIP — 29,99€/mois</button>
+        </div>
+        <div class="ticket-top">
+          <span class="tnum">COMBINÉ · VIP</span>
+          <span class="tbrand">LE TICKET</span>
+        </div>
+        <div class="ticket-match">Canada — Maroc</div>
+        <div class="ticket-meta"><span>CDM 2026 · 16e finale</span><span>Auj. 19h00</span></div>
+        <div class="ticket-row"><span>Marché</span><b>Qualification Maroc</b></div>
+        <div class="ticket-row"><span>Cote</span><b>1.32</b></div>
+        <div style="border-top:1px dashed rgba(0,0,0,0.2); margin:10px 0;"></div>
+        <div class="ticket-match" style="font-size:1.1rem;">Paraguay — France</div>
+        <div class="ticket-meta"><span>CDM 2026 · 16e finale</span><span>Auj. 23h00</span></div>
+        <div class="ticket-row"><span>Marché</span><b>Buteur Mbappé</b></div>
+        <div class="ticket-row"><span>Cote</span><b>1.50</b></div>
+        <div class="ticket-cote"><span class="label">Cote totale</span><span class="val">1.98</span></div>
+        <div class="stamp" style="top:40%;">EN COURS</div>
+        <div class="ticket-perf"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="stats-strip">
+  <div class="wrap stats-grid">
+    <div class="stat"><b>+70%</b><span>Réussite 2026</span></div>
+
+
+    <div class="stat"><b>3</b><span>Sports couverts</span></div>
+  </div>
+</div>
+
+<!-- ===== COUPE DU MONDE 2026 ===== -->
+<div class="cdm-strip">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">En direct</div>
+      <h2>Coupe du Monde 2026 <span class="cdm-badge">3 juillet</span></h2>
+      <p>Résultats officiels et matchs à venir — nos pronostics sur ces matchs sont réservés aux abonnés.</p>
+    </div>
+    <div class="cdm-grid">
+      <!-- 02/07 -->
+      <div class="match-card">
+        <div class="match-group">16e de finale · 2 juil.</div>
+        <div class="match-teams">Espagne — Autriche</div>
+        <div class="match-footer"><div class="match-score">3 — 0</div><span class="match-tag done">Terminé</span></div>
+      </div>
+      <!-- 03/07 -->
+      <div class="match-card">
+        <div class="match-group">16e de finale · 3 juil.</div>
+        <div class="match-teams">Portugal — Croatie</div>
+        <div class="match-footer"><div class="match-score">2 — 1</div><span class="match-tag done">Terminé</span></div>
+      </div>
+      <div class="match-card">
+        <div class="match-group">16e de finale · 3 juil.</div>
+        <div class="match-teams">Suisse — Algérie</div>
+        <div class="match-footer"><div class="match-score">2 — 0</div><span class="match-tag done">Terminé</span></div>
+      </div>
+      <div class="match-card">
+        <div class="match-group">16e de finale · 3 juil.</div>
+        <div class="match-teams">Australie — Égypte</div>
+        <div class="match-footer"><div class="match-score">1 — 1 (tab)</div><span class="match-tag done">Terminé</span></div>
+      </div>
+      <!-- 04/07 -->
+      <div class="match-card">
+        <div class="match-group">16e de finale · 4 juil.</div>
+        <div class="match-teams">Argentine — Cap-Vert</div>
+        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">Aujourd'hui</span></div>
+      </div>
+      <div class="match-card">
+        <div class="match-group">16e de finale · 4 juil.</div>
+        <div class="match-teams">Colombie — Ghana</div>
+        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">Aujourd'hui</span></div>
+      </div>
+      <div class="match-card">
+        <div class="match-group">16e de finale · 4 juil.</div>
+        <div class="match-teams">Canada — Maroc</div>
+        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">Aujourd'hui</span></div>
+      </div>
+      <div class="match-card">
+        <div class="match-group">16e de finale · 4 juil.</div>
+        <div class="match-teams">Paraguay — France</div>
+        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">Aujourd'hui</span></div>
+      </div>
+      <!-- 05/07 -->
+      <div class="match-card">
+        <div class="match-group">16e de finale · 5 juil.</div>
+        <div class="match-teams">Brésil — Norvège</div>
+        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">À venir</span></div>
+      </div>
+      <!-- 06/07 -->
+      <div class="match-card">
+        <div class="match-group">16e de finale · 6 juil.</div>
+        <div class="match-teams">Mexique — Angleterre</div>
+        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">À venir</span></div>
+      </div>
+      <!-- 07/07 -->
+      <div class="match-card">
+        <div class="match-group">16e de finale · 7 juil.</div>
+        <div class="match-teams">États-Unis — Belgique</div>
+        <div class="match-footer"><div class="match-score">— —</div><span class="match-tag soon">À venir</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="pronostics">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Historique public</div>
+      <h2>Les derniers résultats</h2>
+      <p>Chaque pronostic publié reste affiché, gagné ou perdu. La transparence sur l'historique, c'est la base de la confiance.</p>
+    </div>
+    <div class="history-grid" id="historyGrid">
+      <p class="mono" style="grid-column:1/-1; opacity:0.5; font-size:0.85rem;">Chargement des pronostics…</p>
+    </div>
+  </div>
+</section>
+
+<section id="tarifs">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Abonnement</div>
+      <h2>Un accès, deux formules</h2>
+      <p>Sans engagement. Annulable en un clic depuis l'espace membre.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Accès Standard</h3>
+        <div class="price"><b>14,99€</b><span>/ mois</span></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>2 pronostics par semaine</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Historique complet et cotes</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Notification e-mail</li>
+        </ul>
+        <button onclick="startCheckout('standard')">Choisir Standard</button>
+      </div>
+      <div class="price-card featured">
+        <span class="badge-pop">Le plus pris</span>
+        <h3>Accès VIP</h3>
+        <div class="price"><b>29,99€</b><span>/ mois</span></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Tous les pronostics, tous les sports</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Analyse détaillée par match</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Alertes en temps réel</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Accès prioritaire au support</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Canal Telegram privé VIP</li>
+        </ul>
+        <button onclick="startCheckout('vip')">Choisir VIP</button>
+        <div style="margin-top:16px; background:linear-gradient(135deg,#0d1f2d 0%,#0a1929 100%); border:1px solid rgba(41,182,246,0.25); border-radius:8px; padding:16px 18px; display:flex; align-items:center; gap:14px;">
+          <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#29B6F6,#0288D1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:0.88rem;color:#F4F1E8;margin-bottom:2px;">Canal Telegram VIP 🔒</div>
+            <div style="font-size:0.76rem;color:rgba(244,241,232,0.5);font-family:'Space Mono',monospace;">Picks exclusifs · Discussions privées</div>
+          </div>
+          <a href="https://t.me/+0b8B2FO4exdmMGZk" target="_blank" rel="noopener" style="flex-shrink:0;background:linear-gradient(135deg,#29B6F6,#0288D1);color:#fff;font-weight:700;font-size:0.78rem;padding:8px 14px;border-radius:6px;text-decoration:none;letter-spacing:0.03em;white-space:nowrap;">Rejoindre →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="avis">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Témoignages</div>
+      <h2>Ce qu'en disent les abonnés</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi"><p>"Franchement j'étais sceptique au départ mais les pronos sont vraiment bien argumentés. J'ai suivi 3 semaines et c'est rentable."</p><div class="who">— Rose Casta, abonnée VIP</div></div>
+      <div class="testi"><p>"Le fait que les résultats soient visibles même quand c'est perdu ça m'a convaincu. C'est honnête."</p><div class="who">— James, abonné VIP</div></div>
+      <div class="testi"><p>"J'ai testé d'autres services avant, c'est clairement le meilleur rapport qualité-prix que j'ai trouvé."</p><div class="who">— Lucas, abonné Standard</div></div>
+      <div class="testi"><p>"Les cotes sont réalistes, pas des trucs impossibles à trouver. On peut vraiment les jouer."</p><div class="who">— Dume, abonné VIP</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Questions fréquentes</div>
+      <h2>Avant de t'abonner</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Est-ce que je peux annuler à tout moment ?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Oui, sans condition. L'abonnement se résilie en un clic depuis ton espace membre, sans préavis, sans frais de résiliation et sans engagement de durée. Tu conserves l'accès à tous les pronostics jusqu'à la fin de la période déjà réglée. Aucun prélèvement supplémentaire ne sera effectué après ta demande d'annulation. Conformément au droit européen de la consommation, tu bénéficies également d'un délai de rétractation de 14 jours à compter de ta souscription.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Garantissez-vous des gains ?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Non, et aucun service sérieux ne peut le faire. Le pari sportif comporte par nature un risque de perte financière. LE TICKET est un service d'analyse et de conseil sportif — nous fournissons un raisonnement argumenté et une cote recommandée, pas une garantie de résultat. Les performances passées ne préjugent pas des résultats futurs. Joue de manière responsable et ne mise jamais plus que ce que tu peux te permettre de perdre. Service interdit aux mineurs de moins de 18 ans.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Le site prend-il les paris à ma place ?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Non. LE TICKET ne prend aucun pari, ne gère aucun fonds et n'est affilié à aucun opérateur de paris. Le site publie exclusivement du contenu d'analyse sportive à titre informatif. Les paris sont placés librement par l'abonné, en son nom propre, auprès de l'opérateur agréé par l'ANJ (Autorité Nationale des Jeux) de son choix. LE TICKET n'est en aucun cas responsable des décisions de jeu prises par ses abonnés.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Comment se passe le paiement ?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Le paiement s'effectue par carte bancaire via Stripe, plateforme de paiement sécurisée certifiée PCI-DSS. Un prélèvement mensuel automatique est effectué à chaque renouvellement tant que l'abonnement est actif. Aucune donnée bancaire n'est stockée sur nos serveurs — tout est géré directement par Stripe. Tu reçois une confirmation de paiement par email à chaque prélèvement.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Mes données personnelles sont-elles protégées ?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Oui. Tes données personnelles (nom, email, téléphone) sont collectées uniquement pour la gestion de ton compte et ne sont jamais revendues à des tiers. Conformément au RGPD, tu peux à tout moment demander l'accès, la modification ou la suppression de tes données en nous contactant. Les données sont stockées de manière sécurisée via Supabase, hébergé en Europe.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Quelle est la différence entre Standard et VIP ?<span class="plus">+</span></button>
+        <div class="faq-a"><p>L'abonnement Standard (14,99€/mois) donne accès à 2 pronostics par semaine, accompagnés de leur analyse complète. L'abonnement VIP (29,99€/mois) donne accès à tous les pronostics publiés, tous sports confondus, en priorité et sans limite — y compris les combinés et les picks exclusifs CDM 2026. Les deux formules sont sans engagement et résiliables à tout moment.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px;">
+          <svg width="22" height="22" viewBox="0 0 68 68" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#C9A227" fill-rule="evenodd" d="M16,2 H52 A8,8 0 0 1 60,10 V58 A8,8 0 0 1 52,66 H16 A8,8 0 0 1 8,58 V10 A8,8 0 0 1 16,2 Z M-2,34 a9,9 0 1 0 18,0 a9,9 0 1 0 -18,0 Z M50,34 a9,9 0 1 0 18,0 a9,9 0 1 0 -18,0 Z"/>
+            <line x1="42" y1="10" x2="42" y2="58" stroke="#0B1F1A" stroke-width="2.5" stroke-dasharray="4 4"/>
+            <g transform="translate(50,38) rotate(-16)"><path d="M-7,0 L-2,5 L8,-9" fill="none" stroke="#0B1F1A" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+          </svg>
+          LE TICKET
+        </div>
+        <p style="color:var(--paper-dim); font-size:0.88rem; max-width:280px;">Pronostics sportifs analysés et publiés chaque semaine. Service d'information, pas un opérateur de paris.</p>
+      </div>
+      <div>
+        <h5>Navigation</h5>
+        <ul><li><a href="#pronostics">Pronostics</a></li><li><a href="#tarifs">Tarifs</a></li><li><a href="#faq">FAQ</a></li></ul>
+      </div>
+      <div>
+        <h5>Compte</h5>
+        <ul><li><a href="#" onclick="openModal('login'); return false;">Connexion</a></li><li><a href="#" onclick="openModal('signup'); return false;">Créer un compte</a></li><li><a href="admin.html" style="opacity:0.5;">Admin</a></li></ul>
+      </div>
+      <div>
+        <h5>Jeu responsable</h5>
+        <ul>
+          <li><a href="https://www.joueurs-info-service.fr" target="_blank" rel="noopener">joueurs-info-service.fr</a></li>
+          <li><a href="tel:0974751313">09 74 75 13 13 (appel non surtaxé)</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal-box" style="flex-direction:column; gap:18px;">
+      <div class="warn">Jouer comporte des risques : endettement, isolement, dépendance. Service interdit aux mineurs. Cette plateforme propose des contenus d'analyse sportive, à but informatif uniquement — elle ne prend pas de paris et ne garantit aucun gain.</div>
+      <div style="display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; width:100%;">
+        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+          <a href="mentions-legales.html" style="color:rgba(244,241,232,0.65);">Mentions légales</a>
+          <a href="cgv.html" style="color:rgba(244,241,232,0.65);">CGV</a>
+          <a href="politique-confidentialite.html" style="color:rgba(244,241,232,0.65);">Confidentialité</a>
+        </div>
+        <div>© 2026 Le Ticket — Tous droits réservés</div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== MODAL : LOGIN / SIGNUP ===== -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this) closeModal()">
+  <div class="modal">
+    <button class="close" onclick="closeModal()">&times;</button>
+    <div id="loginView">
+      <h3>Connexion</h3>
+      <p class="sub">Accède à tes pronostics réservés.</p>
+      <label for="li-email">E-mail</label>
+      <input id="li-email" type="email" placeholder="toi@exemple.fr">
+      <label for="li-pass">Mot de passe</label>
+      <input id="li-pass" type="password" placeholder="••••••••">
+      <div id="li-error" style="color:#B5483C; font-size:0.82rem; margin-top:8px; display:none;"></div>
+      <button class="submit" onclick="doLogin()">Se connecter</button>
+      <div style="text-align:right; margin-top:6px; margin-bottom:14px;">
+        <a href="#" onclick="switchView('reset'); return false;" style="font-size:0.82rem; color:var(--pitch); font-weight:600; text-decoration:underline;">Mot de passe oublié ?</a>
+      </div>
+      <div class="switch">Pas encore de compte ? <a href="#" onclick="switchView('signup'); return false;">S'inscrire</a></div>
+    </div>
+    <div id="resetView" style="display:none;">
+      <h3>Mot de passe oublié</h3>
+      <p class="sub">Entre ton e-mail, on t'envoie un lien pour réinitialiser ton mot de passe.</p>
+      <label for="re-email">E-mail</label>
+      <input id="re-email" type="email" placeholder="toi@exemple.fr">
+      <div id="re-error" style="color:#B5483C; font-size:0.82rem; margin-top:8px; display:none;"></div>
+      <div id="re-success" style="color:#7CC9A0; font-size:0.82rem; margin-top:8px; display:none;">✅ Email envoyé ! Vérifie ta boîte mail.</div>
+      <button class="submit" onclick="doReset()">Envoyer le lien</button>
+      <div class="switch"><a href="#" onclick="switchView('login'); return false;">← Retour à la connexion</a></div>
+    </div>
+    <div id="signupView" style="display:none;">
+      <h3>Créer un compte</h3>
+      <p class="sub">Rejoins LE TICKET et accède aux pronos.</p>
+      <label for="su-prenom">Prénom</label>
+      <input id="su-prenom" type="text" placeholder="Ton prénom">
+      <label for="su-nom">Nom</label>
+      <input id="su-nom" type="text" placeholder="Ton nom">
+      <label for="su-tel">Téléphone</label>
+      <input id="su-tel" type="tel" placeholder="+33 6 00 00 00 00">
+      <label for="su-email">E-mail</label>
+      <input id="su-email" type="email" placeholder="toi@exemple.fr">
+      <label for="su-pass">Mot de passe</label>
+      <input id="su-pass" type="password" placeholder="8 caractères minimum">
+      <div id="su-error" style="color:#B5483C; font-size:0.82rem; margin-top:8px; display:none;"></div>
+      <div id="su-success" style="color:#7CC9A0; font-size:0.82rem; margin-top:8px; display:none;">✅ Compte créé ! Vérifie ton email pour confirmer.</div>
+      <button class="submit" onclick="doSignup()">Créer mon compte</button>
+      <div class="switch">Déjà abonné ? <a href="#" onclick="switchView('login'); return false;">Se connecter</a></div>
+    </div>
+    <div id="memberView" style="display:none;">
+      <h3>Espace Membre</h3>
+      <p class="sub" id="member-welcome"></p>
+      <button class="submit" onclick="doLogout()" style="background:#B5483C;">Se déconnecter</button>
+      <div style="margin-top:12px; text-align:center;">
+        <a href="#tarifs" onclick="closeModal()" style="color:var(--pitch); font-weight:600; font-size:0.9rem;">Gérer mon abonnement →</a>
+      </div>
+      <div style="margin-top:12px; text-align:center;">
+        <a href="#" onclick="switchView('changepass'); return false;" style="color:rgba(244,241,232,0.45); font-size:0.85rem; text-decoration:underline;">Changer mon mot de passe</a>
+      </div>
+    </div>
+    <div id="changepassView" style="display:none;">
+      <h3>Nouveau mot de passe</h3>
+      <p class="sub">Choisis un nouveau mot de passe pour ton compte.</p>
+      <label for="cp-pass">Nouveau mot de passe</label>
+      <input id="cp-pass" type="password" placeholder="8 caractères minimum">
+      <label for="cp-pass2">Confirmer le mot de passe</label>
+      <input id="cp-pass2" type="password" placeholder="Répète le mot de passe">
+      <div id="cp-error" style="color:#B5483C; font-size:0.82rem; margin-top:8px; display:none;"></div>
+      <div id="cp-success" style="color:#7CC9A0; font-size:0.82rem; margin-top:8px; display:none;">✅ Mot de passe modifié avec succès !</div>
+      <button class="submit" onclick="doChangePass()">Enregistrer</button>
+      <div class="switch"><a href="#" onclick="switchView('member'); return false;">← Retour</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL : CHECKOUT (placeholder Stripe) ===== -->
+<div class="modal-bg" id="checkoutBg" onclick="if(event.target===this) closeCheckout()">
+  <div class="modal">
+    <button class="close" onclick="closeCheckout()">&times;</button>
+    <h3 id="checkoutTitle">Abonnement</h3>
+    <p class="sub" id="checkoutSub">Paiement sécurisé par carte bancaire.</p>
+    <label>Numéro de carte</label>
+    <input type="text" placeholder="4242 4242 4242 4242" disabled>
+    <label>Titulaire</label>
+    <input type="text" placeholder="J. Dupont" disabled>
+    <button class="submit" onclick="fakePay()">Confirmer le paiement</button>
+    <div class="demo-note">
+      Ceci est une maquette de paiement. Pour encaisser réellement :
+      1) crée un statut d'auto-entrepreneur (ou société) pour pouvoir facturer légalement,
+      2) crée un compte Stripe relié à ton RIB professionnel,
+      3) remplace ce formulaire par un vrai <code>Stripe Checkout</code> / <code>Stripe Billing</code> côté serveur — jamais de carte bancaire saisie directement sans Stripe Elements.
+      Le code est prêt à recevoir cette intégration (voir <code>startCheckout()</code> dans le JS).
+    </div>
+  </div>
+</div>
+
+<div class="cookie-bar" id="cookieBar">
+  <p>Ce site utilise uniquement des cookies techniques nécessaires à son fonctionnement (connexion, session). Aucun cookie publicitaire n'est utilisé. <a href="politique-confidentialite.html">En savoir plus</a></p>
+  <button onclick="acceptCookies()">J'ai compris</button>
+</div>
+
+<script>
+  // ----- Cookie banner (RGPD) -----
+  // Démo : pas de persistance pour rester compatible avec le rendu artifact.
+  // En production (site auto-hébergé), remplace acceptCookies() par :
+  //   document.cookie = "cookie_consent=accepted; max-age=31536000; path=/";
+  // et vérifie ce cookie au chargement pour ne plus réafficher le bandeau.
+  function acceptCookies(){
+    document.getElementById('cookieBar').style.display = 'none';
+  }
+
+  // ----- Pronostics : chargement dynamique -----
+  // Source de vérité : window.storage (clé partagée "pronostics:list").
+  // Mis à jour depuis admin.html. Si le stockage n'est pas disponible
+  // (site auto-hébergé hors Claude.ai), on retombe sur DEFAULT_PICKS.
+  const DEFAULT_PICKS = [
+    // ── STANDARD ──────────────────────────────────────────────────────
+    { date:"5 juil. · Tennis · Wimbledon", match:"A. Sabalenka — N. Osaka", marche:"Vainqueur Sabalenka", cote:"1.43", statut:"en-cours", locked:true, type:"standard", label:"En cours" },
+    // ── VIP ───────────────────────────────────────────────────────────
+    { date:"4 juil. · CDM 2026 · 16e de finale", match:"Paraguay — France", marche:"Buteur Kylian Mbappé", cote:"1.50", statut:"win", locked:true, label:"Gagné ✅", score:"Paraguay 0 — 1 France" },
+    { date:"4 juil. · CDM 2026 · 16e de finale", match:"Canada — Maroc", marche:"Qualification Maroc", cote:"1.32", statut:"win", locked:true, label:"Gagné ✅", score:"Canada 0 — 3 Maroc" },
+    { date:"5 juil. · CDM 2026 · 16e de finale", match:"Brésil — Norvège", marche:"Qualification Brésil", cote:"1.39", statut:"en-cours", locked:true, label:"En cours" },
+    { date:"5 juil. · CDM 2026 · 16e de finale", match:"Mexique — Angleterre", marche:"Qualification Angleterre", cote:"1.70", statut:"en-cours", locked:true, label:"En cours" },
+    { date:"5 juil. · CDM 2026 · Combiné VIP", match:"Combiné Foot du jour", marche:"Multi-sélection", cote:"2.36", statut:"en-cours", locked:true, label:"En cours",
+      combi:[
+        { match:"Mexique — Angleterre", marche:"Qualification Angleterre", cote:"1.70" },
+        { match:"Brésil — Norvège", marche:"Qualification Brésil", cote:"1.39" }
+      ]
+    },
+    { date:"9 juil. · CDM 2026 · Quart de finale", match:"France — Maroc", marche:"Qualification France", cote:"1.65", statut:"en-cours", locked:true, label:"En cours" },
+  ];
+  const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+
+  function getSportBadge(date){
+    const d = (date||'').toLowerCase();
+    if(d.includes('tennis')||d.includes('wimbledon')||d.includes('wta')||d.includes('atp')||d.includes('roland')) return '<span class="sport-badge tennis">🎾 Tennis</span>';
+    if(d.includes('basket')||d.includes('nba')) return '<span class="sport-badge basket">🏀 Basket</span>';
+    if(d.includes('cdm')||d.includes('foot')||d.includes('ligue')||d.includes('finale')||d.includes('quart')||d.includes('demi')) return '<span class="sport-badge foot">⚽ Football</span>';
+    return '';
+  }
+
+  function renderPick(p){
+    const tagLabel = p.label || (p.statut === 'win' ? 'Gagné ✅' : p.statut === 'lose' ? 'Perdu ❌' : 'En cours');
+    const scoreHTML = p.score ? `<div style="font-family:'Anton',sans-serif;font-size:1.1rem;color:var(--gold);margin:6px 0 2px;">${p.score}</div>` : '';
+    const tamponnHTML = p.statut === 'win' ? `<div class="tampon-gagne">GAGNÉ</div>` : '';
+    const sportBadge = getSportBadge(p.date);
+
+    // Rendu spécial pour les combinés
+    let combiHTML = '';
+    if(p.combi && p.combi.length){
+      const rows = p.combi.map(s=>`
+        <div class="combi-row">
+          <span>${s.match} — <em style="opacity:.7;font-style:normal;">${s.marche}</em></span>
+          <span class="combi-cote">x${s.cote}</span>
+        </div>`).join('');
+      combiHTML = `<div class="combi-rows">${rows}</div>
+        <div class="combi-total"><span>Cote totale</span><b>x${p.cote}</b></div>`;
+    }
+
+    const inner = `
+      ${sportBadge}
+      <div class="pdate" style="margin-top:4px;">${p.date}</div>
+      <h4>${p.match}</h4>
+      ${combiHTML}
+      ${!p.combi ? scoreHTML : ''}
+      ${!p.combi ? `<div class="pmeta"><span>${p.marche}</span><span>Cote ${p.cote}</span></div>` : ''}
+      <span class="result-tag ${p.statut}" style="margin-top:10px;">${tagLabel}</span>`;
+
+    if(!p.locked){
+      return `<div class="pick-card" style="position:relative;">${inner}${tamponnHTML}</div>`;
+    }
+    const chip = p.type === 'standard'
+      ? `<div class="vip-chip" style="background:rgba(31,77,58,0.25);border-color:rgba(124,201,160,0.4);color:#7CC9A0;">🎯 Abonnés</div>`
+      : `<div class="vip-chip">⚡ VIP</div>`;
+    return `<div class="pick-card locked">
+        ${inner}
+        ${chip}
+        ${tamponnHTML}
+      </div>`;
+  }
+
+  async function loadPronostics(){
+    const grid = document.getElementById('historyGrid');
+    let picks = DEFAULT_PICKS;
+    try{
+      if(window.storage){
+        const res = await window.storage.get('pronostics:list', true);
+        if(res && res.value){
+          const parsed = JSON.parse(res.value);
+          if(Array.isArray(parsed) && parsed.length){ picks = parsed; }
+        }
+      }
+    }catch(e){
+      // Clé pas encore créée ou stockage indisponible : on garde DEFAULT_PICKS
+      console.log('Pronostics par défaut utilisés :', e);
+    }
+    grid.innerHTML = picks.map(renderPick).join('');
+  }
+  loadPronostics();
+
+  // ----- Supabase -----
+  const _supa = supabase.createClient(
+    'https://eebcbeseawqwamtuyzsm.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlYmNiZXNlYXdxd2FtdHV5enNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwOTAwOTgsImV4cCI6MjA5ODY2NjA5OH0.biLPvIYDb4dT7qRKyCcf2NVzoZ69czEj_7pr0wOYvN8'
+  );
+
+  // Vérifie session au chargement
+  _supa.auth.getSession().then(({data:{session}})=>{
+    if(session) updateNavForUser(session.user);
+  });
+  _supa.auth.onAuthStateChange((_event, session)=>{
+    if(session) updateNavForUser(session.user);
+    else resetNav();
+  });
+
+  function updateNavForUser(user){
+    const btn = document.querySelector('.nav-membre');
+    const prenom = user.user_metadata?.prenom || user.email.split('@')[0];
+    if(btn) btn.textContent = '👤 ' + prenom;
+  }
+  function resetNav(){
+    const btn = document.querySelector('.nav-membre');
+    if(btn) btn.textContent = 'Espace membre';
+  }
+
+  // ----- Navigation modals -----
+  function openModal(view){
+    // Réinitialise le plan en attente si le modal est ouvert manuellement
+    _pendingPlan = null;
+    document.querySelector('#signupView .sub').textContent = 'Rejoins LE TICKET et accède aux pronos.';
+    document.getElementById('modalBg').classList.add('show');
+    _supa.auth.getSession().then(({data:{session}})=>{
+      if(session && view === 'login'){
+        switchView('member');
+        const prenom = session.user.user_metadata?.prenom || session.user.email;
+        document.getElementById('member-welcome').textContent = 'Bonjour ' + prenom + ' 👋';
+      } else {
+        switchView(view);
+      }
+    });
+  }
+  function closeModal(){ document.getElementById('modalBg').classList.remove('show'); }
+  function switchView(view){
+    document.getElementById('loginView').style.display = view === 'login' ? 'block' : 'none';
+    document.getElementById('signupView').style.display = view === 'signup' ? 'block' : 'none';
+    document.getElementById('memberView').style.display = view === 'member' ? 'block' : 'none';
+    document.getElementById('resetView').style.display = view === 'reset' ? 'block' : 'none';
+    document.getElementById('changepassView').style.display = view === 'changepass' ? 'block' : 'none';
+  }
+
+  async function doChangePass(){
+    const pass = document.getElementById('cp-pass').value;
+    const pass2 = document.getElementById('cp-pass2').value;
+    const errEl = document.getElementById('cp-error');
+    const okEl = document.getElementById('cp-success');
+    errEl.style.display = 'none'; okEl.style.display = 'none';
+    if(pass.length < 8){ errEl.textContent = 'Le mot de passe doit faire au moins 8 caractères.'; errEl.style.display = 'block'; return; }
+    if(pass !== pass2){ errEl.textContent = 'Les mots de passe ne correspondent pas.'; errEl.style.display = 'block'; return; }
+    const {error} = await _supa.auth.updateUser({ password: pass });
+    if(error){ errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+    okEl.style.display = 'block';
+    setTimeout(()=>{ switchView('member'); }, 2000);
+  }
+
+  async function doReset(){
+    const email = document.getElementById('re-email').value.trim();
+    const errEl = document.getElementById('re-error');
+    const okEl = document.getElementById('re-success');
+    errEl.style.display = 'none'; okEl.style.display = 'none';
+    if(!email){ errEl.textContent = 'Entre ton adresse e-mail.'; errEl.style.display = 'block'; return; }
+    const {error} = await _supa.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://leticket.pro'
+    });
+    if(error){ errEl.textContent = error.message || error.error_description || 'Une erreur est survenue. Vérifie ton adresse e-mail.'; errEl.style.display = 'block'; return; }
+    okEl.style.display = 'block';
+  }
+
+  async function doLogin(){
+    const email = document.getElementById('li-email').value;
+    const pass = document.getElementById('li-pass').value;
+    const errEl = document.getElementById('li-error');
+    errEl.style.display = 'none';
+    const {error} = await _supa.auth.signInWithPassword({email, password: pass});
+    if(error){ errEl.textContent = 'Email ou mot de passe incorrect.'; errEl.style.display = 'block'; return; }
+    if(_pendingPlan){
+      window.location.href = PLANS[_pendingPlan].url;
+    } else {
+      closeModal();
+    }
+  }
+
+  async function doSignup(){
+    const prenom = document.getElementById('su-prenom').value.trim();
+    const nom = document.getElementById('su-nom').value.trim();
+    const tel = document.getElementById('su-tel').value.trim();
+    const email = document.getElementById('su-email').value.trim();
+    const pass = document.getElementById('su-pass').value;
+    const errEl = document.getElementById('su-error');
+    const okEl = document.getElementById('su-success');
+    errEl.style.display = 'none'; okEl.style.display = 'none';
+    if(!prenom || !nom || !email || !pass){ errEl.textContent = 'Remplis tous les champs obligatoires.'; errEl.style.display = 'block'; return; }
+    if(pass.length < 8){ errEl.textContent = 'Le mot de passe doit faire au moins 8 caractères.'; errEl.style.display = 'block'; return; }
+    const {error} = await _supa.auth.signUp({
+      email, password: pass,
+      options: { data: { prenom, nom, telephone: tel } }
+    });
+    if(error){ errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+    sendWelcomeMail(prenom, email, pass);
+    if(_pendingPlan){
+      okEl.textContent = '✅ Compte créé ! Redirection vers le paiement…';
+      okEl.style.display = 'block';
+      setTimeout(()=>{ window.location.href = PLANS[_pendingPlan].url; }, 1500);
+    } else {
+      okEl.textContent = '✅ Compte créé ! Vérifie ton email pour confirmer.';
+      okEl.style.display = 'block';
+      setTimeout(()=>{ closeModal(); document.getElementById('tarifs').scrollIntoView({behavior:'smooth'}); }, 2500);
+    }
+  }
+
+  async function doLogout(){
+    await _supa.auth.signOut();
+    closeModal();
+    resetNav();
+  }
+
+  // ----- FAQ accordion -----
+  function toggleFaq(btn){
+    const item = btn.closest('.faq-item');
+    const answer = item.querySelector('.faq-a');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el=>{
+      el.classList.remove('open');
+      el.querySelector('.faq-a').style.maxHeight = null;
+    });
+    if(!isOpen){
+      item.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  }
+
+  // ----- Checkout Stripe -----
+  const PLANS = {
+    standard: { label: 'Accès Standard', price: '14,99€/mois', url: 'https://buy.stripe.com/7sY3cx5KX7aBfeW2VQ3ks01' },
+    vip:      { label: 'Accès VIP', price: '29,99€/mois', url: 'https://buy.stripe.com/4gM5kF2yL66xd6OgMG3ks02' }
+  };
+  let _pendingPlan = null;
+  async function startCheckout(plan){
+    const {data:{session}} = await _supa.auth.getSession();
+    if(!session){
+      openModal('signup');
+      // On set _pendingPlan APRÈS openModal (qui le remet à null)
+      _pendingPlan = plan;
+      document.querySelector('#signupView .sub').textContent =
+        'Crée ton compte pour accéder à l\'abonnement ' + PLANS[plan].label + '.';
+      return;
+    }
+    const p = PLANS[plan];
+    window.location.href = p.url;
+
+    /* INTÉGRATION RÉELLE STRIPE — à faire côté serveur :
+       1. Le client clique "Confirmer le paiement"
+       2. Le front appelle ton backend : POST /create-checkout-session { plan }
+       3. Le backend (Node/Python...) appelle l'API Stripe avec ta clé secrète :
+          stripe.checkout.sessions.create({
+            mode: 'subscription',
+            line_items: [{ price: 'price_xxx_'+plan, quantity: 1 }],
+            success_url: '...succes', cancel_url: '...annule'
+          })
+       4. Le backend renvoie session.url, et le front fait window.location = session.url
+       5. Stripe héberge la page de paiement (PCI-DSS géré par Stripe, jamais par toi)
+       6. Les paiements arrivent sur ton compte Stripe, relié à ton RIB pro via le dashboard Stripe
+       Ne JAMAIS faire transiter un numéro de carte par ton propre serveur sans Stripe Elements/Checkout. */
+  }
+  function closeCheckout(){ document.getElementById('checkoutBg').classList.remove('show'); }
+  function fakePay(){
+    closeCheckout();
+    alert("Démo : paiement simulé, aucune carte n'a été débitée. Connecte Stripe Checkout pour activer les vrais paiements.");
+  }
+</script>
+
+</body>
+</html>

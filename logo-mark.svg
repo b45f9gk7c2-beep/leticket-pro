@@ -1,0 +1,11 @@
+<svg viewBox="0 0 68 68" xmlns="http://www.w3.org/2000/svg">
+  <path fill="#C9A227" fill-rule="evenodd" d="
+    M16,2 H52 A8,8 0 0 1 60,10 V58 A8,8 0 0 1 52,66 H16 A8,8 0 0 1 8,58 V10 A8,8 0 0 1 16,2 Z
+    M-2,34 a9,9 0 1 0 18,0 a9,9 0 1 0 -18,0 Z
+    M50,34 a9,9 0 1 0 18,0 a9,9 0 1 0 -18,0 Z
+  "/>
+  <line x1="42" y1="10" x2="42" y2="58" stroke="#0B1F1A" stroke-width="2.5" stroke-dasharray="4 4"/>
+  <g transform="translate(50,38) rotate(-16)">
+    <path d="M-7,0 L-2,5 L8,-9" fill="none" stroke="#0B1F1A" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
