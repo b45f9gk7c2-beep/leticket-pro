@@ -1009,14 +1009,37 @@
     else resetNav();
   });
 
+  // Emails ayant accès admin/VIP complet (pour test et gestion)
+  const VIP_ADMIN_EMAILS = ['lucaslevy2b@hotmail.com'];
+
   function updateNavForUser(user){
     const btn = document.querySelector('.nav-membre');
     const prenom = user.user_metadata?.prenom || user.email.split('@')[0];
-    if(btn) btn.textContent = '👤 ' + prenom;
+    if(btn){
+      btn.textContent = '👤 ' + prenom;
+      btn.style.color = 'var(--gold-bright)';
+    }
+    // Déblocage VIP si admin
+    if(VIP_ADMIN_EMAILS.includes(user.email)){
+      activateVIP(prenom);
+    }
   }
+
+  function activateVIP(prenom){
+    // Supprime tous les chips VIP et met les cartes en mode déverrouillé
+    document.querySelectorAll('.vip-chip').forEach(el=>el.remove());
+    document.querySelectorAll('.pick-card.locked').forEach(el=>el.classList.remove('locked'));
+    // Bannière de bienvenue VIP discrète
+    const banner = document.createElement('div');
+    banner.style.cssText='position:fixed;bottom:80px;right:20px;z-index:150;background:linear-gradient(135deg,var(--pitch),#0d3324);border:1px solid rgba(201,162,39,0.4);color:var(--paper);padding:14px 20px;border-radius:8px;font-size:0.84rem;box-shadow:0 8px 24px rgba(0,0,0,0.4);max-width:260px;';
+    banner.innerHTML = `<div style="font-family:'Anton';font-size:1rem;color:var(--gold-bright);margin-bottom:4px;">⚡ Accès VIP actif</div><div style="opacity:.8;">Bienvenue ${prenom} — tous les pronos sont déverrouillés.</div>`;
+    document.body.appendChild(banner);
+    setTimeout(()=>{ banner.style.transition='opacity 1s'; banner.style.opacity='0'; setTimeout(()=>banner.remove(),1000); }, 5000);
+  }
+
   function resetNav(){
     const btn = document.querySelector('.nav-membre');
-    if(btn) btn.textContent = 'Espace membre';
+    if(btn){ btn.textContent = 'Espace membre'; btn.style.color = ''; }
   }
 
   // ----- Navigation modals -----
