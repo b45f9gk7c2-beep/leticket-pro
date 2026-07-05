@@ -603,7 +603,7 @@
       </div>
       <div>
         <h5>Compte</h5>
-        <ul><li><a href="#" onclick="openModal('login'); return false;">Connexion</a></li><li><a href="#" onclick="openModal('signup'); return false;">Créer un compte</a></li><li><a href="admin.html" style="opacity:0.5;">Admin</a></li></ul>
+        <ul><li><a href="#" onclick="openModal('login'); return false;">Connexion</a></li><li><a href="#" onclick="openModal('signup'); return false;">Créer un compte</a></li><li id="footer-admin-link" style="display:none;"><a href="admin.html">Admin</a></li></ul>
       </div>
       <div>
         <h5>Jeu responsable</h5>
@@ -676,12 +676,13 @@
     <div id="memberView" style="display:none;">
       <h3>Espace Membre</h3>
       <p class="sub" id="member-welcome"></p>
-      <button class="submit" onclick="doLogout()" style="background:#B5483C;">Se déconnecter</button>
-      <div style="margin-top:12px; text-align:center;">
-        <a href="#tarifs" onclick="closeModal()" style="color:var(--pitch); font-weight:600; font-size:0.9rem;">Gérer mon abonnement →</a>
+      <div id="member-plan-box" style="margin:18px 0; padding:14px 16px; border-radius:6px; background:rgba(11,31,26,0.5); border:1px solid var(--line); text-align:center;">
+        <div id="member-plan" style="font-family:'Space Mono',monospace; font-size:0.82rem; margin-bottom:4px;"></div>
+        <div id="member-plan-action"></div>
       </div>
+      <button class="submit" onclick="doLogout()" style="background:#B5483C; margin-top:4px;">Se déconnecter</button>
       <div style="margin-top:12px; text-align:center;">
-        <a href="#" onclick="switchView('changepass'); return false;" style="color:rgba(244,241,232,0.45); font-size:0.85rem; text-decoration:underline;">Changer mon mot de passe</a>
+        <a href="#" onclick="switchView('changepass'); return false;" style="color:rgba(22,36,30,0.5); font-size:0.82rem; text-decoration:underline;">Changer mon mot de passe</a>
       </div>
     </div>
     <div id="changepassView" style="display:none;">
@@ -699,26 +700,6 @@
   </div>
 </div>
 
-<!-- ===== MODAL : CHECKOUT (placeholder Stripe) ===== -->
-<div class="modal-bg" id="checkoutBg" onclick="if(event.target===this) closeCheckout()">
-  <div class="modal">
-    <button class="close" onclick="closeCheckout()">&times;</button>
-    <h3 id="checkoutTitle">Abonnement</h3>
-    <p class="sub" id="checkoutSub">Paiement sécurisé par carte bancaire.</p>
-    <label>Numéro de carte</label>
-    <input type="text" placeholder="4242 4242 4242 4242" disabled>
-    <label>Titulaire</label>
-    <input type="text" placeholder="J. Dupont" disabled>
-    <button class="submit" onclick="fakePay()">Confirmer le paiement</button>
-    <div class="demo-note">
-      Ceci est une maquette de paiement. Pour encaisser réellement :
-      1) crée un statut d'auto-entrepreneur (ou société) pour pouvoir facturer légalement,
-      2) crée un compte Stripe relié à ton RIB professionnel,
-      3) remplace ce formulaire par un vrai <code>Stripe Checkout</code> / <code>Stripe Billing</code> côté serveur — jamais de carte bancaire saisie directement sans Stripe Elements.
-      Le code est prêt à recevoir cette intégration (voir <code>startCheckout()</code> dans le JS).
-    </div>
-  </div>
-</div>
 
 <div class="cookie-bar" id="cookieBar">
   <p>Ce site utilise uniquement des cookies techniques nécessaires à son fonctionnement (connexion, session). Aucun cookie publicitaire n'est utilisé. <a href="politique-confidentialite.html">En savoir plus</a></p>
@@ -727,13 +708,11 @@
 
 <script>
   // ----- Cookie banner (RGPD) -----
-  // Démo : pas de persistance pour rester compatible avec le rendu artifact.
-  // En production (site auto-hébergé), remplace acceptCookies() par :
-  //   document.cookie = "cookie_consent=accepted; max-age=31536000; path=/";
-  // et vérifie ce cookie au chargement pour ne plus réafficher le bandeau.
   function acceptCookies(){
     document.getElementById('cookieBar').style.display = 'none';
+    try{ localStorage.setItem('cookie_consent','1'); }catch(e){}
   }
+  try{ if(localStorage.getItem('cookie_consent')) document.getElementById('cookieBar').style.display='none'; }catch(e){}
 
   // ----- Pronostics : chargement dynamique -----
   // Source de vérité : window.storage (clé partagée "pronostics:list").
@@ -1033,55 +1012,51 @@
     else resetNav();
   });
 
-  // Email admin (toi seul) — accès total à tous les contenus + gestion
+  // Seul admin — accès total + lien admin visible
   const ADMIN_EMAILS = ['lucaslevy2b@hotmail.com'];
+  window._userPlan = 'none';
+  window._currentUser = null;
 
   function updateNavForUser(user){
+    window._currentUser = user;
     const btn = document.querySelector('.nav-membre');
     const prenom = user.user_metadata?.prenom || user.email.split('@')[0];
-    if(btn){
-      btn.textContent = '👤 ' + prenom;
-      btn.style.color = 'var(--gold-bright)';
-    }
-    // Vérification du plan (défini dans user_metadata via Stripe webhook ou admin)
+    if(btn){ btn.textContent = '👤 ' + prenom; btn.style.color = 'var(--gold-bright)'; }
+
     const plan = user.user_metadata?.plan || 'none';
-    if(ADMIN_EMAILS.includes(user.email)){
-      // Admin = accès total
-      unlockPicks('vip', prenom, true);
+    const isAdmin = ADMIN_EMAILS.includes(user.email);
+
+    if(isAdmin){
+      window._userPlan = 'admin';
+      unlockPicks('vip', prenom);
+      // Afficher lien admin dans footer
+      const adminLi = document.getElementById('footer-admin-link');
+      if(adminLi) adminLi.style.display = '';
     } else if(plan === 'vip'){
-      // Abonné VIP = Tennis + Football
-      unlockPicks('vip', prenom, false);
+      window._userPlan = 'vip';
+      unlockPicks('vip', prenom);
     } else if(plan === 'standard'){
-      // Abonné Standard = Tennis uniquement
-      unlockPicks('standard', prenom, false);
+      window._userPlan = 'standard';
+      unlockPicks('standard', prenom);
+    } else {
+      window._userPlan = 'none';
     }
-    // Sinon : rien déverrouillé, tout reste flou
   }
 
-  // plan = 'vip' | 'standard'
-  // isAdmin = true uniquement pour toi
-  function unlockPicks(plan, prenom, isAdmin){
-    if(plan === 'vip'){
-      // Déverrouille tout (Tennis + Football)
-      document.querySelectorAll('.pick-card.locked').forEach(el=>{
-        el.querySelector('.lock-overlay')?.remove();
-        const inner = el.querySelector('.pick-inner');
-        if(inner) inner.style.filter = 'none';
-        el.classList.remove('locked');
-      });
-    } else if(plan === 'standard'){
-      // Déverrouille uniquement les picks Standard (Tennis)
-      document.querySelectorAll('.pick-card.locked[data-plan="standard"]').forEach(el=>{
-        el.querySelector('.lock-overlay')?.remove();
-        const inner = el.querySelector('.pick-inner');
-        if(inner) inner.style.filter = 'none';
-        el.classList.remove('locked');
-      });
-    }
-    // Bannière de bienvenue
+  function unlockPicks(plan, prenom){
+    const selector = plan === 'vip'
+      ? '.pick-card.locked'
+      : '.pick-card.locked[data-plan="standard"]';
+    document.querySelectorAll(selector).forEach(el=>{
+      el.querySelector('.lock-overlay')?.remove();
+      const inner = el.querySelector('.pick-inner');
+      if(inner) inner.style.filter = 'none';
+      el.classList.remove('locked');
+    });
+    // Bannière discrète
     const msg = plan === 'vip'
-      ? `⚡ Accès VIP — tous les pronos déverrouillés.`
-      : `🎯 Accès Standard — pronos Tennis déverrouillés.`;
+      ? '⚡ Tous les pronos sont déverrouillés.'
+      : '🎯 Pronos Tennis déverrouillés.';
     const banner = document.createElement('div');
     banner.style.cssText = 'position:fixed;bottom:80px;right:20px;z-index:150;background:linear-gradient(135deg,var(--pitch),#0d3324);border:1px solid rgba(201,162,39,0.4);color:var(--paper);padding:14px 20px;border-radius:8px;font-size:0.84rem;box-shadow:0 8px 24px rgba(0,0,0,0.4);max-width:260px;transition:opacity 1s;';
     banner.innerHTML = `<div style="font-family:'Anton';font-size:1rem;color:var(--gold-bright);margin-bottom:4px;">Bienvenue ${prenom} 👋</div><div style="opacity:.8;">${msg}</div>`;
@@ -1089,9 +1064,37 @@
     setTimeout(()=>{ banner.style.opacity='0'; setTimeout(()=>banner.remove(),1000); }, 5000);
   }
 
+  function updateMemberView(user){
+    const prenom = user.user_metadata?.prenom || user.email.split('@')[0];
+    const el = document.getElementById('member-welcome');
+    if(el) el.textContent = 'Bonjour ' + prenom + ' 👋';
+    const planEl = document.getElementById('member-plan');
+    const actionEl = document.getElementById('member-plan-action');
+    const plan = window._userPlan;
+    if(planEl){
+      if(plan === 'admin')    planEl.innerHTML = '<span style="color:var(--gold-bright);font-weight:700;">👑 Admin — accès total</span>';
+      else if(plan === 'vip') planEl.innerHTML = '<span style="color:var(--gold-bright);font-weight:700;">⚡ Abonnement VIP actif</span>';
+      else if(plan === 'standard') planEl.innerHTML = '<span style="color:#7CC9A0;font-weight:700;">🎯 Abonnement Standard actif</span>';
+      else                    planEl.innerHTML = '<span style="color:rgba(22,36,30,0.5);">Aucun abonnement actif</span>';
+    }
+    if(actionEl){
+      if(plan === 'none'){
+        actionEl.innerHTML = `<button onclick="closeModal(); startCheckout('vip');" style="margin-top:10px;background:var(--gold);color:var(--night);border:none;padding:9px 20px;border-radius:4px;font-weight:700;cursor:pointer;font-size:0.84rem;">S'abonner maintenant →</button>`;
+      } else if(plan === 'standard'){
+        actionEl.innerHTML = `<button onclick="closeModal(); startCheckout('vip');" style="margin-top:10px;background:transparent;color:var(--gold-bright);border:1px solid rgba(224,185,58,0.4);padding:7px 16px;border-radius:4px;font-weight:600;cursor:pointer;font-size:0.8rem;">Passer en VIP →</button>`;
+      } else {
+        actionEl.innerHTML = '';
+      }
+    }
+  }
+
   function resetNav(){
+    window._currentUser = null;
+    window._userPlan = 'none';
     const btn = document.querySelector('.nav-membre');
     if(btn){ btn.textContent = 'Espace membre'; btn.style.color = ''; }
+    const adminLi = document.getElementById('footer-admin-link');
+    if(adminLi) adminLi.style.display = 'none';
   }
 
   // ----- Navigation modals -----
@@ -1112,11 +1115,12 @@
   }
   function closeModal(){ document.getElementById('modalBg').classList.remove('show'); }
   function switchView(view){
-    document.getElementById('loginView').style.display = view === 'login' ? 'block' : 'none';
-    document.getElementById('signupView').style.display = view === 'signup' ? 'block' : 'none';
-    document.getElementById('memberView').style.display = view === 'member' ? 'block' : 'none';
-    document.getElementById('resetView').style.display = view === 'reset' ? 'block' : 'none';
+    document.getElementById('loginView').style.display      = view === 'login'      ? 'block' : 'none';
+    document.getElementById('signupView').style.display     = view === 'signup'     ? 'block' : 'none';
+    document.getElementById('memberView').style.display     = view === 'member'     ? 'block' : 'none';
+    document.getElementById('resetView').style.display      = view === 'reset'      ? 'block' : 'none';
     document.getElementById('changepassView').style.display = view === 'changepass' ? 'block' : 'none';
+    if(view === 'member' && window._currentUser) updateMemberView(window._currentUser);
   }
 
   async function doChangePass(){
@@ -1241,11 +1245,6 @@
        5. Stripe héberge la page de paiement (PCI-DSS géré par Stripe, jamais par toi)
        6. Les paiements arrivent sur ton compte Stripe, relié à ton RIB pro via le dashboard Stripe
        Ne JAMAIS faire transiter un numéro de carte par ton propre serveur sans Stripe Elements/Checkout. */
-  }
-  function closeCheckout(){ document.getElementById('checkoutBg').classList.remove('show'); }
-  function fakePay(){
-    closeCheckout();
-    alert("Démo : paiement simulé, aucune carte n'a été débitée. Connecte Stripe Checkout pour activer les vrais paiements.");
   }
 </script>
 
