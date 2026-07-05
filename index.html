@@ -1137,7 +1137,16 @@
       unlockPicks('standard', prenom);
     } else {
       window._userPlan = 'none';
+      showWelcomeBanner(prenom, null);
     }
+  }
+
+  function showWelcomeBanner(prenom, subtitle){
+    const banner = document.createElement('div');
+    banner.style.cssText = 'position:fixed;bottom:80px;right:20px;z-index:150;background:linear-gradient(135deg,var(--pitch),#0d3324);border:1px solid rgba(201,162,39,0.4);color:var(--paper);padding:14px 20px;border-radius:8px;font-size:0.84rem;box-shadow:0 8px 24px rgba(0,0,0,0.4);max-width:260px;transition:opacity 1s;';
+    banner.innerHTML = `<div style="font-family:'Anton';font-size:1rem;color:var(--gold-bright);margin-bottom:${subtitle?'4px':'0'};">Bienvenue ${prenom} 👋</div>${subtitle ? `<div style="opacity:.8;">${subtitle}</div>` : ''}`;
+    document.body.appendChild(banner);
+    setTimeout(()=>{ banner.style.opacity='0'; setTimeout(()=>banner.remove(),1000); }, 5000);
   }
 
   function unlockPicks(plan, prenom){
@@ -1150,15 +1159,9 @@
       if(inner) inner.style.filter = 'none';
       el.classList.remove('locked');
     });
-    // Bannière discrète
-    const msg = plan === 'vip'
-      ? '⚡ Tous les pronos sont déverrouillés.'
-      : '🎯 Pronos Tennis déverrouillés.';
-    const banner = document.createElement('div');
-    banner.style.cssText = 'position:fixed;bottom:80px;right:20px;z-index:150;background:linear-gradient(135deg,var(--pitch),#0d3324);border:1px solid rgba(201,162,39,0.4);color:var(--paper);padding:14px 20px;border-radius:8px;font-size:0.84rem;box-shadow:0 8px 24px rgba(0,0,0,0.4);max-width:260px;transition:opacity 1s;';
-    banner.innerHTML = `<div style="font-family:'Anton';font-size:1rem;color:var(--gold-bright);margin-bottom:4px;">Bienvenue ${prenom} 👋</div><div style="opacity:.8;">${msg}</div>`;
-    document.body.appendChild(banner);
-    setTimeout(()=>{ banner.style.opacity='0'; setTimeout(()=>banner.remove(),1000); }, 5000);
+    // Bannière de bienvenue
+    const label = plan === 'vip' ? 'Accès VIP déverrouillé' : 'Accès Standard déverrouillé';
+    showWelcomeBanner(prenom, label);
   }
 
   function updateMemberView(user){
