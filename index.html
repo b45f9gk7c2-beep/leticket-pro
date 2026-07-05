@@ -1021,8 +1021,19 @@
   // Source de vérité : window.storage (clé partagée "pronostics:list").
   // Mis à jour depuis admin.html. Si le stockage n'est pas disponible
   // (site auto-hébergé hors Claude.ai), on retombe sur DEFAULT_PICKS.
-  const DEFAULT_PICKS = [];
-  // Les pronos sont gérés exclusivement via l'interface admin (admin.html).
+  const DEFAULT_PICKS = [
+    {
+      date:"5 juil. · Tennis · Wimbledon",
+      match:"A. Sabalenka — N. Osaka",
+      marche:"Vainqueur A. Sabalenka",
+      cote:"1.41",
+      statut:"en-cours",
+      locked:true,
+      type:"standard",
+      label:"En cours",
+      analyse:"Sabalenka, numéro 1 mondiale, est dans une forme impeccable sur gazon cette saison. Elle n'a pas perdu un set dans cette édition de Wimbledon et sa puissance de service est particulièrement efficace sur surface rapide. Osaka effectue son retour après une longue absence compétitive — elle manque clairement du rythme de match pour rivaliser face à une joueuse au sommet de sa forme. La cote à 1.41 est solide pour une victoire qui ne fait aucun doute sur le papier. Sélection Standard du jour."
+    }
+  ];
   const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
 
   function getSportBadge(date){
