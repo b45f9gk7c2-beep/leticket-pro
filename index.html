@@ -411,6 +411,7 @@
       <a href="#tarifs">Tarifs</a>
       <a href="#avis">Avis</a>
       <a href="#faq">FAQ</a>
+      <a href="#" id="nav-analyses-link" onclick="openAnalyses(); return false;" style="display:none; color:var(--gold-bright); opacity:1; font-weight:700; letter-spacing:0.03em; border-bottom:1px solid rgba(201,162,39,0.4); padding-bottom:1px;">Analyses</a>
     </div>
     <div>
       <button class="nav-cta" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">S'abonner</button>
@@ -1142,15 +1143,20 @@
     if(isAdmin){
       window._userPlan = 'admin';
       unlockPicks('vip', prenom);
-      // Afficher lien admin dans footer
       const adminLi = document.getElementById('footer-admin-link');
       if(adminLi) adminLi.style.display = '';
+      const navA = document.getElementById('nav-analyses-link');
+      if(navA) navA.style.display = '';
     } else if(plan === 'vip'){
       window._userPlan = 'vip';
       unlockPicks('vip', prenom);
+      const navA = document.getElementById('nav-analyses-link');
+      if(navA) navA.style.display = '';
     } else if(plan === 'standard'){
       window._userPlan = 'standard';
       unlockPicks('standard', prenom);
+      const navA = document.getElementById('nav-analyses-link');
+      if(navA) navA.style.display = '';
     } else {
       window._userPlan = 'none';
       showWelcomeBanner(prenom, null);
@@ -1317,6 +1323,8 @@
     if(btn){ btn.textContent = 'Inscription'; btn.style.color = ''; btn.onclick = function(){ openModal('signup'); }; }
     const adminLi = document.getElementById('footer-admin-link');
     if(adminLi) adminLi.style.display = 'none';
+    const navA = document.getElementById('nav-analyses-link');
+    if(navA) navA.style.display = 'none';
   }
 
   // ----- Navigation modals -----
