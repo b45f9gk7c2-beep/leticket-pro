@@ -875,8 +875,8 @@
       <input id="su-prenom" type="text" placeholder="Ton prénom">
       <label for="su-nom">Nom</label>
       <input id="su-nom" type="text" placeholder="Ton nom">
-      <label for="su-tel">Téléphone</label>
-      <input id="su-tel" type="tel" placeholder="+33 6 00 00 00 00">
+      <label for="su-tel">Téléphone <span style="color:#B5483C;">*</span></label>
+      <input id="su-tel" type="tel" placeholder="+33 6 00 00 00 00" required>
       <label for="su-email">E-mail</label>
       <input id="su-email" type="email" placeholder="toi@exemple.fr">
       <label for="su-pass">Mot de passe</label>
@@ -1873,7 +1873,7 @@
     const errEl = document.getElementById('su-error');
     const okEl = document.getElementById('su-success');
     errEl.style.display = 'none'; okEl.style.display = 'none';
-    if(!prenom || !nom || !email || !pass){ errEl.textContent = 'Remplis tous les champs obligatoires.'; errEl.style.display = 'block'; return; }
+    if(!prenom || !nom || !tel || !email || !pass){ errEl.textContent = 'Remplis tous les champs obligatoires (y compris le téléphone).'; errEl.style.display = 'block'; return; }
     if(pass.length < 8){ errEl.textContent = 'Le mot de passe doit faire au moins 8 caractères.'; errEl.style.display = 'block'; return; }
     if(btn){ btn.disabled = true; btn.textContent = 'Création…'; }
     const {error} = await _supa.auth.signUp({
