@@ -712,6 +712,14 @@
         <div id="member-plan-action" style="padding:10px 16px;display:flex;flex-direction:column;gap:8px;"></div>
       </div>
 
+      <!-- Mes Analyses -->
+      <div id="member-analyses-section" style="display:none;margin-bottom:14px;">
+        <div style="background:#f7f4e9;border-radius:6px;overflow:hidden;">
+          <div style="padding:10px 16px;background:#ede9d8;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#888;">Mes analyses</div>
+          <div id="member-analyses-list" style="display:flex;flex-direction:column;gap:0;"></div>
+        </div>
+      </div>
+
       <!-- Actions -->
       <div style="display:flex;flex-direction:column;gap:8px;">
         <button class="submit" onclick="doLogout()" style="background:#B5483C;">Se déconnecter</button>
@@ -771,19 +779,26 @@
   // (site auto-hébergé hors Claude.ai), on retombe sur DEFAULT_PICKS.
   const DEFAULT_PICKS = [
     // ── STANDARD ──────────────────────────────────────────────────────
-    { date:"5 juil. · Tennis · Wimbledon", match:"A. Sabalenka — N. Osaka", marche:"Vainqueur Sabalenka", cote:"1.43", statut:"en-cours", locked:true, type:"standard", label:"En cours" },
+    { date:"5 juil. · Tennis · Wimbledon", match:"A. Sabalenka — N. Osaka", marche:"Vainqueur Sabalenka", cote:"1.43", statut:"en-cours", locked:true, type:"standard", label:"En cours",
+      analyse:"Sabalenka est en grande forme sur gazon cette saison, elle a remporté ses 3 derniers matchs sur surface rapide sans perdre un set. Osaka revient de blessure et manque clairement de rythme compétitif. La n°1 mondiale reste largement favorite — on joue sa victoire en 2 sets à une cote solide de 1.43." },
     // ── VIP ───────────────────────────────────────────────────────────
-    { date:"4 juil. · CDM 2026 · 16e de finale", match:"Paraguay — France", marche:"Buteur Kylian Mbappé", cote:"1.50", statut:"win", locked:true, label:"Gagné ✅", score:"Paraguay 0 — 1 France" },
-    { date:"4 juil. · CDM 2026 · 16e de finale", match:"Canada — Maroc", marche:"Qualification Maroc", cote:"1.32", statut:"win", locked:true, label:"Gagné ✅", score:"Canada 0 — 3 Maroc" },
-    { date:"5 juil. · CDM 2026 · 16e de finale", match:"Brésil — Norvège", marche:"Qualification Brésil", cote:"1.39", statut:"en-cours", locked:true, label:"En cours" },
-    { date:"5 juil. · CDM 2026 · 16e de finale", match:"Mexique — Angleterre", marche:"Qualification Angleterre", cote:"1.70", statut:"en-cours", locked:true, label:"En cours" },
+    { date:"4 juil. · CDM 2026 · 16e de finale", match:"Paraguay — France", marche:"Buteur Kylian Mbappé", cote:"1.50", statut:"win", locked:true, label:"Gagné ✅", score:"Paraguay 0 — 1 France",
+      analyse:"Mbappé inscrit en moyenne 0.8 but par match en phase à élimination directe. Le Paraguay présente l'une des défenses les plus perméables du tournoi (4 buts encaissés en phase de groupes). Avec les espaces que va laisser le Paraguay pour tenter de marquer, Mbappé aura les occasions nécessaires. Pronostic validé ✅" },
+    { date:"4 juil. · CDM 2026 · 16e de finale", match:"Canada — Maroc", marche:"Qualification Maroc", cote:"1.32", statut:"win", locked:true, label:"Gagné ✅", score:"Canada 0 — 3 Maroc",
+      analyse:"Le Maroc a terminé 1er de son groupe avec une défense solide (1 seul but encaissé). Le Canada, bien qu'hôte, souffre d'un manque de profondeur offensive et a du mal à concrétiser. Le collectif marocain, bien organisé tactiquement, s'impose sans surprise. Pronostic validé ✅" },
+    { date:"5 juil. · CDM 2026 · 16e de finale", match:"Brésil — Norvège", marche:"Qualification Brésil", cote:"1.39", statut:"en-cours", locked:true, label:"En cours",
+      analyse:"Le Brésil est l'équipe la plus impressionnante du tournoi (9 buts marqués, 1 encaissé). La Norvège n'a jamais dépassé ce stade de la compétition. Vinicius Jr et Rodrygo sont en feu offensivement. La cote à 1.39 est très abordable pour une qualification qui ne souffre d'aucun doute sur le papier." },
+    { date:"5 juil. · CDM 2026 · 16e de finale", match:"Mexique — Angleterre", marche:"Qualification Angleterre", cote:"1.70", statut:"en-cours", locked:true, label:"En cours",
+      analyse:"L'Angleterre dispose d'un effectif supérieur sur tous les plans : Bellingham, Saka, Kane en grande forme. Le Mexique n'a inscrit qu'un seul but lors de sa phase de groupes et souffre d'une fragilité défensive notoire. La cote à 1.70 représente une belle valeur pour une qualification quasi-certaine des Three Lions." },
     { date:"5 juil. · CDM 2026 · Combiné VIP", match:"Combiné Foot du jour", marche:"Multi-sélection", cote:"2.36", statut:"en-cours", locked:true, label:"En cours",
+      analyse:"Double mise sur les deux géants de ce soir. Angleterre et Brésil sont tous les deux favoris clairs de leur affiche respective (voir analyses individuelles). En combinant ces deux certitudes, on obtient une cote à 2.36 qui offre un excellent ratio risque/rendement. C'est le pari VIP de la journée.",
       combi:[
         { match:"Mexique — Angleterre", marche:"Qualification Angleterre", cote:"1.70" },
         { match:"Brésil — Norvège", marche:"Qualification Brésil", cote:"1.39" }
       ]
     },
-    { date:"9 juil. · CDM 2026 · Quart de finale", match:"France — Maroc", marche:"Qualification France", cote:"1.65", statut:"en-cours", locked:true, label:"En cours" },
+    { date:"9 juil. · CDM 2026 · Quart de finale", match:"France — Maroc", marche:"Qualification France", cote:"1.65", statut:"en-cours", locked:true, label:"En cours",
+      analyse:"La revanche de 2022. La France arrive plus aguerrie, avec Mbappé au sommet de sa forme et un collectif plus équilibré. Le Maroc reste une équipe solide mais aura du mal à répéter l'exploit du Mondial précédent face à une équipe de France qui n'a rien laissé au hasard dans sa préparation. Cote à 1.65, excellente valeur." },
   ];
   const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
 
@@ -1185,13 +1200,47 @@
       } else if(plan === 'standard'){
         actionEl.innerHTML = `
           <button onclick="closeModal();startCheckout('vip');" style="width:100%;background:linear-gradient(160deg,#2a6e4e,#1a4d35);color:#F4F1E8;border:none;padding:10px;border-radius:4px;font-weight:700;cursor:pointer;font-size:0.85rem;">Passer en VIP — 29,99€/mois →</button>
-          <button onclick="if(confirm('Confirmer l\\'annulation de ton abonnement Standard ?')) alert('Pour annuler, contacte-nous à contact@leticket.pro');" style="width:100%;background:transparent;color:#B5483C;border:1px solid rgba(181,72,60,0.3);padding:9px;border-radius:4px;font-weight:600;cursor:pointer;font-size:0.82rem;">Annuler mon abonnement</button>`;
+          <button onclick="if(confirm('Confirmer l\\'annulation de ton abonnement Standard ?')) alert('Pour annuler, contacte-nous à contact@leticket.pro');" style="width:100%;background:transparent;color:#B5483C;border:1px solid rgba(181,72,60,0.3);padding:9px;border-radius:4px;font-weight:600;cursor:pointer;font-size:0.82rem;">Résilier mon abonnement</button>`;
       } else if(plan === 'vip'){
         actionEl.innerHTML = `
-          <button onclick="if(confirm('Confirmer l\\'annulation de ton abonnement VIP ?')) alert('Pour annuler, contacte-nous à contact@leticket.pro');" style="width:100%;background:transparent;color:#B5483C;border:1px solid rgba(181,72,60,0.3);padding:9px;border-radius:4px;font-weight:600;cursor:pointer;font-size:0.82rem;">Annuler mon abonnement</button>`;
+          <button onclick="if(confirm('Confirmer l\\'annulation de ton abonnement VIP ?')) alert('Pour annuler, contacte-nous à contact@leticket.pro');" style="width:100%;background:transparent;color:#B5483C;border:1px solid rgba(181,72,60,0.3);padding:9px;border-radius:4px;font-weight:600;cursor:pointer;font-size:0.82rem;">Résilier mon abonnement</button>`;
       } else {
         actionEl.innerHTML = '';
       }
+    }
+
+    // ── Section Mes Analyses ──────────────────────────────────────────
+    const analysesSection = document.getElementById('member-analyses-section');
+    const analysesList    = document.getElementById('member-analyses-list');
+    if(analysesSection && analysesList && plan !== 'none'){
+      // Filtrer les picks accessibles selon le plan
+      const accessible = DEFAULT_PICKS.filter(p => {
+        if(!p.analyse) return false;
+        if(plan === 'admin' || plan === 'vip') return true;
+        if(plan === 'standard') return p.type === 'standard';
+        return false;
+      });
+      if(accessible.length){
+        analysesSection.style.display = 'block';
+        const statutColor = s => s === 'win' ? '#2d8f55' : s === 'lose' ? '#B5483C' : '#888';
+        const statutLabel = s => s === 'win' ? 'Gagné ✅' : s === 'lose' ? 'Perdu ❌' : 'En cours';
+        analysesList.innerHTML = accessible.map((p, i) => `
+          <div style="padding:14px 16px;${i < accessible.length-1 ? 'border-bottom:1px solid #e8e3d0;' : ''}">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;">
+              <div>
+                <div style="font-weight:700;font-size:0.86rem;color:var(--ink);">${p.match}</div>
+                <div style="font-size:0.72rem;color:#aaa;margin-top:2px;font-family:'Space Mono',monospace;">${p.date}</div>
+              </div>
+              <span style="flex-shrink:0;font-size:0.72rem;font-weight:700;color:${statutColor(p.statut)};white-space:nowrap;">${p.label || statutLabel(p.statut)}</span>
+            </div>
+            <div style="font-size:0.82rem;font-weight:600;color:var(--pitch);margin-bottom:8px;">${p.marche} · Cote ${p.cote}</div>
+            <div style="font-size:0.81rem;color:#555;line-height:1.65;background:#fff;border-left:3px solid var(--gold);padding:10px 12px;border-radius:0 4px 4px 0;">${p.analyse}</div>
+          </div>`).join('');
+      } else {
+        analysesSection.style.display = 'none';
+      }
+    } else if(analysesSection){
+      analysesSection.style.display = 'none';
     }
   }
 
