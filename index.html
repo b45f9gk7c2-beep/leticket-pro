@@ -210,7 +210,9 @@
     background:var(--night-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
     padding:48px 0;
   }
-  .stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:24px; text-align:center;}
+  .stats-grid{display:flex; justify-content:center; align-items:center; gap:0; text-align:center; flex-wrap:wrap;}
+  .stat{flex:0 0 auto; padding:0 52px; border-right:1px solid var(--line);}
+  .stat:last-child{border-right:none;}
   .stat b{display:block; font-family:'Anton'; font-size:2.6rem; color:var(--gold-bright);}
   .stat span{font-size:0.84rem; color:var(--paper-dim); text-transform:uppercase; letter-spacing:0.06em;}
 
@@ -437,8 +439,8 @@
 <div class="stats-strip">
   <div class="wrap stats-grid">
     <div class="stat"><b>+70%</b><span>Réussite 2026</span></div>
-
-
+    <div class="stat"><b>+200</b><span>Clients satisfaits</span></div>
+    <div class="stat"><b>7</b><span>Pronos cette semaine</span></div>
     <div class="stat"><b>3</b><span>Sports couverts</span></div>
   </div>
 </div>
