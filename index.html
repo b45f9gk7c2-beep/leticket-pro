@@ -1745,6 +1745,7 @@
     const plan = window._userPlan || 'none';
     const accessible = DEFAULT_PICKS.filter(p => {
       if(!p.analyse) return false;
+      if(p.statut === 'win' || p.statut === 'lose') return false; // terminés → visibles dans l'historique public
       if(plan === 'admin' || plan === 'vip') return true;
       if(plan === 'standard') return p.type === 'standard';
       return false;
@@ -1906,8 +1907,10 @@
       }
     }catch(e){}
 
-    const stdPicks = allPicks.filter(p => p.type === 'standard');
-    const vipPicks = allPicks.filter(p => p.type !== 'standard');
+    // Uniquement les pronos en cours — les matchs terminés restent visibles dans l'historique public (transparence)
+    const activePicks = allPicks.filter(p => p.statut !== 'win' && p.statut !== 'lose');
+    const stdPicks = activePicks.filter(p => p.type === 'standard');
+    const vipPicks = activePicks.filter(p => p.type !== 'standard');
 
     const sub = document.getElementById('prono-popup-subtitle');
     if(sub) sub.textContent = plan === 'none' ? 'Abonnez-vous pour accéder aux analyses complètes'
