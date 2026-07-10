@@ -651,19 +651,19 @@
     <div class="ticket-wrap">
       <div class="ticket" style="box-shadow:0 30px 60px -10px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,0,0,0.05), 0 0 40px rgba(31,120,70,0.35);">
         <div class="ticket-top">
-          <span class="tnum">FUN · VIP ⚡</span>
+          <span class="tnum">VIP ⚡</span>
           <span class="tbrand">LE TICKET</span>
         </div>
-        <div class="ticket-match">Mexique — Angleterre</div>
+        <div class="ticket-match">Argentine — Égypte</div>
         <div class="ticket-meta">
           <span>CDM 2026 · Phase finale</span>
-          <span style="color:#2d8f55; font-weight:700;">2 — 3 ✅</span>
+          <span style="color:#2d8f55; font-weight:700;">3 — 2 ✅</span>
         </div>
-        <div class="ticket-row"><span>Les 2 équipes marquent</span><b style="color:#2d8f55;">Oui ✅</b></div>
-        <div class="ticket-row"><span>Buteur</span><b style="color:#2d8f55;">H. Kane ✅</b></div>
-        <div class="ticket-row"><span>Cote</span><b>3.25</b></div>
-        <div class="ticket-row"><span>Mise</span><b>20,00 €</b></div>
-        <div class="ticket-cote"><span class="label">Gains</span><span class="val" style="color:#2d8f55;">65,00 €</span></div>
+        <div class="ticket-row"><span>Vainqueur</span><b style="color:#2d8f55;">Argentine ✅</b></div>
+        <div class="ticket-row"><span>Buteur</span><b style="color:#2d8f55;">L. Messi ✅</b></div>
+        <div class="ticket-row"><span>Cote</span><b>1.78</b></div>
+        <div class="ticket-row"><span>Mise</span><b>45,00 €</b></div>
+        <div class="ticket-cote"><span class="label">Gains</span><span class="val" style="color:#2d8f55;">80,10 €</span></div>
         <div class="stamp" style="top:42%; border-color:#2a7a50; color:#2a7a50; mix-blend-mode:normal;">GAGNÉ ✓</div>
         <div class="ticket-perf"></div>
       </div>
@@ -1097,6 +1097,39 @@
     // ⚠️ RÈGLE DE TRANSPARENCE : ne jamais supprimer un prono terminé.
     // Passer son statut à "win" ou "lose" (+ score) pour qu'il reste dans l'historique public.
     {
+      date:"10 juil. · Football · CDM 2026",
+      match:"Espagne — Belgique",
+      marche:"Double chance — Espagne ou match nul",
+      cote:"1.25",
+      statut:"en-cours",
+      locked:true,
+      type:"vip",
+      label:"En cours",
+      analyse:"L'Espagne aborde ce quart de finale en grand favori, portée par un collectif rodé et une maîtrise technique supérieure à celle de la Belgique, dont la génération dorée montre des signes de fatigue physique et générationnelle. La Belgique reste capable de tenir tête sur un match à élimination directe, mais un exploit complet contre cette Espagne paraît peu probable. La double chance Espagne ou match nul couvre les deux scénarios les plus réalistes et sécurise la sélection avec une cote à 1.25. Pick VIP du jour, orienté sécurité."
+    },
+    {
+      date:"11 juil. · Football · CDM 2026",
+      match:"Norvège — Angleterre",
+      marche:"Les 2 équipes marquent — Oui",
+      cote:"1.66",
+      statut:"en-cours",
+      locked:true,
+      type:"vip",
+      label:"En cours",
+      analyse:"L'Angleterre aligne une attaque parmi les plus prolifiques du tournoi avec Bellingham, Saka et Kane en pleine confiance, mais sa défense a montré des failles face à des offenses rapides. La Norvège, portée par Haaland, dispose d'une force de frappe individuelle capable de trouver la faille contre n'importe quelle défense. Les deux sélections ont marqué dans la grande majorité de leurs matchs cette CDM. Le scénario des deux équipes qui marquent est cohérent avec la physionomie attendue de cette rencontre. Cote à 1.66, sélection VIP du jour."
+    },
+    {
+      date:"12 juil. · Football · CDM 2026",
+      match:"Argentine — Suisse",
+      marche:"Résultat Argentine + Buteur Lionel Messi",
+      cote:"2.20",
+      statut:"en-cours",
+      locked:true,
+      type:"vip",
+      label:"En cours",
+      analyse:"L'Argentine poursuit son parcours sans accroc dans ce tournoi et retrouve une Suisse séduisante mais moins armée offensivement pour un match à élimination directe face à la tenante du titre. Messi reste l'option de tir privilégiée de la Albiceleste et continue d'être décisif à chaque tour. Combiner la victoire argentine avec un but de Messi permet de faire grimper la cote à 2.20 — un bon ratio pour un scénario qui reste le plus probable sur cette affiche. Pick VIP du jour."
+    },
+    {
       date:"6 juil. · Football · CDM 2026",
       match:"Mexique — Angleterre",
       marche:"Les 2 équipes marquent OUI + Buteur Kane",
@@ -1113,33 +1146,35 @@
       match:"Argentine — Égypte",
       marche:"Victoire Argentine + Buteur L. Messi",
       cote:"1.78",
-      statut:"en-cours",
-      locked:true,
+      score:"3 — 2",
+      statut:"win",
+      locked:false,
       type:"vip",
-      label:"En cours",
-      analyse:"L'Argentine championne en titre déroule dans ce tournoi et affronte une Égypte solide défensivement mais très limitée offensivement. La Albiceleste devrait monopoliser le ballon et se procurer une grosse quantité d'occasions. Messi reste le tireur attitré des penaltys et des coups francs, et il est impliqué sur quasiment chaque but argentin dans cette CDM. Combiner la victoire logique de l'Argentine avec un but de Messi permet de faire grimper la cote à 1.78 — un excellent ratio pour un scénario très probable. Pick VIP du jour, coup d'envoi 18h00."
+      label:"Gagné ✅",
+      analyse:"L'Argentine championne en titre déroule dans ce tournoi et affronte une Égypte solide défensivement mais très limitée offensivement. La Albiceleste devrait monopoliser le ballon et se procurer une grosse quantité d'occasions. Messi reste le tireur attitré des penaltys et des coups francs, et il est impliqué sur quasiment chaque but argentin dans cette CDM. Combiner la victoire logique de l'Argentine avec un but de Messi permet de faire grimper la cote à 1.78 — un excellent ratio pour un scénario très probable. Score final 3-2 : l'Argentine s'impose et Messi trouve le chemin des filets — pari validé, cote 1.78 encaissée."
     },
     {
       date:"7 juil. · Football · CDM 2026",
       match:"Suisse — Colombie",
       marche:"Double chance — Colombie ou match nul",
       cote:"1.29",
-      statut:"en-cours",
-      locked:true,
+      score:"0 — 0",
+      statut:"win",
+      locked:false,
       type:"vip",
-      label:"En cours",
-      analyse:"La Colombie réalise un tournoi sérieux, portée par une génération talentueuse et un milieu de terrain qui contrôle le rythme des matchs. La Suisse, appliquée mais sans étincelle offensive, peine à créer du danger contre les blocs organisés. La double chance Colombie ou match nul couvre deux scénarios sur trois dans une affiche qui s'annonce fermée et disputée. La cote à 1.29 est une base fiable, idéale en pick de confiance ou en fond de combiné. Sélection VIP sécurité."
+      label:"Gagné ✅",
+      analyse:"La Colombie réalise un tournoi sérieux, portée par une génération talentueuse et un milieu de terrain qui contrôle le rythme des matchs. La Suisse, appliquée mais sans étincelle offensive, peine à créer du danger contre les blocs organisés. La double chance Colombie ou match nul couvre deux scénarios sur trois dans une affiche qui s'annonce fermée et disputée. La cote à 1.29 est une base fiable, idéale en pick de confiance ou en fond de combiné. Score final 0-0 : la double chance Colombie/nul est validée, cote 1.29 encaissée."
     },
     {
       date:"7 juil. · Tennis · Wimbledon",
       match:"N. Osaka — K. Muchova",
       marche:"Nombre de sets — Plus de 2,5",
       cote:"2.10",
-      statut:"en-cours",
-      locked:true,
+      statut:"lose",
+      locked:false,
       type:"vip",
-      label:"🎉 FUN",
-      analyse:"🎉 PICK FUN DU JOUR — Le pari plaisir, à jouer avec une mise légère uniquement. Osaka retrouve des sensations sur gazon : son service reste une arme majeure qui lui permet de tenir ses mises en jeu même face aux meilleures. Muchova, c'est le contre-style parfait — variations, amorties, montées au filet — mais son jeu tout en toucher met du temps à s'installer. Deux joueuses capables de prendre un set à l'autre sans jamais dominer de bout en bout : le scénario du match en 3 sets est crédible. La cote à 2.10 double la mise si le match va au bout. ⚠️ Rappel : pick 100% FUN — ne misez jamais plus que ce que vous pouvez vous permettre de perdre."
+      label:"🎉 FUN · Perdu ❌",
+      analyse:"🎉 PICK FUN DU JOUR — Le pari plaisir, à jouer avec une mise légère uniquement. Osaka retrouve des sensations sur gazon : son service reste une arme majeure qui lui permet de tenir ses mises en jeu même face aux meilleures. Muchova, c'est le contre-style parfait — variations, amorties, montées au filet — mais son jeu tout en toucher met du temps à s'installer. Deux joueuses capables de prendre un set à l'autre sans jamais dominer de bout en bout : le scénario du match en 3 sets est crédible. Match finalement plié en 2 sets — Muchova s'impose 7-6, 6-4. Le pari plus de 2,5 sets ne passe pas. Ça fait partie du jeu : on affiche nos pertes comme nos gains, et on repart sur l'analyse suivante."
     },
     {
       date:"6 juil. · Football · CDM 2026",
