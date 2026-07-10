@@ -636,7 +636,7 @@
 <section class="hero">
   <div class="wrap">
     <div>
-      <div class="eyebrow">7 pronostics publiés cette semaine</div>
+      <div class="eyebrow"><span id="heroWeekCount">7</span> pronostics publiés cette semaine</div>
       <h1>L'analyse avant<br>le coup d'envoi.</h1>
       <p class="lead">Des pronostics sportifs argumentés, publiés avant chaque match, avec la cote et le raisonnement complet. Pas de promesses miracles — du travail d'analyse, chaque semaine.</p>
       <div class="hero-ctas">
@@ -676,7 +676,7 @@
     <div class="stat"><b id="stripRate">+70%</b><span>Réussite 2026*</span></div>
     <div class="stat"><b id="stripWins">—</b><span>Tickets gagnés</span></div>
     <div class="stat"><b>+11</b><span>Clients satisfaits</span></div>
-    <div class="stat"><b>7</b><span>Pronos cette semaine</span></div>
+    <div class="stat"><b id="stripWeekCount">7</b><span>Pronos cette semaine</span></div>
   </div>
 </div>
 
@@ -848,7 +848,7 @@
       </div>
       <div>
         <h5>Compte</h5>
-        <ul><li><a href="#" onclick="openModal('login'); return false;">Connexion</a></li><li><a href="#" onclick="openModal('signup'); return false;">Créer un compte</a></li><li id="footer-admin-link" style="display:none;"><a href="admin.html">Admin</a></li></ul>
+        <ul><li><a href="#" onclick="openModal('login'); return false;">Connexion</a></li><li><a href="#" onclick="openModal('signup'); return false;">Créer un compte</a></li></ul>
       </div>
       <div>
         <h5>Jeu responsable</h5>
@@ -1345,6 +1345,30 @@
     if(heroRate) heroRate.textContent = rate + '%';
     if(stripRate) stripRate.textContent = rate + '%';
     if(stripWins) stripWins.textContent = wins;
+    // Compteur "pronos cette semaine" : pronos datés des 7 derniers jours
+    const weekCount = countPicksThisWeek(DEFAULT_PICKS);
+    const heroWeek = document.getElementById('heroWeekCount');
+    const stripWeek = document.getElementById('stripWeekCount');
+    if(heroWeek) heroWeek.textContent = weekCount;
+    if(stripWeek) stripWeek.textContent = weekCount;
+  }
+
+  // Parse "7 juil. · Football · CDM 2026" → Date, pour compter les pronos récents.
+  const _MOIS_FR = {janv:0,'févr':1,fevr:1,mars:2,avr:3,mai:4,juin:5,juil:6,'août':7,aout:7,sept:8,oct:9,nov:10,'déc':11,dec:11};
+  function countPicksThisWeek(picks){
+    const now = new Date();
+    const count = picks.filter(p => {
+      const m = (p.date||'').match(/^(\d{1,2})\s+([a-zéûôè]+)/i);
+      if(!m) return false;
+      const mois = _MOIS_FR[m[2].toLowerCase().replace('.','').slice(0,4)];
+      if(mois === undefined) return false;
+      const d = new Date(now.getFullYear(), mois, parseInt(m[1]));
+      // Gestion du passage d'année (prono de décembre consulté en janvier)
+      if(d - now > 90*24*3600*1000) d.setFullYear(d.getFullYear()-1);
+      const age = now - d;
+      return age < 8*24*3600*1000 && age > -8*24*3600*1000;
+    }).length;
+    return count || picks.length;
   }
 
   async function loadPronostics(){
@@ -1485,9 +1509,10 @@
   // Rafraîchissement principal
   async function fetchCDMScores(){
     try{
-      // Récupère aujourd'hui + les 6 prochains jours pour avoir les matchs à venir
+      // Récupère de J-2 à J+4 : les résultats récents (grille "derniers résultats")
+      // ET les matchs à venir
       const dateKeys = Array.from({length:7},(_,i)=>{
-        const d = new Date(); d.setDate(d.getDate()+i);
+        const d = new Date(); d.setDate(d.getDate()+i-2);
         return d.toISOString().slice(0,10).replace(/-/g,'');
       });
       const responses = await Promise.all(
@@ -2185,7 +2210,7 @@
     document.getElementById('li-email').value = '';
     document.getElementById('li-pass').value = '';
     if(_pendingPlan){
-      window.location.href = PLANS[_pendingPlan].url;
+      window.location.href = stripeCheckoutUrl(_pendingPlan, email);
     } else {
       closeModal();
     }
@@ -2287,7 +2312,7 @@
       if(_pendingPlan && PLANS[_pendingPlan]){
         okEl.textContent = '✅ Compte créé ! Redirection vers le paiement…';
         okEl.style.display = 'block';
-        setTimeout(()=>{ window.location.href = PLANS[_pendingPlan].url; }, 1200);
+        setTimeout(()=>{ window.location.href = stripeCheckoutUrl(_pendingPlan, email); }, 1200);
       } else {
         okEl.textContent = '✅ Compte créé et connecté ! Bienvenue ' + prenom + ' 🎉';
         okEl.style.display = 'block';
@@ -2364,6 +2389,13 @@
     vip:      { label: 'Accès VIP', price: '29,99€/mois', url: 'https://buy.stripe.com/4gM5kF2yL66xd6OgMG3ks02' }
   };
   let _pendingPlan = null;
+  // Pré-remplit l'email du compte sur la page Stripe : le webhook associe le
+  // paiement à l'abonné par email — sans ça, un email différent au checkout
+  // laisse l'abonnement inactif.
+  function stripeCheckoutUrl(plan, email){
+    const url = PLANS[plan].url;
+    return email ? url + '?prefilled_email=' + encodeURIComponent(email) : url;
+  }
   // ===== ANIMATIONS & PERFORMANCE =====
 
   // Scroll reveal
@@ -2439,8 +2471,7 @@
       return;
     }
 
-    const p = PLANS[plan];
-    window.location.href = p.url;
+    window.location.href = stripeCheckoutUrl(plan, session.user?.email);
 
     /* INTÉGRATION RÉELLE STRIPE — à faire côté serveur :
        1. Le client clique "Confirmer le paiement"
