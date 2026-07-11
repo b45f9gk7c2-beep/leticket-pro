@@ -286,6 +286,7 @@
   .sport-badge.foot{background:rgba(31,77,58,0.35);color:#7CC9A0;border:1px solid rgba(124,201,160,0.3);}
   .sport-badge.tennis{background:rgba(201,162,39,0.12);color:var(--gold-bright);border:1px solid rgba(224,185,58,0.3);}
   .sport-badge.basket{background:rgba(200,100,30,0.15);color:#E8853A;border:1px solid rgba(232,133,58,0.3);}
+  .sport-badge.mma{background:rgba(200,50,50,0.15);color:#E8736B;border:1px solid rgba(232,115,107,0.3);}
   .combi-rows{margin:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 0;}
   .combi-row{display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;padding:5px 0;gap:8px;}
   .combi-row span:first-child{color:rgba(244,241,232,0.7);}
@@ -1098,6 +1099,28 @@
     // ⚠️ RÈGLE DE TRANSPARENCE : ne jamais supprimer un prono terminé.
     // Passer son statut à "win" ou "lose" (+ score) pour qu'il reste dans l'historique public.
     {
+      date:"11 juil. · MMA · UFC",
+      match:"C. McGregor — M. Holloway",
+      marche:"Vainqueur — Conor McGregor",
+      cote:"3.05",
+      statut:"en-cours",
+      locked:true,
+      type:"vip",
+      label:"🎉 FUN · En cours",
+      analyse:"🎉 PICK FUN DU JOUR — Le pari plaisir, à jouer avec une mise légère uniquement. Sur le papier, McGregor part outsider face à un Holloway au sommet de sa régularité, et la cote à 3.05 le confirme. Mais c'est justement ce qui rend ce pari amusant : l'Irlandais reste l'un des plus gros punchers de sa catégorie, avec une main gauche capable de renverser un combat en une fraction de seconde. Son plan de jeu est limpide — chercher le KO précoce dans les deux premiers rounds, avant que le rythme et le volume de coups de Holloway ne s'installent. Holloway, lui, est un métronome : cardio inépuisable, garde haute, menton solide, il use ses adversaires sur la durée et enchaîne les combinaisons en avançant. Le scénario défavorable pour McGregor, c'est un combat qui s'étire : plus les rounds passent, plus la cadence hawaïenne prend le dessus. Le pari sur McGregor, c'est donc un pari sur l'explosivité et le timing du early finish — à haut risque, mais avec une vraie logique derrière. Exactement l'esprit d'un pick FUN : petite mise, gros frisson. Sélection VIP plaisir du jour."
+    },
+    {
+      date:"11 juil. · MMA · UFC",
+      match:"B. Saint-Denis — P. Pimblett",
+      marche:"Vainqueur — Benoît Saint-Denis",
+      cote:"1.70",
+      statut:"en-cours",
+      locked:true,
+      type:"vip",
+      label:"🎉 FUN · En cours",
+      analyse:"🎉 PICK FUN DU JOUR — Le pari plaisir, à jouer avec une mise légère uniquement. Benoît « God of War » Saint-Denis aborde ce combat en favori logique, et la cote à 1.70 reflète bien le rapport de forces. Le Français a une identité claire : pression constante, lutte de haut niveau, contrôle au sol et menace de soumission à chaque échange. Son gaz et sa densité physique lui permettent de casser le rythme de ses adversaires et de les emmener là où ils sont le moins à l'aise — au corps à corps et au sol. En face, Paddy Pimblett est un client dangereux : striking imprévisible, jeu de soumission redoutable dès qu'un adversaire s'aventure dans sa garde, et une popularité qui le porte. Mais ses deux points d'interrogation sont connus : la défense à la lutte et la gestion du cardio sur la longueur. Le plan de BSD est donc lisible — imposer le combat de grappler, coller Pimblett contre la cage, multiplier les takedowns et faire monter la pression round après round. Si l'Anglais ne trouve pas une soumission opportuniste ou un gros coup en début de combat, le scénario penche nettement du côté du Français. Un pick FUN plus « posé » que l'autre, mais qui garde le piège d'un adversaire capable de finir n'importe qui. Sélection VIP plaisir du jour."
+    },
+    {
       date:"10 juil. · Football · CDM 2026",
       match:"Espagne — Belgique",
       marche:"Double chance — Espagne ou match nul",
@@ -1246,6 +1269,7 @@
     const d = (date||'').toLowerCase();
     if(d.includes('tennis')||d.includes('wimbledon')||d.includes('wta')||d.includes('atp')||d.includes('roland')) return '<span class="sport-badge tennis">🎾 Tennis</span>';
     if(d.includes('basket')||d.includes('nba')) return '<span class="sport-badge basket">🏀 Basket</span>';
+    if(d.includes('mma')||d.includes('ufc')||d.includes('boxe')) return '<span class="sport-badge mma">🥊 MMA</span>';
     if(d.includes('cdm')||d.includes('foot')||d.includes('ligue')||d.includes('finale')||d.includes('quart')||d.includes('demi')) return '<span class="sport-badge foot">⚽ Football</span>';
     return '';
   }
