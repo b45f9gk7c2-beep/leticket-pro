@@ -112,8 +112,11 @@
     box-shadow:0 3px 16px rgba(201,162,39,0.38);
   }
   .nav-cta:hover{transform:translateY(-2px); box-shadow:0 8px 28px rgba(201,162,39,0.55); opacity:0.93;}
-  .burger{display:none; flex-direction:column; gap:4px; cursor:pointer; background:none; border:none;}
-  .burger span{width:24px; height:2px; background:var(--paper);}
+  .burger{display:none; flex-direction:column; gap:4px; cursor:pointer; background:none; border:none; padding:10px;}
+  .burger span{width:24px; height:2px; background:var(--paper); transition:transform .2s, opacity .2s;}
+  .burger.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+  .burger.open span:nth-child(2){opacity:0;}
+  .burger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
 
   /* ---------- CDM 2026 ---------- */
   .cdm-strip{background:var(--night-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:60px 0;}
@@ -2361,11 +2364,14 @@
 
   // ----- Menu mobile -----
   function toggleMobileNav(){
-    const nav = document.getElementById('mobileNav');
-    nav.classList.toggle('open');
+    const open = document.getElementById('mobileNav').classList.toggle('open');
+    document.getElementById('burgerBtn').classList.toggle('open', open);
+    document.getElementById('burgerBtn').setAttribute('aria-label', open ? 'Fermer le menu' : 'Menu');
   }
   function closeMobileNav(){
     document.getElementById('mobileNav').classList.remove('open');
+    document.getElementById('burgerBtn').classList.remove('open');
+    document.getElementById('burgerBtn').setAttribute('aria-label', 'Menu');
   }
 
   // ----- FAQ accordion -----
