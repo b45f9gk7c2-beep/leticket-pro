@@ -615,7 +615,7 @@
       <a href="#" id="nav-analyses-link" onclick="openAnalyses(); return false;" style="display:none; color:var(--gold-bright); opacity:1; font-weight:700; letter-spacing:0.03em; border-bottom:1px solid rgba(201,162,39,0.4); padding-bottom:1px;">Analyses</a>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
-      <button class="nav-cta" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">S'abonner</button>
+      <button class="nav-cta" onclick="startCheckout('vip')">S'abonner</button>
       <button class="burger" id="burgerBtn" onclick="toggleMobileNav()" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
@@ -633,7 +633,7 @@
   <div style="width:100%;height:1px;background:rgba(244,241,232,0.12);margin:4px 0;"></div>
   <button id="mobile-login-btn" onclick="closeMobileNav();openModal('login');" style="background:rgba(244,241,232,0.08);color:var(--paper);border:1px solid rgba(244,241,232,0.3);padding:14px 36px;border-radius:6px;font-size:1rem;font-weight:700;cursor:pointer;width:80%;max-width:260px;">Se connecter</button>
   <button id="mobile-signup-btn" onclick="closeMobileNav();openModal('signup');" style="background:rgba(244,241,232,0.12);color:var(--paper);border:1px solid rgba(244,241,232,0.25);padding:14px 36px;border-radius:6px;font-size:1rem;font-weight:700;cursor:pointer;width:80%;max-width:260px;">Inscription</button>
-  <button class="nav-cta" onclick="closeMobileNav();document.getElementById('tarifs').scrollIntoView({behavior:'smooth'});" style="font-size:1rem;padding:14px 36px;width:80%;max-width:260px;">S'abonner</button>
+  <button class="nav-cta" onclick="closeMobileNav();startCheckout('vip');" style="font-size:1rem;padding:14px 36px;width:80%;max-width:260px;">S'abonner</button>
 </div>
 
 <section class="hero">
