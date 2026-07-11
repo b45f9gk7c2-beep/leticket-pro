@@ -440,6 +440,8 @@
     background:var(--gold); color:var(--night); border:none; padding:11px 22px;
     border-radius:var(--radius); font-weight:700; font-size:0.86rem; cursor:pointer; white-space:nowrap;
   }
+  /* Menu mobile ouvert : le bandeau cookies ne doit pas recouvrir les boutons du menu */
+  body.nav-open .cookie-bar{display:none;}
 
   /* ---------- MODAL TRANSITION ---------- */
   .modal-bg{transition:opacity .18s;}
@@ -2367,11 +2369,13 @@
     const open = document.getElementById('mobileNav').classList.toggle('open');
     document.getElementById('burgerBtn').classList.toggle('open', open);
     document.getElementById('burgerBtn').setAttribute('aria-label', open ? 'Fermer le menu' : 'Menu');
+    document.body.classList.toggle('nav-open', open);
   }
   function closeMobileNav(){
     document.getElementById('mobileNav').classList.remove('open');
     document.getElementById('burgerBtn').classList.remove('open');
     document.getElementById('burgerBtn').setAttribute('aria-label', 'Menu');
+    document.body.classList.remove('nav-open');
   }
 
   // ----- FAQ accordion -----
