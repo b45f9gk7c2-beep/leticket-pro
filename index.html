@@ -1900,8 +1900,15 @@
       const scoreHTML = p.score ? `<div style="font-family:'Anton',sans-serif;font-size:1rem;color:var(--gold);margin:4px 0 2px;">${p.score}</div>` : '';
 
       // Section marché / cote
+      // ⚠️ Sans accès au palier : on ne montre NI le marché NI la cote
+      // (sinon un abonné Standard peut copier les paris VIP sans payer —
+      // seule l'analyse était masquée avant le 11 juillet).
       let marcheSection;
-      if(p.combi && p.combi.length){
+      if(!canAccess){
+        marcheSection = `<div style="padding:12px 16px;border-bottom:1px solid rgba(244,241,232,0.08);text-align:center;">
+          <span style="font-size:0.8rem;opacity:0.45;">🔒 Sélection et cote réservées aux abonnés ${tierLabel}</span>
+        </div>`;
+      } else if(p.combi && p.combi.length){
         const rows = p.combi.map(s=>`
           <div style="display:flex;justify-content:space-between;font-size:0.78rem;padding:4px 0;border-bottom:1px solid rgba(244,241,232,0.06);">
             <span style="opacity:0.7;">${s.match} — <em style="font-style:normal;opacity:0.7;">${s.marche}</em></span>
