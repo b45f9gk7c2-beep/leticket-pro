@@ -1587,11 +1587,8 @@
           if(p.combi) return applyESPNCombi(p, events);
           return applyESPN(p, events);
         });
-        // Mettre à jour uniquement la section des résultats gagnants
-        const winOnly = updatedPicks.filter(p => p.statut === 'win');
-        histGrid.innerHTML = winOnly.length
-          ? `<div class="picks-cards-row">${winOnly.map(renderWinCard).join('')}</div>`
-          : '<p class="mono" style="opacity:0.5;font-size:0.85rem;">Les résultats gagnants s\'afficheront ici.</p>';
+        // Ré-afficher TOUS les pronos terminés (gagnés ET perdus — transparence DGCCRF/ANJ)
+        histGrid.innerHTML = renderAllPicks(updatedPicks);
         // Ré-appliquer l'accès déverrouillé après re-rendu
         const _plan = window._userPlan;
         if(_plan === 'vip' || _plan === 'admin'){
