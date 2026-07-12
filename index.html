@@ -261,6 +261,13 @@
   }
   .prono-tab-btn.active{background:var(--gold);color:var(--night);border-color:var(--gold);}
   .prono-tab-btn.inactive{background:rgba(244,241,232,0.06);color:rgba(244,241,232,0.65);border-color:rgba(244,241,232,0.15);}
+  .sport-chip{
+    padding:6px 14px;border-radius:20px;font-family:'Space Mono',monospace;font-weight:700;
+    font-size:0.72rem;letter-spacing:0.05em;cursor:pointer;border:1px solid;white-space:nowrap;
+    transition:background .15s,color .15s,border-color .15s;
+    background:rgba(244,241,232,0.05);color:rgba(244,241,232,0.6);border-color:rgba(244,241,232,0.14);
+  }
+  .sport-chip.active{background:rgba(224,185,58,0.16);color:var(--gold-bright);border-color:rgba(224,185,58,0.5);}
   .prono-pick-card{
     background:rgba(255,255,255,0.04);border:1px solid rgba(244,241,232,0.1);
     border-radius:8px;overflow:hidden;
@@ -1067,10 +1074,12 @@
       <button onclick="closePronostics()" style="background:rgba(244,241,232,0.08);border:1px solid rgba(244,241,232,0.18);color:var(--paper);width:36px;height:36px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
     </div>
     <!-- Tabs -->
-    <div style="display:flex;gap:10px;margin-bottom:20px;">
+    <div style="display:flex;gap:10px;margin-bottom:14px;">
       <button id="prono-tab-std" class="prono-tab-btn active" onclick="switchPronoTab('standard')">🎯 Standard</button>
       <button id="prono-tab-vip" class="prono-tab-btn inactive" onclick="switchPronoTab('vip')">⚡ VIP</button>
     </div>
+    <!-- Filtres par sport -->
+    <div id="prono-sport-chips" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;"></div>
     <!-- Standard list -->
     <div id="prono-list-std" style="display:flex;flex-direction:column;gap:12px;"></div>
     <!-- VIP list -->
@@ -1999,14 +2008,22 @@
       </div>`;
     };
 
-    // Regroupement par sport : Football et Tennis toujours affichés (même vides),
-    // les autres sports uniquement s'ils ont des picks en cours.
+    // Filtre sport actif (chips « Tous / Football / Tennis / … » du popup)
+    const filter = window._pronoSportFilter || 'all';
+    if(filter !== 'all'){
+      const fPicks = picks.filter(p => getSportKey(p.date) === filter);
+      if(!fPicks.length) return `<p style="font-size:0.85rem;opacity:0.4;text-align:center;padding:24px 0;">Aucun pronostic ${SPORT_TITLES[filter]||''} en cours — prochaine publication à venir.</p>`;
+      return fPicks.map(renderCard).join('');
+    }
+
+    // Vue « Tous » : regroupement par sport. Football et Tennis toujours affichés
+    // (même vides), les autres sports uniquement s'ils ont des picks en cours.
     const SPORT_SECTIONS = [
-      { key:'foot',   titre:'⚽ Football',       toujours:true  },
-      { key:'tennis', titre:'🎾 Tennis',         toujours:true  },
-      { key:'basket', titre:'🏀 Basket',         toujours:false },
-      { key:'mma',    titre:'🥊 MMA',            toujours:false },
-      { key:'autre',  titre:'🏅 Autres sports',  toujours:false }
+      { key:'foot',   toujours:true  },
+      { key:'tennis', toujours:true  },
+      { key:'basket', toujours:false },
+      { key:'mma',    toujours:false },
+      { key:'autre',  toujours:false }
     ];
     const bySport = {};
     picks.forEach(p => {
@@ -2018,7 +2035,7 @@
       const sPicks = bySport[sec.key] || [];
       if(!sPicks.length && !sec.toujours) return '';
       const header = `<div style="display:flex;align-items:center;gap:10px;margin:6px 0 -4px;">
-        <span style="font-family:'Space Mono',monospace;font-size:0.72rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-bright);">${sec.titre}</span>
+        <span onclick="filterPronoSport('${sec.key}')" style="font-family:'Space Mono',monospace;font-size:0.72rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-bright);cursor:pointer;">${SPORT_TITLES[sec.key]}</span>
         <span style="flex:1;height:1px;background:rgba(244,241,232,0.12);"></span>
       </div>`;
       const body = sPicks.length
@@ -2026,6 +2043,38 @@
         : `<p style="font-size:0.8rem;opacity:0.4;margin:0;padding:2px 0 6px;">Aucun pronostic en cours dans ce sport — prochaine publication à venir.</p>`;
       return header + body;
     }).join('');
+  }
+
+  /* ─── Filtres par sport du popup Pronostics ─── */
+  const SPORT_TITLES = {
+    foot:'⚽ Football', tennis:'🎾 Tennis', basket:'🏀 Basket', mma:'🥊 MMA', autre:'🏅 Autres sports'
+  };
+  window._pronoSportFilter = 'all';
+  window._pronoData = null; // {stdPicks, vipPicks, plan} — mémorisé pour re-rendre au clic sur un filtre
+
+  function renderSportChips(){
+    const box = document.getElementById('prono-sport-chips');
+    if(!box || !window._pronoData) return;
+    const d = window._pronoData;
+    const present = new Set(d.stdPicks.concat(d.vipPicks).map(p => getSportKey(p.date)));
+    // Football et Tennis toujours proposés ; les autres sports seulement s'ils ont des picks
+    const keys = ['all','foot','tennis'].concat(['basket','mma','autre'].filter(k => present.has(k)));
+    box.innerHTML = keys.map(k => {
+      const label = k === 'all' ? 'Tous' : SPORT_TITLES[k];
+      const cls = window._pronoSportFilter === k ? 'sport-chip active' : 'sport-chip';
+      return `<button class="${cls}" onclick="filterPronoSport('${k}')">${label}</button>`;
+    }).join('');
+  }
+
+  function filterPronoSport(sport){
+    window._pronoSportFilter = sport;
+    renderSportChips();
+    const d = window._pronoData;
+    if(!d) return;
+    const stdList = document.getElementById('prono-list-std');
+    if(stdList) stdList.innerHTML = renderPronoList(d.stdPicks, d.plan, 'standard');
+    const vipList = document.getElementById('prono-list-vip');
+    if(vipList) vipList.innerHTML = renderPronoList(d.vipPicks, d.plan, 'vip');
   }
 
   function switchPronoTab(tab){
@@ -2077,6 +2126,11 @@
     if(sub) sub.textContent = plan === 'none' ? 'Abonnez-vous pour accéder aux analyses complètes'
       : plan === 'standard' ? 'Abonnement Standard actif'
       : 'Abonnement VIP actif — accès complet';
+
+    // Mémoriser les données puis rendre listes + filtres sport (vue « Tous » par défaut)
+    window._pronoData = { stdPicks, vipPicks, plan };
+    window._pronoSportFilter = 'all';
+    renderSportChips();
 
     const stdList = document.getElementById('prono-list-std');
     if(stdList) stdList.innerHTML = renderPronoList(stdPicks, plan, 'standard');
