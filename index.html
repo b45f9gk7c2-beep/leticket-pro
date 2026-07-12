@@ -1289,13 +1289,23 @@
   ];
   const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
 
-  function getSportBadge(date){
+  function getSportKey(date){
     const d = (date||'').toLowerCase();
-    if(d.includes('tennis')||d.includes('wimbledon')||d.includes('wta')||d.includes('atp')||d.includes('roland')) return '<span class="sport-badge tennis">🎾 Tennis</span>';
-    if(d.includes('basket')||d.includes('nba')) return '<span class="sport-badge basket">🏀 Basket</span>';
-    if(d.includes('mma')||d.includes('ufc')||d.includes('boxe')) return '<span class="sport-badge mma">🥊 MMA</span>';
-    if(d.includes('cdm')||d.includes('foot')||d.includes('ligue')||d.includes('finale')||d.includes('quart')||d.includes('demi')) return '<span class="sport-badge foot">⚽ Football</span>';
-    return '';
+    if(d.includes('tennis')||d.includes('wimbledon')||d.includes('wta')||d.includes('atp')||d.includes('roland')) return 'tennis';
+    if(d.includes('basket')||d.includes('nba')) return 'basket';
+    if(d.includes('mma')||d.includes('ufc')||d.includes('boxe')) return 'mma';
+    if(d.includes('cdm')||d.includes('foot')||d.includes('ligue')||d.includes('finale')||d.includes('quart')||d.includes('demi')) return 'foot';
+    return 'autre';
+  }
+
+  function getSportBadge(date){
+    const badges = {
+      tennis:'<span class="sport-badge tennis">🎾 Tennis</span>',
+      basket:'<span class="sport-badge basket">🏀 Basket</span>',
+      mma:'<span class="sport-badge mma">🥊 MMA</span>',
+      foot:'<span class="sport-badge foot">⚽ Football</span>'
+    };
+    return badges[getSportKey(date)] || '';
   }
 
   function renderPick(p){
@@ -1918,7 +1928,7 @@
 
     if(!picks.length) return `<p style="font-size:0.85rem;opacity:0.4;text-align:center;padding:24px 0;">Aucun pronostic publié pour le moment.</p>`;
 
-    return picks.map(p => {
+    const renderCard = p => {
       const tagLabel  = p.label || statLabel(p.statut);
       const scoreHTML = p.score ? `<div style="font-family:'Anton',sans-serif;font-size:1rem;color:var(--gold);margin:4px 0 2px;">${p.score}</div>` : '';
 
@@ -1987,6 +1997,34 @@
         ${analyseSection}
         ${telegramBtn}
       </div>`;
+    };
+
+    // Regroupement par sport : Football et Tennis toujours affichés (même vides),
+    // les autres sports uniquement s'ils ont des picks en cours.
+    const SPORT_SECTIONS = [
+      { key:'foot',   titre:'⚽ Football',       toujours:true  },
+      { key:'tennis', titre:'🎾 Tennis',         toujours:true  },
+      { key:'basket', titre:'🏀 Basket',         toujours:false },
+      { key:'mma',    titre:'🥊 MMA',            toujours:false },
+      { key:'autre',  titre:'🏅 Autres sports',  toujours:false }
+    ];
+    const bySport = {};
+    picks.forEach(p => {
+      const k = getSportKey(p.date);
+      (bySport[k] = bySport[k] || []).push(p);
+    });
+
+    return SPORT_SECTIONS.map(sec => {
+      const sPicks = bySport[sec.key] || [];
+      if(!sPicks.length && !sec.toujours) return '';
+      const header = `<div style="display:flex;align-items:center;gap:10px;margin:6px 0 -4px;">
+        <span style="font-family:'Space Mono',monospace;font-size:0.72rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-bright);">${sec.titre}</span>
+        <span style="flex:1;height:1px;background:rgba(244,241,232,0.12);"></span>
+      </div>`;
+      const body = sPicks.length
+        ? sPicks.map(renderCard).join('')
+        : `<p style="font-size:0.8rem;opacity:0.4;margin:0;padding:2px 0 6px;">Aucun pronostic en cours dans ce sport — prochaine publication à venir.</p>`;
+      return header + body;
     }).join('');
   }
 
