@@ -294,6 +294,7 @@
   .sport-badge.tennis{background:rgba(201,162,39,0.12);color:var(--gold-bright);border:1px solid rgba(224,185,58,0.3);}
   .sport-badge.basket{background:rgba(200,100,30,0.15);color:#E8853A;border:1px solid rgba(232,133,58,0.3);}
   .sport-badge.mma{background:rgba(200,50,50,0.15);color:#E8736B;border:1px solid rgba(232,115,107,0.3);}
+  .sport-badge.baseball{background:rgba(90,140,200,0.15);color:#7EA8D8;border:1px solid rgba(126,168,216,0.3);}
   .combi-rows{margin:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 0;}
   .combi-row{display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;padding:5px 0;gap:8px;}
   .combi-row span:first-child{color:rgba(244,241,232,0.7);}
@@ -1303,6 +1304,7 @@
     if(d.includes('tennis')||d.includes('wimbledon')||d.includes('wta')||d.includes('atp')||d.includes('roland')) return 'tennis';
     if(d.includes('basket')||d.includes('nba')) return 'basket';
     if(d.includes('mma')||d.includes('ufc')||d.includes('boxe')) return 'mma';
+    if(d.includes('baseball')||d.includes('mlb')) return 'baseball';
     if(d.includes('cdm')||d.includes('foot')||d.includes('ligue')||d.includes('finale')||d.includes('quart')||d.includes('demi')) return 'foot';
     return 'autre';
   }
@@ -1312,6 +1314,7 @@
       tennis:'<span class="sport-badge tennis">🎾 Tennis</span>',
       basket:'<span class="sport-badge basket">🏀 Basket</span>',
       mma:'<span class="sport-badge mma">🥊 MMA</span>',
+      baseball:'<span class="sport-badge baseball">⚾ Baseball</span>',
       foot:'<span class="sport-badge foot">⚽ Football</span>'
     };
     return badges[getSportKey(date)] || '';
@@ -2012,18 +2015,24 @@
     const filter = window._pronoSportFilter || 'all';
     if(filter !== 'all'){
       const fPicks = picks.filter(p => getSportKey(p.date) === filter);
-      if(!fPicks.length) return `<p style="font-size:0.85rem;opacity:0.4;text-align:center;padding:24px 0;">Aucun pronostic ${SPORT_TITLES[filter]||''} en cours — prochaine publication à venir.</p>`;
+      if(!fPicks.length){
+        // Le baseball est une exclusivité VIP : message dédié côté Standard
+        if(filter === 'baseball' && tier === 'standard') return `<p style="font-size:0.85rem;opacity:0.4;text-align:center;padding:24px 0;">⚾ Les pronos Baseball sont une exclusivité VIP — retrouvez-les dans l'onglet ⚡ VIP.</p>`;
+        return `<p style="font-size:0.85rem;opacity:0.4;text-align:center;padding:24px 0;">Aucun pronostic ${SPORT_TITLES[filter]||''} en cours — prochaine publication à venir.</p>`;
+      }
       return fPicks.map(renderCard).join('');
     }
 
     // Vue « Tous » : regroupement par sport. Football et Tennis toujours affichés
-    // (même vides), les autres sports uniquement s'ils ont des picks en cours.
+    // (même vides), Baseball toujours affiché côté VIP uniquement (exclusivité VIP),
+    // les autres sports uniquement s'ils ont des picks en cours.
     const SPORT_SECTIONS = [
-      { key:'foot',   toujours:true  },
-      { key:'tennis', toujours:true  },
-      { key:'basket', toujours:false },
-      { key:'mma',    toujours:false },
-      { key:'autre',  toujours:false }
+      { key:'foot',     toujours:true  },
+      { key:'tennis',   toujours:true  },
+      { key:'baseball', toujours: tier === 'vip' },
+      { key:'basket',   toujours:false },
+      { key:'mma',      toujours:false },
+      { key:'autre',    toujours:false }
     ];
     const bySport = {};
     picks.forEach(p => {
@@ -2047,7 +2056,7 @@
 
   /* ─── Filtres par sport du popup Pronostics ─── */
   const SPORT_TITLES = {
-    foot:'⚽ Football', tennis:'🎾 Tennis', basket:'🏀 Basket', mma:'🥊 MMA', autre:'🏅 Autres sports'
+    foot:'⚽ Football', tennis:'🎾 Tennis', baseball:'⚾ Baseball', basket:'🏀 Basket', mma:'🥊 MMA', autre:'🏅 Autres sports'
   };
   window._pronoSportFilter = 'all';
   window._pronoData = null; // {stdPicks, vipPicks, plan} — mémorisé pour re-rendre au clic sur un filtre
@@ -2057,12 +2066,13 @@
     if(!box || !window._pronoData) return;
     const d = window._pronoData;
     const present = new Set(d.stdPicks.concat(d.vipPicks).map(p => getSportKey(p.date)));
-    // Football et Tennis toujours proposés ; les autres sports seulement s'ils ont des picks
-    const keys = ['all','foot','tennis'].concat(['basket','mma','autre'].filter(k => present.has(k)));
+    // Football, Tennis et Baseball (exclu VIP) toujours proposés ; les autres sports seulement s'ils ont des picks
+    const keys = ['all','foot','tennis','baseball'].concat(['basket','mma','autre'].filter(k => present.has(k)));
     box.innerHTML = keys.map(k => {
       const label = k === 'all' ? 'Tous' : SPORT_TITLES[k];
+      const vipTag = k === 'baseball' ? ' <span style="font-size:0.58rem;background:var(--gold);color:var(--night);padding:1px 5px;border-radius:8px;font-weight:700;vertical-align:middle;">VIP</span>' : '';
       const cls = window._pronoSportFilter === k ? 'sport-chip active' : 'sport-chip';
-      return `<button class="${cls}" onclick="filterPronoSport('${k}')">${label}</button>`;
+      return `<button class="${cls}" onclick="filterPronoSport('${k}')">${label}${vipTag}</button>`;
     }).join('');
   }
 
