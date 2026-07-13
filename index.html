@@ -665,16 +665,16 @@
     <div class="ticket-wrap">
       <div class="ticket" style="box-shadow:0 30px 60px -10px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,0,0,0.05), 0 0 40px rgba(31,120,70,0.35);">
         <div class="ticket-top">
-          <span class="tnum">VIP ⚡</span>
+          <span class="tnum" id="heroTicketTier">VIP ⚡</span>
           <span class="tbrand">LE TICKET</span>
         </div>
-        <div class="ticket-match">Norvège — Angleterre</div>
+        <div class="ticket-match" id="heroTicketMatch">Norvège — Angleterre</div>
         <div class="ticket-meta">
-          <span>CDM 2026 · Quart de finale</span>
-          <span style="color:#2d8f55; font-weight:700;">1 — 2 a.p. ✅</span>
+          <span id="heroTicketComp">CDM 2026 · Quart de finale</span>
+          <span id="heroTicketScore" style="color:#2d8f55; font-weight:700;">1 — 2 a.p. ✅</span>
         </div>
-        <div class="ticket-row"><span>Les 2 équipes marquent</span><b style="color:#2d8f55;">Oui ✅</b></div>
-        <div class="ticket-row"><span>Cote</span><b>1.66</b></div>
+        <div class="ticket-row"><span id="heroTicketMarche">Les 2 équipes marquent</span><b style="color:#2d8f55;" id="heroTicketValue">Oui ✅</b></div>
+        <div class="ticket-row"><span>Cote</span><b id="heroTicketCote">1.66</b></div>
         <div class="stamp" style="top:42%; border-color:#2a7a50; color:#2a7a50; opacity:0.55; mix-blend-mode:multiply;">GAGNÉ ✓</div>
         <div class="ticket-perf"></div>
       </div>
@@ -1390,6 +1390,7 @@
   function renderAllPicks(picks){
     const settled = picks.filter(p => p.statut === 'win' || p.statut === 'lose');
     renderStatsBar(settled);
+    renderHeroTicket(settled);
     if(!settled.length){
       return '<p class="mono" style="opacity:0.5;font-size:0.85rem;">Les résultats (gagnés et perdus) s\'afficheront ici.</p>';
     }
@@ -1451,6 +1452,52 @@
       return age < 8*24*3600*1000 && age > -8*24*3600*1000;
     }).length;
     return count || picks.length;
+  }
+
+  // Parse la date d'un prono en objet Date (pour trier les gagnants par récence)
+  function _pickDate(p){
+    const m = (p.date||'').match(/^(\d{1,2})\s+([a-zéûôè]+)/i);
+    if(!m) return null;
+    const mois = _MOIS_FR[m[2].toLowerCase().replace('.','').slice(0,4)];
+    if(mois === undefined) return null;
+    const now = new Date();
+    const d = new Date(now.getFullYear(), mois, parseInt(m[1]));
+    if(d - now > 90*24*3600*1000) d.setFullYear(d.getFullYear()-1);
+    return d;
+  }
+
+  // Ticket hero (page d'accueil) = dernier ticket GAGNANT, mis à jour automatiquement.
+  // Se synchronise avec l'historique : dès qu'un prono passe à "win", il remonte ici s'il
+  // est le plus récent. Jamais de montant en euros (règle juridique).
+  function renderHeroTicket(picks){
+    const wins = (picks || DEFAULT_PICKS).filter(p => p.statut === 'win');
+    if(!wins.length) return;
+    wins.sort((a,b) => {
+      const da = _pickDate(a), db = _pickDate(b);
+      return (db ? db.getTime() : 0) - (da ? da.getTime() : 0);
+    });
+    const p = wins[0];
+    const set = (id, txt) => { const el = document.getElementById(id); if(el) el.textContent = txt; };
+
+    set('heroTicketTier', p.type === 'standard' ? '🎯 STANDARD' : 'VIP ⚡');
+    set('heroTicketMatch', p.match);
+    // Compétition = segments de la date après le jour et le sport ("11 juil. · Football · CDM 2026" → "CDM 2026")
+    const seg = (p.date || '').split('·').map(s => s.trim());
+    set('heroTicketComp', seg.slice(2).join(' · ') || seg.slice(-1)[0] || '');
+    // Score (facultatif — jamais inventé) : masqué si absent
+    const scoreEl = document.getElementById('heroTicketScore');
+    if(scoreEl){
+      if(p.score){ scoreEl.textContent = p.score + ' ✅'; scoreEl.style.display = ''; }
+      else scoreEl.style.display = 'none';
+    }
+    // Marché : "label — valeur" scindé pour garder l'affichage libellé / sélection
+    const parts = (p.marche || '').split('—');
+    const label = parts.length >= 2 ? parts[0].trim() : (p.marche || '');
+    const value = parts.length >= 2 ? parts.slice(1).join('—').trim() : '';
+    set('heroTicketMarche', label);
+    const valEl = document.getElementById('heroTicketValue');
+    if(valEl) valEl.textContent = (value ? value + ' ' : '') + '✅';
+    set('heroTicketCote', p.cote);
   }
 
   async function loadPronostics(){
