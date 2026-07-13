@@ -2015,21 +2015,16 @@
     const filter = window._pronoSportFilter || 'all';
     if(filter !== 'all'){
       const fPicks = picks.filter(p => getSportKey(p.date) === filter);
-      if(!fPicks.length){
-        // Le baseball est une exclusivité VIP : message dédié côté Standard
-        if(filter === 'baseball' && tier === 'standard') return `<p style="font-size:0.85rem;opacity:0.4;text-align:center;padding:24px 0;">⚾ Les pronos Baseball sont une exclusivité VIP — retrouvez-les dans l'onglet ⚡ VIP.</p>`;
-        return `<p style="font-size:0.85rem;opacity:0.4;text-align:center;padding:24px 0;">Aucun pronostic ${SPORT_TITLES[filter]||''} en cours — prochaine publication à venir.</p>`;
-      }
+      if(!fPicks.length) return `<p style="font-size:0.85rem;opacity:0.4;text-align:center;padding:24px 0;">Aucun pronostic ${SPORT_TITLES[filter]||''} en cours — prochaine publication à venir.</p>`;
       return fPicks.map(renderCard).join('');
     }
 
-    // Vue « Tous » : regroupement par sport. Football et Tennis toujours affichés
-    // (même vides), Baseball toujours affiché côté VIP uniquement (exclusivité VIP),
-    // les autres sports uniquement s'ils ont des picks en cours.
+    // Vue « Tous » : regroupement par sport. Football, Tennis et Baseball toujours
+    // affichés (même vides), les autres sports uniquement s'ils ont des picks en cours.
     const SPORT_SECTIONS = [
       { key:'foot',     toujours:true  },
       { key:'tennis',   toujours:true  },
-      { key:'baseball', toujours: tier === 'vip' },
+      { key:'baseball', toujours:true  },
       { key:'basket',   toujours:false },
       { key:'mma',      toujours:false },
       { key:'autre',    toujours:false }
@@ -2066,13 +2061,12 @@
     if(!box || !window._pronoData) return;
     const d = window._pronoData;
     const present = new Set(d.stdPicks.concat(d.vipPicks).map(p => getSportKey(p.date)));
-    // Football, Tennis et Baseball (exclu VIP) toujours proposés ; les autres sports seulement s'ils ont des picks
+    // Football, Tennis et Baseball toujours proposés ; les autres sports seulement s'ils ont des picks
     const keys = ['all','foot','tennis','baseball'].concat(['basket','mma','autre'].filter(k => present.has(k)));
     box.innerHTML = keys.map(k => {
       const label = k === 'all' ? 'Tous' : SPORT_TITLES[k];
-      const vipTag = k === 'baseball' ? ' <span style="font-size:0.58rem;background:var(--gold);color:var(--night);padding:1px 5px;border-radius:8px;font-weight:700;vertical-align:middle;">VIP</span>' : '';
       const cls = window._pronoSportFilter === k ? 'sport-chip active' : 'sport-chip';
-      return `<button class="${cls}" onclick="filterPronoSport('${k}')">${label}${vipTag}</button>`;
+      return `<button class="${cls}" onclick="filterPronoSport('${k}')">${label}</button>`;
     }).join('');
   }
 
