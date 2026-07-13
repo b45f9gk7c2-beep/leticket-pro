@@ -1987,11 +1987,10 @@
 
   /* ─── POPUP PRONOSTICS ─── */
   function renderPronoList(picks, plan, tier){
-    const canAccess = tier === 'standard'
-      ? (plan==='standard'||plan==='vip'||plan==='admin')
-      : (plan==='vip'||plan==='admin');
-    const tierLabel = tier === 'standard' ? 'Standard' : 'VIP';
-
+    // Accès calculé PAR PICK selon son type (voir renderCard) : un pick standard
+    // est accessible aux abonnés Standard ET VIP, un pick VIP uniquement aux VIP.
+    // L'onglet VIP liste TOUS les pronos actifs et déverrouille au cas par cas
+    // (c'est le principe « VIP = accès à tout », y compris les picks Standard).
     const statColor = s => s==='win'?'#4ade80':s==='lose'?'#f87171':'rgba(244,241,232,0.55)';
     const statBg    = s => s==='win'?'rgba(74,222,128,0.12)':s==='lose'?'rgba(248,113,113,0.1)':'rgba(244,241,232,0.06)';
     const statLabel = s => s==='win'?'Gagné ✅':s==='lose'?'Perdu ❌':'En cours';
@@ -1999,6 +1998,11 @@
     if(!picks.length) return `<p style="font-size:0.85rem;opacity:0.4;text-align:center;padding:24px 0;">Aucun pronostic publié pour le moment.</p>`;
 
     const renderCard = p => {
+      const pickTier  = p.type === 'standard' ? 'standard' : 'vip';
+      const canAccess = pickTier === 'standard'
+        ? (plan==='standard'||plan==='vip'||plan==='admin')
+        : (plan==='vip'||plan==='admin');
+      const tierLabel = pickTier === 'standard' ? 'Standard' : 'VIP';
       const tagLabel  = p.label || statLabel(p.statut);
       const scoreHTML = p.score ? `<div style="font-family:'Anton',sans-serif;font-size:1rem;color:var(--gold);margin:4px 0 2px;">${p.score}</div>` : '';
 
@@ -2041,13 +2045,13 @@
         analyseSection = `<div style="padding:14px 16px;text-align:center;">
           <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(244,241,232,0.25);margin-bottom:10px;">Analyse</div>
           <p style="font-size:0.8rem;opacity:0.4;margin:0 0 12px;">Réservée aux abonnés ${tierLabel}</p>
-          <button onclick="closePronostics();startCheckout('${tier}')" style="background:var(--gold);color:var(--night);border:none;padding:9px 20px;border-radius:4px;font-weight:700;font-size:0.78rem;cursor:pointer;letter-spacing:0.04em;font-family:'Anton',sans-serif;">S'abonner →</button>
+          <button onclick="closePronostics();startCheckout('${pickTier}')" style="background:var(--gold);color:var(--night);border:none;padding:9px 20px;border-radius:4px;font-weight:700;font-size:0.78rem;cursor:pointer;letter-spacing:0.04em;font-family:'Anton',sans-serif;">S'abonner →</button>
         </div>`;
       } else {
         analyseSection = '';
       }
 
-      const telegramBtn = (tier === 'vip' && canAccess) ? `<div style="padding:12px 16px;border-top:1px solid rgba(244,241,232,0.08);text-align:center;">
+      const telegramBtn = (pickTier === 'vip' && canAccess) ? `<div style="padding:12px 16px;border-top:1px solid rgba(244,241,232,0.08);text-align:center;">
         <a href="https://t.me/+0b8B2FO4exdmMGZk" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:rgba(41,171,226,0.12);color:#29ABE2;border:1px solid rgba(41,171,226,0.3);padding:9px 20px;border-radius:6px;font-size:0.82rem;font-weight:700;text-decoration:none;letter-spacing:0.03em;font-family:'Anton',sans-serif;transition:background .15s;" onmouseover="this.style.background='rgba(41,171,226,0.22)'" onmouseout="this.style.background='rgba(41,171,226,0.12)'">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 14.45l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.109z"/></svg>
           Rejoindre le canal Telegram
@@ -2182,7 +2186,9 @@
     // Uniquement les pronos en cours — les matchs terminés restent visibles dans l'historique public (transparence)
     const activePicks = allPicks.filter(p => p.statut !== 'win' && p.statut !== 'lose');
     const stdPicks = activePicks.filter(p => p.type === 'standard');
-    const vipPicks = activePicks.filter(p => p.type !== 'standard');
+    // VIP = accès à TOUT : l'onglet VIP liste tous les pronos actifs (standard inclus).
+    // Le verrouillage se fait par pick selon son type (voir renderPronoList/renderCard).
+    const vipPicks = activePicks;
 
     const sub = document.getElementById('prono-popup-subtitle');
     if(sub) sub.textContent = plan === 'none' ? 'Abonnez-vous pour accéder aux analyses complètes'
