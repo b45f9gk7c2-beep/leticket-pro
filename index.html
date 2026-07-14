@@ -1310,6 +1310,14 @@
   ];
   const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
 
+  // Échappement HTML — défense en profondeur pour toute donnée externe (API ESPN)
+  // insérée via innerHTML. Empêche une éventuelle injection si l'API renvoyait du HTML.
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => (
+      { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+    ));
+  }
+
   function getSportKey(date){
     const d = (date||'').toLowerCase();
     if(d.includes('tennis')||d.includes('wimbledon')||d.includes('wta')||d.includes('atp')||d.includes('roland')) return 'tennis';
@@ -1683,16 +1691,16 @@
           const home  = comp.competitors.find(c=>c.homeAway==='home')||comp.competitors[0];
           const away  = comp.competitors.find(c=>c.homeAway==='away')||comp.competitors[1];
           const st    = comp.status;
-          const homeFR = TEAM_FR[home.team.displayName]||home.team.displayName;
-          const awayFR = TEAM_FR[away.team.displayName]||away.team.displayName;
+          const homeFR = esc(TEAM_FR[home.team.displayName]||home.team.displayName);
+          const awayFR = esc(TEAM_FR[away.team.displayName]||away.team.displayName);
           const isLive = st.type.state==='in';
           const isDone = st.type.completed;
           let scoreHTML, tagHTML;
           if(isLive){
-            scoreHTML = `<div class="match-score">${home.score} — ${away.score}</div>`;
-            tagHTML   = `<span class="match-tag" style="background:rgba(181,72,60,0.2);color:#E08376;border:1px solid var(--lose);">🔴 ${st.type.shortDetail||'En direct'}</span>`;
+            scoreHTML = `<div class="match-score">${esc(home.score)} — ${esc(away.score)}</div>`;
+            tagHTML   = `<span class="match-tag" style="background:rgba(181,72,60,0.2);color:#E08376;border:1px solid var(--lose);">🔴 ${esc(st.type.shortDetail||'En direct')}</span>`;
           } else if(isDone){
-            scoreHTML = `<div class="match-score">${home.score} — ${away.score}</div>`;
+            scoreHTML = `<div class="match-score">${esc(home.score)} — ${esc(away.score)}</div>`;
             tagHTML   = `<span class="match-tag done">Terminé</span>`;
           } else {
             const evDate = new Date(ev.date);
@@ -1703,7 +1711,7 @@
           }
           const dateStr  = new Date(ev.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short',timeZone:'Europe/Paris'});
           const noteHead = (ev.notes||[]).find(n=>n.type==='event')?.headline||'';
-          const roundStr = roundFR(noteHead)||'CDM 2026';
+          const roundStr = esc(roundFR(noteHead)||'CDM 2026');
           return `<div class="match-card">
             <div class="match-group">${roundStr} · ${dateStr}</div>
             <div class="match-teams">${homeFR} — ${awayFR}</div>
