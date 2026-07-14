@@ -1,0 +1,3 @@
+# LE TICKET — Blocage des chemins sensibles (Cloudflare Pages)
+# Renvoie 404 sur toute tentative d'accès au dossier .git
+/.git/*  /  404
