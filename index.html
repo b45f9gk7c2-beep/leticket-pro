@@ -294,6 +294,7 @@
   .sport-badge.tennis{background:rgba(201,162,39,0.12);color:var(--gold-bright);border:1px solid rgba(224,185,58,0.3);}
   .sport-badge.basket{background:rgba(200,100,30,0.15);color:#E8853A;border:1px solid rgba(232,133,58,0.3);}
   .sport-badge.mma{background:rgba(200,50,50,0.15);color:#E8736B;border:1px solid rgba(232,115,107,0.3);}
+  .sport-badge.ufc{background:rgba(200,50,50,0.15);color:#E8736B;border:1px solid rgba(232,115,107,0.3);}
   .sport-badge.baseball{background:rgba(90,140,200,0.15);color:#7EA8D8;border:1px solid rgba(126,168,216,0.3);}
   .combi-rows{margin:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 0;}
   .combi-row{display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;padding:5px 0;gap:8px;}
@@ -1109,6 +1110,17 @@
     // ⚠️ RÈGLE DE TRANSPARENCE : ne jamais supprimer un prono terminé.
     // Passer son statut à "win" ou "lose" (+ score) pour qu'il reste dans l'historique public.
     {
+      date:"20 juil. · Tennis · Prague",
+      match:"N. Bartunkova — Y. Yuan",
+      marche:"Vainqueur — N. Bartunkova",
+      cote:"1.25",
+      statut:"en-cours",
+      locked:true,
+      type:"standard",
+      label:"En cours",
+      analyse:"À domicile ou presque, Nikola Bartunkova — tête de série et grand espoir du tennis tchèque — aborde ce match en favorite logique face à Yue Yuan, et la cote à 1.25 le confirme. La jeune Tchèque s'appuie sur un tennis complet et agressif, une prise de balle précoce et une solidité mentale au-dessus de son âge qui lui permettent de dérouler face à des adversaires moins bien classées. Yue Yuan est une joueuse d'expérience, capable de bien défendre du fond du court, mais son jeu manque de temps forts pour réellement inquiéter une adversaire qui impose son rythme d'entrée de jeu. Bartunkova a l'habitude de prendre le match par le col dès les premiers jeux, de servir avec un bon pourcentage de premières balles et de convertir ses occasions de break. Sur une opposition où elle a le contrôle du tempo et une marge technique nette, la victoire de la Tchèque est le scénario largement le plus probable. À 1.25, c'est une base fiable, idéale en pick de confiance ou en fond de combiné. Sélection Standard du jour."
+    },
+    {
       date:"17 juil. · Tennis · Mallorca",
       match:"N. Borges — L. Darderi",
       marche:"Nombre de jeux — Plus de 19,5",
@@ -1179,7 +1191,7 @@
       analyse:"Cette demi-finale de CDM 2026 oppose les deux meilleures attaques encore en lice, et c'est précisément ce qui fait la solidité de ce « Les deux équipes marquent ». L'Espagne trouve le chemin des filets dans la quasi-totalité de ses matchs du tournoi : sa possession asphyxiante finit toujours par créer des occasions, même face aux blocs les plus bas, et elle vient d'en passer deux à la Belgique en quart de finale. En face, la France n'a pas besoin de dominer la possession pour faire mal : ses transitions comptent parmi les plus létales du monde, et la ligne défensive espagnole — positionnée très haut pour soutenir son pressing — laisse précisément les espaces dans son dos où les Bleus sont redoutables. Difficile d'imaginer la Roja muette sur 90 minutes tant elle multiplie les temps forts ; tout aussi difficile d'imaginer une attaque française de ce calibre repartir sans avoir fait trembler les filets au moins une fois. Les deux sélections ont marqué dans la très grande majorité de leurs rencontres depuis le début de la compétition, ce qui donne au scénario BTTS une vraie régularité statistique. À 1.65, le « Oui » aux deux équipes qui marquent offre une base fiable et parfaitement cohérente avec la physionomie attendue d'un choc entre deux équipes tournées vers l'avant — le type de pari de confiance idéal en sélection sèche comme en fond de combiné. Pick VIP du jour, sur l'une des plus belles affiches du tournoi. Verdict : l'Espagne s'impose 2-0 et la France est restée muette — le « Les 2 équipes marquent Oui » ne passe pas. Ça fait partie du jeu : on affiche nos pertes comme nos gains, et on repart sur l'analyse suivante."
     },
     {
-      date:"11 juil. · MMA · UFC",
+      date:"11 juil. · UFC",
       match:"C. McGregor — M. Holloway",
       marche:"Vainqueur — Conor McGregor",
       cote:"3.05",
@@ -1190,7 +1202,7 @@
       analyse:"🎉 PICK FUN DU JOUR — Le pari plaisir, à jouer avec une mise légère uniquement. Sur le papier, McGregor part outsider face à un Holloway au sommet de sa régularité, et la cote à 3.05 le confirme. Mais c'est justement ce qui rend ce pari amusant : l'Irlandais reste l'un des plus gros punchers de sa catégorie, avec une main gauche capable de renverser un combat en une fraction de seconde. Son plan de jeu est limpide — chercher le KO précoce dans les deux premiers rounds, avant que le rythme et le volume de coups de Holloway ne s'installent. Holloway, lui, est un métronome : cardio inépuisable, garde haute, menton solide, il use ses adversaires sur la durée et enchaîne les combinaisons en avançant. Le scénario défavorable pour McGregor, c'est un combat qui s'étire : plus les rounds passent, plus la cadence hawaïenne prend le dessus. Le pari sur McGregor, c'est donc un pari sur l'explosivité et le timing du early finish — à haut risque, mais avec une vraie logique derrière. Exactement l'esprit d'un pick FUN : petite mise, gros frisson. Sélection VIP plaisir du jour. Verdict : le early finish a bien eu lieu… dans l'autre sens. Holloway termine le combat dès la première reprise (3:51). Le pari ne passe pas — c'était le risque assumé de ce pick plaisir. On affiche nos pertes comme nos gains, et on repart sur l'analyse suivante."
     },
     {
-      date:"11 juil. · MMA · UFC",
+      date:"11 juil. · UFC",
       match:"B. Saint-Denis — P. Pimblett",
       marche:"Vainqueur — Benoît Saint-Denis",
       cote:"1.70",
@@ -1359,7 +1371,7 @@
     const d = (date||'').toLowerCase();
     if(d.includes('tennis')||d.includes('wimbledon')||d.includes('wta')||d.includes('atp')||d.includes('roland')) return 'tennis';
     if(d.includes('basket')||d.includes('nba')) return 'basket';
-    if(d.includes('mma')||d.includes('ufc')||d.includes('boxe')) return 'mma';
+    if(d.includes('mma')||d.includes('ufc')||d.includes('boxe')) return 'ufc';
     if(d.includes('baseball')||d.includes('mlb')) return 'baseball';
     if(d.includes('cdm')||d.includes('foot')||d.includes('ligue')||d.includes('finale')||d.includes('quart')||d.includes('demi')) return 'foot';
     return 'autre';
@@ -1369,7 +1381,7 @@
     const badges = {
       tennis:'<span class="sport-badge tennis">🎾 Tennis</span>',
       basket:'<span class="sport-badge basket">🏀 Basket</span>',
-      mma:'<span class="sport-badge mma">🥊 MMA</span>',
+      ufc:'<span class="sport-badge ufc">🥊 UFC</span>',
       baseball:'<span class="sport-badge baseball">⚾ Baseball</span>',
       foot:'<span class="sport-badge foot">⚽ Football</span>'
     };
@@ -2003,7 +2015,7 @@
       return false;
     });
     const sub = document.getElementById('analyses-subtitle');
-    if(sub) sub.textContent = plan === 'vip' || plan === 'admin' ? 'Accès VIP — tous les sports' : 'Accès Standard — Tennis';
+    if(sub) sub.textContent = plan === 'vip' || plan === 'admin' ? 'Accès VIP — tous les sports' : 'Accès Standard';
 
     const list = document.getElementById('analyses-list');
     if(list){
@@ -2133,19 +2145,24 @@
     const filter = window._pronoSportFilter || 'all';
     if(filter !== 'all'){
       const fPicks = picks.filter(p => getSportKey(p.date) === filter);
-      if(!fPicks.length) return `<p style="font-size:0.85rem;opacity:0.4;text-align:center;padding:24px 0;">Aucun pronostic ${SPORT_TITLES[filter]||''} en cours — prochaine publication à venir.</p>`;
+      if(!fPicks.length){
+        // UFC = exclusivité VIP : message dédié côté Standard
+        if(filter === 'ufc' && tier === 'standard') return `<p style="font-size:0.85rem;opacity:0.4;text-align:center;padding:24px 0;">🥊 Les pronos UFC sont une exclusivité VIP — retrouvez-les dans l'onglet ⚡ VIP.</p>`;
+        return `<p style="font-size:0.85rem;opacity:0.4;text-align:center;padding:24px 0;">Aucun pronostic ${SPORT_TITLES[filter]||''} en cours — prochaine publication à venir.</p>`;
+      }
       return fPicks.map(renderCard).join('');
     }
 
     // Vue « Tous » : regroupement par sport. Football, Tennis et Baseball toujours
-    // affichés (même vides), les autres sports uniquement s'ils ont des picks en cours.
+    // affichés (même vides). UFC = exclusivité VIP → section toujours visible dans
+    // l'onglet VIP uniquement. Les autres sports uniquement s'ils ont des picks.
     const SPORT_SECTIONS = [
-      { key:'foot',     toujours:true  },
-      { key:'tennis',   toujours:true  },
-      { key:'baseball', toujours:true  },
-      { key:'basket',   toujours:false },
-      { key:'mma',      toujours:false },
-      { key:'autre',    toujours:false }
+      { key:'foot',     toujours:true          },
+      { key:'tennis',   toujours:true          },
+      { key:'baseball', toujours:true          },
+      { key:'ufc',      toujours: tier==='vip' },
+      { key:'basket',   toujours:false         },
+      { key:'autre',    toujours:false         }
     ];
     const bySport = {};
     picks.forEach(p => {
@@ -2169,7 +2186,7 @@
 
   /* ─── Filtres par sport du popup Pronostics ─── */
   const SPORT_TITLES = {
-    foot:'⚽ Football', tennis:'🎾 Tennis', baseball:'⚾ Baseball', basket:'🏀 Basket', mma:'🥊 MMA', autre:'🏅 Autres sports'
+    foot:'⚽ Football', tennis:'🎾 Tennis', baseball:'⚾ Baseball', ufc:'🥊 UFC', basket:'🏀 Basket', autre:'🏅 Autres sports'
   };
   window._pronoSportFilter = 'all';
   window._pronoData = null; // {stdPicks, vipPicks, plan} — mémorisé pour re-rendre au clic sur un filtre
@@ -2179,12 +2196,13 @@
     if(!box || !window._pronoData) return;
     const d = window._pronoData;
     const present = new Set(d.stdPicks.concat(d.vipPicks).map(p => getSportKey(p.date)));
-    // Football, Tennis et Baseball toujours proposés ; les autres sports seulement s'ils ont des picks
-    const keys = ['all','foot','tennis','baseball'].concat(['basket','mma','autre'].filter(k => present.has(k)));
+    // Football, Tennis, Baseball et UFC (exclu VIP) toujours proposés ; les autres sports seulement s'ils ont des picks
+    const keys = ['all','foot','tennis','baseball','ufc'].concat(['basket','autre'].filter(k => present.has(k)));
     box.innerHTML = keys.map(k => {
       const label = k === 'all' ? 'Tous' : SPORT_TITLES[k];
+      const vipTag = k === 'ufc' ? ' <span style="font-size:0.58rem;background:var(--gold);color:var(--night);padding:1px 5px;border-radius:8px;font-weight:700;vertical-align:middle;">VIP</span>' : '';
       const cls = window._pronoSportFilter === k ? 'sport-chip active' : 'sport-chip';
-      return `<button class="${cls}" onclick="filterPronoSport('${k}')">${label}</button>`;
+      return `<button class="${cls}" onclick="filterPronoSport('${k}')">${label}${vipTag}</button>`;
     }).join('');
   }
 
