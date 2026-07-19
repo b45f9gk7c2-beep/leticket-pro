@@ -1473,21 +1473,14 @@
     const wins = settled.filter(p => p.statut === 'win').length;
     const losses = settled.length - wins;
     const rate = Math.round((wins / settled.length) * 100);
-    // Distinction picks confiance / picks FUN (paris plaisir à cote élevée, risque assumé).
-    // Classement figé au moment de la publication (label) — jamais modifié après règlement.
-    const isFun = p => (p.label || '').includes('FUN');
-    const fun = settled.filter(isFun);
-    const conf = settled.filter(p => !isFun(p));
-    const funWins = fun.filter(p => p.statut === 'win').length;
-    const confWins = conf.filter(p => p.statut === 'win').length;
-    const splitHTML = (conf.length && fun.length) ? `
-      <span><b style="color:#7CC9A0;">${Math.round(confWins/conf.length*100)}%</b> picks confiance (${confWins}/${conf.length})</span>
-      <span><b style="color:var(--gold-bright);">${Math.round(funWins/fun.length*100)}%</b> picks FUN 🎉 (${funWins}/${fun.length})</span>` : '';
+    // ⚠️ FUN/ULTRA FUN abandonné le 19 juillet 2026 (repositionnement « safe only » demandé
+    // par Lucas) : plus de split confiance/FUN dans la barre — on n'affiche que le taux global.
+    // L'historique conserve ses anciens labels FUN (transparence, jamais réécrits).
     bar.innerHTML = `
       <span><b style="color:var(--gold-bright);">${settled.length}</b> pronos terminés</span>
       <span><b style="color:#7CC9A0;">${wins}</b> gagnés</span>
       <span><b style="color:#E08376;">${losses}</b> perdus</span>
-      <span><b style="color:var(--gold-bright);">${rate}%</b> de réussite</span>${splitHTML}`;
+      <span><b style="color:var(--gold-bright);">${rate}%</b> de réussite</span>`;
     bar.style.display = 'flex';
     // Synchronise les stats du hero avec le taux réellement constaté (chiffre vérifiable)
     const heroRate = document.getElementById('heroRate');
