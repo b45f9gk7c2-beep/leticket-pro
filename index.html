@@ -692,13 +692,13 @@
   </div>
 </div>
 
-<!-- ===== COUPE DU MONDE 2026 ===== -->
+<!-- ===== TENNIS · ATP ESTORIL ===== -->
 <div class="cdm-strip">
   <div class="wrap">
     <div class="section-head">
       <div class="eyebrow">En direct</div>
-      <h2>Coupe du Monde 2026 <span class="cdm-badge" id="cdmDateBadge"></span></h2>
-      <p>Résultats officiels et matchs à venir — nos pronostics sur ces matchs sont réservés aux abonnés.</p>
+      <h2>🎾 Tennis — ATP Estoril <span class="cdm-badge" id="cdmDateBadge"></span></h2>
+      <p>Résultats officiels et matchs à venir du Millennium Estoril Open — nos pronostics sur ces matchs sont réservés aux abonnés.</p>
     </div>
     <div class="cdm-grid" id="cdmGrid">
       <div class="skeleton-card"></div>
@@ -833,7 +833,7 @@
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Quelle est la différence entre Standard et VIP ?<span class="plus">+</span></button>
-        <div class="faq-a"><p>L'abonnement Standard (14,99€/mois) donne accès à 1 pronostic par semaine, accompagné de son analyse complète. L'abonnement VIP (29,99€/mois) donne accès à tous les pronostics publiés, tous sports confondus, en priorité et sans limite — y compris les combinés et les picks exclusifs CDM 2026. Les deux formules sont sans engagement et résiliables à tout moment.</p></div>
+        <div class="faq-a"><p>L'abonnement Standard (14,99€/mois) donne accès à 1 pronostic par semaine, accompagné de son analyse complète. L'abonnement VIP (29,99€/mois) donne accès à tous les pronostics publiés, tous sports confondus, en priorité et sans limite — y compris les combinés et les picks exclusifs (tennis ATP, UFC…). Les deux formules sont sans engagement et résiliables à tout moment.</p></div>
       </div>
     </div>
   </div>
@@ -1580,232 +1580,88 @@
   }
   loadPronostics();
 
-  // ----- Scores CDM 2026 en direct (ESPN) -----
-  const TEAM_FR = {
-    'Brazil':'Brésil','Norway':'Norvège','Mexico':'Mexique','England':'Angleterre',
-    'France':'France','Paraguay':'Paraguay','Canada':'Canada','Morocco':'Maroc',
-    'Argentina':'Argentine','Cape Verde':'Cap-Vert','Colombia':'Colombie','Ghana':'Ghana',
-    'Spain':'Espagne','Austria':'Autriche','Portugal':'Portugal','Croatia':'Croatie',
-    'Switzerland':'Suisse','Algeria':'Algérie','Australia':'Australie','Egypt':'Égypte',
-    'United States':'États-Unis','Belgium':'Belgique','USA':'États-Unis','Uruguay':'Uruguay',
-    'Ecuador':'Équateur','Japan':'Japon','Netherlands':'Pays-Bas','Germany':'Allemagne',
-    'Italy':'Italie','Senegal':'Sénégal','Ivory Coast':'Côte d\'Ivoire',
-    'South Korea':'Corée du Sud','Saudi Arabia':'Arabie Saoudite',
-    'Serbia':'Serbie','Denmark':'Danemark','Poland':'Pologne','Ukraine':'Ukraine',
-    'Tunisia':'Tunisie','Cameroon':'Cameroun','Nigeria':'Nigéria',
-    'United Arab Emirates':'Émirats Arabes','Qatar':'Qatar','Iran':'Iran',
-    'New Zealand':'Nouvelle-Zélande','Venezuela':'Venezuela','Bolivia':'Bolivie',
-    'Peru':'Pérou','Chile':'Chili','Costa Rica':'Costa Rica','Panama':'Panama',
-    'Honduras':'Honduras','El Salvador':'El Salvador','Jamaica':'Jamaïque',
-    'Trinidad & Tobago':'Trinité-et-Tobago','Haiti':'Haïti','Cuba':'Cuba',
-  };
-  const TEAM_EN = {};
-  Object.entries(TEAM_FR).forEach(([en,fr])=>{ TEAM_EN[fr]=en; });
+  // ----- Scores Tennis · ATP Estoril en direct (ESPN) -----
+  // (Remplace l'ancien module CDM 2026 — tournoi terminé le 19 juillet.
+  //  La mise à jour auto des pronos foot a été retirée avec lui : elle ne
+  //  s'appliquait qu'aux matchs fifa.world. Les picks se règlent à la main.)
+  const TENNIS_SCOREBOARD = 'https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard';
+  const TENNIS_TOURNOI = 'estoril'; // partie du nom ESPN du tournoi mis en avant
 
-  // Traductions phases
-  const ROUND_FR = {
-    'round-of-16':'16e de finale','quarterfinal':'Quart de finale',
-    'semifinal':'Demi-finale','final':'Finale','third-place':'Troisième place',
-    'Round of 16':'16e de finale','Quarterfinal':'Quart de finale',
-    'Semifinal':'Demi-finale','Final':'Finale',
-  };
-  function roundFR(str){
-    if(!str) return 'CDM 2026';
-    for(const [k,v] of Object.entries(ROUND_FR)){
-      if(str.toLowerCase().includes(k.toLowerCase())) return v;
-    }
-    return str;
+  function playerName(c){
+    const a = (c && c.athlete) || {};
+    return a.shortName || a.displayName || '—';
   }
 
-  // Détermine le vainqueur d'un événement ESPN terminé
-  function getWinnerEN(event){
-    const comp = event.competitions[0];
-    if(!comp.status.type.completed) return null;
-    const home = comp.competitors.find(c=>c.homeAway==='home');
-    const away = comp.competitors.find(c=>c.homeAway==='away');
-    // ESPN marque winner:true sur le vainqueur (y compris aux tirs au but)
-    const winComp = comp.competitors.find(c=>c.winner===true);
-    if(winComp) return winComp.team.displayName;
-    const hs = parseFloat(home.score||0), as = parseFloat(away.score||0);
-    if(hs>as) return home.team.displayName;
-    if(as>hs) return away.team.displayName;
-    return null;
+  // Sets « 1-6 · 7-6 · 6-4 » du point de vue du 1er joueur
+  function setsLine(p1, p2){
+    const l1 = p1.linescores || [], l2 = p2.linescores || [];
+    if(!l1.length) return '';
+    return l1.map((s,i)=>`${Math.round(s.value)}-${Math.round(((l2[i]||{}).value)||0)}`).join(' · ');
   }
 
-  // Cherche l'événement ESPN correspondant à un pick
-  function findEvent(pick, events){
-    const teams = (pick.match||'').split('—').map(t=>t.trim());
-    const teamsEN = teams.map(t=>TEAM_EN[t]||t);
-    return events.find(ev=>{
-      const names = ev.competitions[0].competitors.map(c=>c.team.displayName);
-      return teamsEN.every(t=>names.includes(t));
-    });
-  }
-
-  // Met à jour un pick en fonction des données ESPN
-  function applyESPN(pick, events){
-    if(pick.statut!=='en-cours') return pick; // déjà résolu
-    const ev = findEvent(pick, events);
-    if(!ev) return pick;
-    const comp = ev.competitions[0];
-    const home = comp.competitors.find(c=>c.homeAway==='home')||comp.competitors[0];
-    const away = comp.competitors.find(c=>c.homeAway==='away')||comp.competitors[1];
-    const homeNameFR = TEAM_FR[home.team.displayName]||home.team.displayName;
-    const awayNameFR = TEAM_FR[away.team.displayName]||away.team.displayName;
-    const scoreLine = `${homeNameFR} ${home.score} — ${away.score} ${awayNameFR}`;
-    const state = comp.status.type.state;
-
-    if(comp.status.type.completed){
-      // Match terminé : détermine gagné/perdu
-      const marche = (pick.marche||'').toLowerCase();
-      if(marche.includes('qualification')){
-        const teamFR = Object.keys(TEAM_EN).find(fr=>marche.includes(fr.toLowerCase()));
-        const teamEN = teamFR ? TEAM_EN[teamFR] : null;
-        const winner = getWinnerEN(ev);
-        const won = teamEN && winner && winner===teamEN;
-        return { ...pick,
-          statut: won?'win':'lose',
-          label: won?'Gagné ✅':'Perdu ❌',
-          score: scoreLine,
-        };
-      }
-      // Pour les autres marchés (buteur etc.) : afficher juste le score
-      return { ...pick, score: scoreLine, label:'Terminé' };
-    }
-
-    if(state==='in'){
-      // Match en cours : afficher le score live
-      const detail = comp.status.type.shortDetail||'En direct';
-      return { ...pick,
-        score: scoreLine,
-        label: `🔴 ${detail}`,
-      };
-    }
-    return pick;
-  }
-
-  // Met à jour le combiné
-  function applyESPNCombi(pick, events){
-    if(pick.statut!=='en-cours') return pick;
-    const legs = (pick.combi||[]).map(leg=>
-      applyESPN({match:leg.match, marche:leg.marche, statut:'en-cours'}, events)
-    );
-    if(legs.some(l=>l.statut==='lose')) return {...pick, statut:'lose', label:'Perdu ❌'};
-    if(legs.every(l=>l.statut==='win'))  return {...pick, statut:'win',  label:'Gagné ✅'};
-    const liveScores = legs.filter(l=>l.score).map(l=>l.score).join(' | ');
-    if(liveScores) return {...pick, label:'🔴 En direct'};
-    return pick;
-  }
-
-  // Rafraîchissement principal
-  async function fetchCDMScores(){
+  async function fetchTennisScores(){
     try{
-      // Récupère de J-2 à J+4 : les résultats récents (grille "derniers résultats")
-      // ET les matchs à venir
-      const dateKeys = Array.from({length:7},(_,i)=>{
-        const d = new Date(); d.setDate(d.getDate()+i-2);
-        return d.toISOString().slice(0,10).replace(/-/g,'');
-      });
-      const responses = await Promise.all(
-        dateKeys.map(dk=>
-          fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${dk}`)
-            .then(r=>r.json()).catch(()=>({events:[]}))
-        )
-      );
-      // Fusionner + dédupliquer
-      const seen = new Set();
-      const events = responses.flatMap(d=>d.events||[]).filter(ev=>{
-        if(seen.has(ev.id)) return false; seen.add(ev.id); return true;
-      });
-
-      // ── 1. Grille CDM ──────────────────────────────────────────────
+      const data = await fetch(TENNIS_SCOREBOARD).then(r=>r.json());
+      const evt = (data.events||[]).find(e=>(e.name||'').toLowerCase().includes(TENNIS_TOURNOI)) || (data.events||[])[0];
       const grid = document.getElementById('cdmGrid');
-      if(grid && events.length){
-        const live     = events.filter(e=>e.competitions[0].status.type.state==='in');
-        const done     = events.filter(e=>e.competitions[0].status.type.completed)
-                               .sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,2);
-        const upcoming = events.filter(e=>e.competitions[0].status.type.state==='pre')
-                               .sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,2);
-        let display = [...live,...done,...upcoming].slice(0,5);
-        if(!display.length) display = events.sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,5);
+      if(!grid || !evt) return;
 
-        grid.innerHTML = display.map(ev=>{
-          const comp  = ev.competitions[0];
-          const home  = comp.competitors.find(c=>c.homeAway==='home')||comp.competitors[0];
-          const away  = comp.competitors.find(c=>c.homeAway==='away')||comp.competitors[1];
-          const st    = comp.status;
-          const homeFR = esc(TEAM_FR[home.team.displayName]||home.team.displayName);
-          const awayFR = esc(TEAM_FR[away.team.displayName]||away.team.displayName);
-          const isLive = st.type.state==='in';
-          const isDone = st.type.completed;
-          let scoreHTML, tagHTML;
-          if(isLive){
-            scoreHTML = `<div class="match-score">${esc(home.score)} — ${esc(away.score)}</div>`;
-            tagHTML   = `<span class="match-tag" style="background:rgba(181,72,60,0.2);color:#E08376;border:1px solid var(--lose);">🔴 ${esc(st.type.shortDetail||'En direct')}</span>`;
-          } else if(isDone){
-            scoreHTML = `<div class="match-score">${esc(home.score)} — ${esc(away.score)}</div>`;
-            tagHTML   = `<span class="match-tag done">Terminé</span>`;
-          } else {
-            const evDate = new Date(ev.date);
-            const heure = evDate.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Paris'});
-            const jourStr = evDate.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short',timeZone:'Europe/Paris'});
-            scoreHTML = `<div class="match-score" style="font-size:0.9rem;opacity:0.35;">— —</div>`;
-            tagHTML   = `<span class="match-tag soon">🕐 ${jourStr} · ${heure}</span>`;
-          }
-          const dateStr  = new Date(ev.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short',timeZone:'Europe/Paris'});
-          const noteHead = (ev.notes||[]).find(n=>n.type==='event')?.headline||'';
-          const roundStr = esc(roundFR(noteHead)||'CDM 2026');
-          return `<div class="match-card">
-            <div class="match-group">${roundStr} · ${dateStr}</div>
-            <div class="match-teams">${homeFR} — ${awayFR}</div>
-            <div class="match-footer">${scoreHTML}${tagHTML}</div>
-          </div>`;
-        }).join('');
+      // Simples uniquement, matchs dont les 2 joueurs sont connus
+      const comps = (evt.groupings||[])
+        .filter(g=>/singles/i.test((g.grouping&&g.grouping.displayName)||''))
+        .flatMap(g=>g.competitions||[])
+        .filter(c=>(c.competitors||[]).length===2 && c.competitors.every(x=>x.athlete&&(x.athlete.shortName||x.athlete.displayName)));
+      if(!comps.length) return;
 
-        // Badge date
-        const badge = document.querySelector('.cdm-badge');
-        if(badge) badge.textContent = new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
-      }
+      const live     = comps.filter(c=>c.status.type.state==='in');
+      const done     = comps.filter(c=>c.status.type.completed)
+                            .sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,2);
+      const upcoming = comps.filter(c=>c.status.type.state==='pre')
+                            .sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,2);
+      let display = [...live,...done,...upcoming].slice(0,5);
+      if(!display.length) display = comps.sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
 
-      // ── 2. Mise à jour auto des pronos ────────────────────────────
-      const histGrid = document.getElementById('historyGrid');
-      if(histGrid){
-        const updatedPicks = DEFAULT_PICKS.map(p=>{
-          if(p.combi) return applyESPNCombi(p, events);
-          return applyESPN(p, events);
-        });
-        // Ré-afficher TOUS les pronos terminés (gagnés ET perdus — transparence DGCCRF/ANJ)
-        histGrid.innerHTML = renderAllPicks(updatedPicks);
-        // Ré-appliquer l'accès déverrouillé après re-rendu
-        const _plan = window._userPlan;
-        if(_plan === 'vip' || _plan === 'admin'){
-          document.querySelectorAll('.pick-card.locked').forEach(el=>{
-            el.querySelector('.lock-overlay')?.remove();
-            const inn = el.querySelector('.pick-inner');
-            if(inn) inn.style.filter = 'none';
-            el.classList.remove('locked');
-          });
-        } else if(_plan === 'standard'){
-          document.querySelectorAll('.pick-card.locked[data-plan="standard"]').forEach(el=>{
-            el.querySelector('.lock-overlay')?.remove();
-            const inn = el.querySelector('.pick-inner');
-            if(inn) inn.style.filter = 'none';
-            el.classList.remove('locked');
-          });
+      grid.innerHTML = display.map(c=>{
+        const p1 = c.competitors[0], p2 = c.competitors[1];
+        const st = c.status;
+        const isLive = st.type.state==='in';
+        const isDone = st.type.completed;
+        const sets = esc(setsLine(p1, p2));
+        let scoreHTML, tagHTML;
+        if(isLive){
+          scoreHTML = `<div class="match-score" style="font-size:1rem;">${sets||'—'}</div>`;
+          tagHTML   = `<span class="match-tag" style="background:rgba(181,72,60,0.2);color:#E08376;border:1px solid var(--lose);">🔴 ${esc(st.type.shortDetail||'En direct')}</span>`;
+        } else if(isDone){
+          scoreHTML = `<div class="match-score" style="font-size:1rem;">${sets}</div>`;
+          tagHTML   = `<span class="match-tag done">Terminé</span>`;
+        } else {
+          const d = new Date(c.date);
+          const heure = d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Paris'});
+          const jourStr = d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short',timeZone:'Europe/Paris'});
+          scoreHTML = `<div class="match-score" style="font-size:0.9rem;opacity:0.35;">— —</div>`;
+          tagHTML   = `<span class="match-tag soon">🕐 ${jourStr} · ${heure}</span>`;
         }
-      }
+        const dateStr = new Date(c.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short',timeZone:'Europe/Paris'});
+        return `<div class="match-card">
+          <div class="match-group">ATP Estoril · ${dateStr}</div>
+          <div class="match-teams">${esc(playerName(p1))} — ${esc(playerName(p2))}</div>
+          <div class="match-footer">${scoreHTML}${tagHTML}</div>
+        </div>`;
+      }).join('');
 
-    }catch(e){ console.warn('ESPN CDM error:', e); }
+      const badge = document.querySelector('.cdm-badge');
+      if(badge) badge.textContent = new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+    }catch(e){ console.warn('ESPN tennis error:', e); }
   }
 
-  // Date badge CDM en temps réel
+  // Date badge en temps réel
   (function(){
     const b = document.getElementById('cdmDateBadge');
     if(b) b.textContent = new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
   })();
 
-  fetchCDMScores();
-  const _cdmTimer = setInterval(()=>{ if(document.visibilityState!=='hidden') fetchCDMScores(); }, 60000);
+  fetchTennisScores();
+  const _tennisTimer = setInterval(()=>{ if(document.visibilityState!=='hidden') fetchTennisScores(); }, 60000);
 
   // ----- Supabase -----
   const _supa = supabase.createClient(
