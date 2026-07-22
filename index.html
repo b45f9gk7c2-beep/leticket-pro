@@ -296,6 +296,7 @@
   .sport-badge.mma{background:rgba(200,50,50,0.15);color:#E8736B;border:1px solid rgba(232,115,107,0.3);}
   .sport-badge.ufc{background:rgba(200,50,50,0.15);color:#E8736B;border:1px solid rgba(232,115,107,0.3);}
   .sport-badge.baseball{background:rgba(90,140,200,0.15);color:#7EA8D8;border:1px solid rgba(126,168,216,0.3);}
+  .sport-badge.f1{background:rgba(225,6,0,0.14);color:#F2726D;border:1px solid rgba(242,114,109,0.35);}
   .combi-rows{margin:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 0;}
   .combi-row{display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;padding:5px 0;gap:8px;}
   .combi-row span:first-child{color:rgba(244,241,232,0.7);}
@@ -703,6 +704,21 @@
     </div>
     <div class="cdm-grid" id="tennisGrid">
       <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EN DIRECT · FORMULE 1 ===== -->
+<div class="cdm-strip" style="border-top:none; border-bottom:none; padding-top:20px;">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">En direct</div>
+      <h2>🏁 Formule 1 — Grand Prix</h2>
+      <p>Dernier Grand Prix disputé et prochaine course du calendrier — nos pronostics F1 sont réservés aux abonnés.</p>
+    </div>
+    <div class="cdm-grid" id="f1Grid">
       <div class="skeleton-card"></div>
       <div class="skeleton-card"></div>
     </div>
@@ -1127,6 +1143,18 @@
     // ⚠️ RÈGLE DE TRANSPARENCE : ne jamais supprimer un prono terminé.
     // Passer son statut à "win" ou "lose" (+ score) pour qu'il reste dans l'historique public.
     {
+      date:"26 juil. · F1 · GP de Hongrie",
+      match:"Grand Prix de Hongrie 2026",
+      marche:"Vainqueur — Andrea Kimi Antonelli",
+      cote:"2.60",
+      statut:"en-cours",
+      locked:true,
+      type:"vip",
+      label:"En cours",
+      analyse:"Direction le Hungaroring pour le Grand Prix de Hongrie, et un pari audacieux mais argumenté : la victoire d'Andrea Kimi Antonelli à 2.60. Le tracé hongrois, sinueux, technique et pauvre en longues lignes droites, est réputé pour rebattre les cartes : la vitesse de pointe pure y compte moins que l'appui aérodynamique, la motricité en sortie de virages lents et la capacité à enchaîner un tour parfait en qualifications, où la position sur la grille est décisive tant les dépassements y sont difficiles. C'est exactement le type de circuit où un pilote en pleine ascension peut créer l'exploit s'il signe une grande séance qualificative. Antonelli, dans une dynamique de progression constante, a montré une aisance particulière sur les tracés exigeants et une gestion de course mature pour son expérience ; sur un Grand Prix où tout se joue souvent dès le samedi, une pole ou une première ligne le placerait en position idéale pour contrôler le rythme. La chaleur hongroise, éprouvante pour les pneumatiques, ajoute une dimension stratégique qui peut sourire à ceux qui gèrent le mieux la dégradation. À 2.60, la cote rémunère un scénario loin d'être improbable sur ce circuit atypique. ⚠️ Attention : en Formule 1, une victoire sèche reste un pari offensif — un seul pilote l'emporte parmi tout le plateau, et un aléa mécanique, une averse ou un incident de course peuvent tout changer. Sélection VIP plus ambitieuse, à jouer avec mesure et en misant petit. Course dimanche."
+      ,
+    },
+    {
       date:"23 juil. · Football · Ligue Europa",
       match:"Combiné Ligue Europa",
       marche:"Combiné 4 sélections",
@@ -1445,6 +1473,7 @@
     if(d.includes('basket')||d.includes('nba')) return 'basket';
     if(d.includes('mma')||d.includes('ufc')||d.includes('boxe')) return 'ufc';
     if(d.includes('baseball')||d.includes('mlb')) return 'baseball';
+    if(d.includes('f1')||d.includes('formule 1')||d.includes('grand prix')||d.includes('gp ')||d.includes('gp de')||d.includes('gp du')) return 'f1';
     if(d.includes('cdm')||d.includes('foot')||d.includes('ligue')||d.includes('finale')||d.includes('quart')||d.includes('demi')) return 'foot';
     return 'autre';
   }
@@ -1455,6 +1484,7 @@
       basket:'<span class="sport-badge basket">🏀 Basket</span>',
       ufc:'<span class="sport-badge ufc">🥊 UFC</span>',
       baseball:'<span class="sport-badge baseball">⚾ Baseball</span>',
+      f1:'<span class="sport-badge f1">🏁 Formule 1</span>',
       foot:'<span class="sport-badge foot">⚽ Football</span>'
     };
     return badges[getSportKey(date)] || '';
@@ -1740,15 +1770,26 @@
       ${cardFooter(st, scoreTxt, dateISO)}</div>`;
   }
 
+  // "AWS Hungarian Grand Prix" → "GP de Hongrie" (nom de GP ESPN → français)
+  function f1GpFr(name){
+    const map={Hungarian:'de Hongrie',Belgian:'de Belgique',Dutch:'des Pays-Bas',British:'de Grande-Bretagne',Italian:"d'Italie",Spanish:"d'Espagne",French:'de France',Austrian:"d'Autriche",Monaco:'de Monaco',Canadian:'du Canada',Australian:"d'Australie",Japanese:'du Japon',Miami:'de Miami',Bahrain:'de Bahreïn',Mexican:'du Mexique',Brazilian:'du Brésil','Abu Dhabi':"d'Abou Dabi",'United States':'des États-Unis','Las Vegas':'de Las Vegas',Qatar:'du Qatar',Chinese:'de Chine',Azerbaijan:"d'Azerbaïdjan",Singapore:'de Singapour','Saudi Arabian':"d'Arabie Saoudite",'Emilia Romagna':"d'Émilie-Romagne"};
+    for(const k in map){ if(name.indexOf(k)!==-1) return 'GP '+map[k]; }
+    const m=name.match(/([A-Za-zÀ-ÿ]+)\s+Grand Prix/);
+    return m?('GP '+m[1]):(name||'Grand Prix');
+  }
+
   async function fetchLiveScores(){
     try{
       // Plage J-2 → J+4 en une seule requête pour la LdC
       const fmt = d => d.toISOString().slice(0,10).replace(/-/g,'');
       const d1 = new Date(); d1.setDate(d1.getDate()-2);
       const d2 = new Date(); d2.setDate(d2.getDate()+4);
-      const [tennisData, ldcData] = await Promise.all([
+      const f1a = new Date(); f1a.setDate(f1a.getDate()-10);
+      const f1b = new Date(); f1b.setDate(f1b.getDate()+45);
+      const [tennisData, ldcData, f1Data] = await Promise.all([
         fetch(TENNIS_SCOREBOARD).then(r=>r.json()).catch(()=>({events:[]})),
-        fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${LDC_LEAGUE}/scoreboard?dates=${fmt(d1)}-${fmt(d2)}`).then(r=>r.json()).catch(()=>({events:[]}))
+        fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${LDC_LEAGUE}/scoreboard?dates=${fmt(d1)}-${fmt(d2)}`).then(r=>r.json()).catch(()=>({events:[]})),
+        fetch(`https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard?dates=${fmt(f1a)}-${fmt(f1b)}`).then(r=>r.json()).catch(()=>({events:[]}))
       ]);
       // ── Section Tennis : simples de l'Estoril Open ──
       const tennisGrid = document.getElementById('tennisGrid');
@@ -1781,6 +1822,29 @@
         });
         if(ldcCards.length) ldcGrid.innerHTML = ldcCards.join('');
       }
+
+      // ── Section Formule 1 : dernier GP disputé + prochaine course ──
+      const f1Grid = document.getElementById('f1Grid');
+      if(f1Grid){
+        const f1ev = f1Data.events||[];
+        const done = f1ev.filter(e=>e.status.type.completed).sort((a,b)=>new Date(b.date)-new Date(a.date));
+        const next = f1ev.filter(e=>!e.status.type.completed).sort((a,b)=>new Date(a.date)-new Date(b.date));
+        const cards=[];
+        if(done[0]){
+          const e=done[0], cps=(e.competitions[0].competitors)||[];
+          const w=cps.find(c=>String(c.order)==='1'||c.winner)||cps[0];
+          const wn=w&&w.athlete?(w.athlete.shortName||w.athlete.displayName):'—';
+          const ds=new Date(e.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short',timeZone:'Europe/Paris'});
+          cards.push(`<div class="match-card"><div class="match-group">Formule 1 · ${ds}</div><div class="match-teams">${esc(f1GpFr(e.name||''))}</div><div class="match-footer"><div class="match-score" style="font-size:0.92rem;">🏆 ${esc(wn)}</div><span class="match-tag done">Terminé</span></div></div>`);
+        }
+        if(next[0]){
+          const e=next[0], d=new Date(e.date);
+          const jour=d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short',timeZone:'Europe/Paris'});
+          cards.push(`<div class="match-card"><div class="match-group">Formule 1 · prochaine course</div><div class="match-teams">${esc(f1GpFr(e.name||''))}</div><div class="match-footer"><div class="match-score" style="font-size:0.9rem;opacity:0.35;">— —</div><span class="match-tag soon">🕐 ${jour}</span></div></div>`);
+        }
+        if(cards.length) f1Grid.innerHTML = cards.join('');
+      }
+
       const badge = document.querySelector('.cdm-badge');
       if(badge) badge.textContent = new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
     }catch(e){ console.warn('ESPN live error:', e); }
@@ -2141,6 +2205,7 @@
       { key:'tennis',   toujours:true  },
       { key:'baseball', toujours:true  },
       { key:'ufc',      toujours:true  },
+      { key:'f1',       toujours:true  },
       { key:'basket',   toujours:false },
       { key:'autre',    toujours:false }
     ];
@@ -2166,7 +2231,7 @@
 
   /* ─── Filtres par sport du popup Pronostics ─── */
   const SPORT_TITLES = {
-    foot:'⚽ Football', tennis:'🎾 Tennis', baseball:'⚾ Baseball', ufc:'🥊 UFC', basket:'🏀 Basket', autre:'🏅 Autres sports'
+    foot:'⚽ Football', tennis:'🎾 Tennis', baseball:'⚾ Baseball', ufc:'🥊 UFC', f1:'🏁 Formule 1', basket:'🏀 Basket', autre:'🏅 Autres sports'
   };
   window._pronoSportFilter = 'all';
   window._pronoData = null; // {stdPicks, vipPicks, plan} — mémorisé pour re-rendre au clic sur un filtre
@@ -2177,7 +2242,7 @@
     const d = window._pronoData;
     const present = new Set(d.stdPicks.concat(d.vipPicks).map(p => getSportKey(p.date)));
     // Football, Tennis, Baseball et UFC toujours proposés ; les autres sports seulement s'ils ont des picks
-    const keys = ['all','foot','tennis','baseball','ufc'].concat(['basket','autre'].filter(k => present.has(k)));
+    const keys = ['all','foot','tennis','baseball','ufc','f1'].concat(['basket','autre'].filter(k => present.has(k)));
     box.innerHTML = keys.map(k => {
       const label = k === 'all' ? 'Tous' : SPORT_TITLES[k];
       const cls = window._pronoSportFilter === k ? 'sport-chip active' : 'sport-chip';
