@@ -709,12 +709,12 @@
   </div>
 </div>
 
-<!-- ===== EN DIRECT · FOOTBALL — LIGUE DES CHAMPIONS ===== -->
+<!-- ===== EN DIRECT · FOOTBALL — LIGUE EUROPA ===== -->
 <div class="cdm-strip" style="border-top:none; padding-top:20px;">
   <div class="wrap">
     <div class="section-head">
       <div class="eyebrow">En direct</div>
-      <h2>⚽ Football — Ligue des Champions</h2>
+      <h2>⚽ Football — Ligue Europa</h2>
       <p>Tours de qualification — résultats officiels et prochaines affiches. Nos pronostics sur ces matchs sont réservés aux abonnés.</p>
     </div>
     <div class="cdm-grid" id="ldcGrid">
@@ -1660,13 +1660,14 @@
   }
   loadPronostics();
 
-  // ----- Scores en direct (ESPN) : ATP Estoril + Ligue des Champions -----
+  // ----- Scores en direct (ESPN) : ATP Estoril + Ligue Europa -----
   // (Remplace l'ancien module CDM 2026, tournoi terminé le 19 juillet. La mise à
   //  jour auto des pronos foot est partie avec lui : les picks se règlent à la main.)
   const TENNIS_SCOREBOARD = 'https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard';
   const TENNIS_TOURNOI = 'estoril'; // partie du nom ESPN du tournoi mis en avant
-  // Qualifications LdC = ligue ESPN « uefa.champions_qual » (uefa.champions est vide hors phase finale)
-  const LDC_LEAGUE = 'uefa.champions_qual';
+  // Qualifications Ligue Europa = ligue ESPN « uefa.europa_qual » (uefa.europa est vide hors phase finale ;
+  // ne pas confondre avec uefa.europa.conf_qual = Conference League)
+  const LDC_LEAGUE = 'uefa.europa_qual';
 
   function playerName(c){
     const a = (c && c.athlete) || {};
@@ -1747,7 +1748,7 @@
         if(tennisCards.length) tennisGrid.innerHTML = tennisCards.join('');
       }
 
-      // ── Section Football : Ligue des Champions (qualifications) ──
+      // ── Section Football : Ligue Europa (qualifications) ──
       const ldcGrid = document.getElementById('ldcGrid');
       const ldcEvents = ldcData.events||[];
       if(ldcGrid && ldcEvents.length){
@@ -1757,7 +1758,7 @@
           const nm = t=>esc((t.team&&(t.team.shortDisplayName||t.team.displayName))||'—');
           const isPre = comp.status.type.state==='pre';
           const score = isPre ? '' : `${esc(home.score)} — ${esc(away.score)}`;
-          return matchCard('Ligue des Champions', comp.date,
+          return matchCard('Ligue Europa', comp.date,
             `${nm(home)} — ${nm(away)}`, comp.status, score);
         });
         if(ldcCards.length) ldcGrid.innerHTML = ldcCards.join('');
