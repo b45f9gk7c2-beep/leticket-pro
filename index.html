@@ -674,8 +674,9 @@
           <span id="heroTicketComp">CDM 2026 · Quart de finale</span>
           <span id="heroTicketScore" style="color:#2d8f55; font-weight:700;">1 — 2 a.p. ✅</span>
         </div>
-        <div class="ticket-row"><span id="heroTicketMarche">Les 2 équipes marquent</span><b style="color:#2d8f55;" id="heroTicketValue">Oui ✅</b></div>
-        <div class="ticket-row"><span>Cote</span><b id="heroTicketCote">1.66</b></div>
+        <div class="ticket-row" id="heroTicketMarcheRow"><span id="heroTicketMarche">Les 2 équipes marquent</span><b style="color:#2d8f55;" id="heroTicketValue">Oui ✅</b></div>
+        <div id="heroTicketCombi" style="display:none;"></div>
+        <div class="ticket-row"><span id="heroTicketCoteLabel">Cote</span><b id="heroTicketCote">1.66</b></div>
         <div class="stamp" style="top:42%; border-color:#2a7a50; color:#2a7a50; opacity:0.55; mix-blend-mode:multiply;">GAGNÉ ✓</div>
         <div class="ticket-perf"></div>
       </div>
@@ -1597,19 +1598,40 @@
     // Compétition = segments de la date après le jour et le sport ("11 juil. · Football · CDM 2026" → "CDM 2026")
     const seg = (p.date || '').split('·').map(s => s.trim());
     set('heroTicketComp', seg.slice(2).join(' · ') || seg.slice(-1)[0] || '');
-    // Score (facultatif — jamais inventé) : masqué si absent
-    const scoreEl = document.getElementById('heroTicketScore');
-    if(scoreEl){
-      if(p.score){ scoreEl.textContent = p.score + ' ✅'; scoreEl.style.display = ''; }
-      else scoreEl.style.display = 'none';
+    const scoreEl   = document.getElementById('heroTicketScore');
+    const marcheRow = document.getElementById('heroTicketMarcheRow');
+    const combiEl   = document.getElementById('heroTicketCombi');
+    const coteLabel = document.getElementById('heroTicketCoteLabel');
+
+    if(p.combi && p.combi.length){
+      // Combiné : on masque la ligne marché simple et le score (trop long),
+      // on affiche chaque jambe (sélection ✅) + "Cote totale".
+      if(scoreEl)   scoreEl.style.display = 'none';
+      if(marcheRow) marcheRow.style.display = 'none';
+      if(coteLabel) coteLabel.textContent = 'Cote totale';
+      if(combiEl){
+        combiEl.style.display = '';
+        combiEl.innerHTML = p.combi.map(s => {
+          const sel = (s.marche || '').split('—').slice(1).join('—').trim() || s.marche || '';
+          return `<div class="ticket-row" style="font-size:0.82rem;"><span style="opacity:0.72;">${esc(sel)}</span><b style="color:#2d8f55;">✅</b></div>`;
+        }).join('');
+      }
+    } else {
+      // Pari simple : affichage classique marché / sélection
+      if(combiEl){ combiEl.style.display = 'none'; combiEl.innerHTML = ''; }
+      if(marcheRow) marcheRow.style.display = '';
+      if(coteLabel) coteLabel.textContent = 'Cote';
+      if(scoreEl){
+        if(p.score){ scoreEl.textContent = p.score + ' ✅'; scoreEl.style.display = ''; }
+        else scoreEl.style.display = 'none';
+      }
+      const parts = (p.marche || '').split('—');
+      const label = parts.length >= 2 ? parts[0].trim() : (p.marche || '');
+      const value = parts.length >= 2 ? parts.slice(1).join('—').trim() : '';
+      set('heroTicketMarche', label);
+      const valEl = document.getElementById('heroTicketValue');
+      if(valEl) valEl.textContent = (value ? value + ' ' : '') + '✅';
     }
-    // Marché : "label — valeur" scindé pour garder l'affichage libellé / sélection
-    const parts = (p.marche || '').split('—');
-    const label = parts.length >= 2 ? parts[0].trim() : (p.marche || '');
-    const value = parts.length >= 2 ? parts.slice(1).join('—').trim() : '';
-    set('heroTicketMarche', label);
-    const valEl = document.getElementById('heroTicketValue');
-    if(valEl) valEl.textContent = (value ? value + ' ' : '') + '✅';
     set('heroTicketCote', p.cote);
   }
 
