@@ -1612,8 +1612,14 @@
       if(combiEl){
         combiEl.style.display = '';
         combiEl.innerHTML = p.combi.map(s => {
-          const sel = (s.marche || '').split('—').slice(1).join('—').trim() || s.marche || '';
-          return `<div class="ticket-row" style="font-size:0.82rem;"><span style="opacity:0.72;">${esc(sel)}</span><b style="color:#2d8f55;">✅</b></div>`;
+          // "Libellé — Sélection" : on montre la sélection, sauf si elle est trop
+          // générique (Oui/Non d'un BTTS) → on affiche alors le libellé du marché.
+          const seg = (s.marche || '').split('—');
+          const lbl = seg[0].trim();
+          const val = seg.slice(1).join('—').trim();
+          let disp = val || lbl;
+          if(val && val.length <= 4) disp = lbl;
+          return `<div class="ticket-row" style="font-size:0.82rem;"><span style="opacity:0.72;">${esc(disp)}</span><b style="color:#2d8f55;">✅</b></div>`;
         }).join('');
       }
     } else {
