@@ -8,18 +8,30 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!-- Scripts CDN épinglés + SRI (intégrité) : un CDN compromis ne peut pas injecter de code -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.8" integrity="sha384-Tve8O+C6PBzsIMK/IRCwHbi8fyEzXIlIs6OfVBZHubplwYhaQF/4Mzxqgg+pp/oy" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js" integrity="sha384-SALc35EccAf6RzGw4iNsyj7kTPr33K7RoGzYu+7heZhT8s0GZouafRiCg1qy44AS" crossorigin="anonymous"></script>
 <script>
   // ⚙️ Remplace par tes clés EmailJS (dashboard.emailjs.com)
   const EMAILJS_PUBLIC_KEY  = 'REMPLACE_PAR_TA_CLE_PUBLIQUE';
   const EMAILJS_SERVICE_ID  = 'REMPLACE_PAR_TON_SERVICE_ID';
   const EMAILJS_TEMPLATE_ID = 'REMPLACE_PAR_TON_TEMPLATE_ID';
-  emailjs.init(EMAILJS_PUBLIC_KEY);
+
+  // Init paresseuse : le script EmailJS est chargé en `defer` (non bloquant) et n'est
+  // initialisé qu'à la 1re utilisation réelle — jamais avec des clés placeholder.
+  let _emailjsReady = false;
+  function _ensureEmailjs(){
+    if(_emailjsReady) return true;
+    if(typeof emailjs === 'undefined') return false;
+    if(!EMAILJS_PUBLIC_KEY || EMAILJS_PUBLIC_KEY.startsWith('REMPLACE')) return false;
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+    _emailjsReady = true;
+    return true;
+  }
 
   function sendWelcomeMail(prenom, email){
     if(!EMAILJS_SERVICE_ID || EMAILJS_SERVICE_ID.startsWith('REMPLACE')) return;
-    if(typeof emailjs === 'undefined') return;
+    if(!_ensureEmailjs()) return;
     emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
       to_name:  prenom,
       to_email: email,
