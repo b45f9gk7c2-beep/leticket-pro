@@ -1,4 +1,4 @@
-# LE TICKET — En-têtes de sécurité (Cloudflare Pages)
+# LE TICKET — En-têtes de sécurité (Cloudflare)
 # Appliqués à toutes les pages du site.
 /*
   X-Frame-Options: DENY
@@ -6,8 +6,24 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=(), usb=(), payment=()
   Cross-Origin-Opener-Policy: same-origin
-  Strict-Transport-Security: max-age=31536000; includeSubDomains
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://eebcbeseawqwamtuyzsm.supabase.co wss://eebcbeseawqwamtuyzsm.supabase.co https://site.api.espn.com https://api.emailjs.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self' https://buy.stripe.com
+  Cross-Origin-Resource-Policy: same-origin
+  X-Permitted-Cross-Domain-Policies: none
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://eebcbeseawqwamtuyzsm.supabase.co wss://eebcbeseawqwamtuyzsm.supabase.co https://site.api.espn.com https://api.emailjs.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self' https://buy.stripe.com; upgrade-insecure-requests
+
+# Assets statiques : cache long (perf — ils changent rarement ; sinon renommer le fichier)
+/*.svg
+  Cache-Control: public, max-age=604800
+/*.png
+  Cache-Control: public, max-age=604800
+/*.jpg
+  Cache-Control: public, max-age=604800
+/*.jpeg
+  Cache-Control: public, max-age=604800
+/*.webp
+  Cache-Control: public, max-age=604800
+/*.ico
+  Cache-Control: public, max-age=604800
 
 # Empêche la mise en cache/indexation d'un éventuel dossier .git
 /.git/*
