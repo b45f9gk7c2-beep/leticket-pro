@@ -1783,7 +1783,7 @@
       const evt = (tennisData.events||[]).find(e=>(e.name||'').toLowerCase().includes(TENNIS_TOURNOI)) || (tennisData.events||[])[0];
       if(tennisGrid && evt){
         const comps = (evt.groupings||[])
-          .filter(g=>/singles/i.test((g.grouping&&g.grouping.displayName)||''))
+          .filter(g=>/^men'?s singles$/i.test(((g.grouping&&g.grouping.displayName)||'').trim()))
           .flatMap(g=>g.competitions||[])
           .filter(c=>(c.competitors||[]).length===2 && c.competitors.every(x=>x.athlete&&(x.athlete.shortName||x.athlete.displayName)));
         const tennisCards = pickDisplay(comps,3).map(c=>{
