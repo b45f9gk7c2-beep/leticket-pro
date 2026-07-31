@@ -707,7 +707,7 @@
 </div>
 
 <!-- ===== EN DIRECT · TENNIS — ATP WASHINGTON ===== -->
-<div class="cdm-strip" style="border-bottom:none;">
+<div class="cdm-strip">
   <div class="wrap">
     <div class="section-head">
       <div class="eyebrow">En direct</div>
@@ -715,22 +715,6 @@
       <p>Résultats officiels et matchs à venir du tournoi ATP de Washington (Mubadala DC Open) — nos pronostics sur ces matchs sont réservés aux abonnés.</p>
     </div>
     <div class="cdm-grid" id="tennisGrid">
-      <div class="skeleton-card"></div>
-      <div class="skeleton-card"></div>
-      <div class="skeleton-card"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== EN DIRECT · FOOTBALL — LIGUE DES CHAMPIONS ===== -->
-<div class="cdm-strip" style="border-top:none; padding-top:20px;">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">En direct</div>
-      <h2>⚽ Football — Ligue des Champions</h2>
-      <p>Tours de qualification — résultats officiels et prochaines affiches. Nos pronostics sur ces matchs sont réservés aux abonnés.</p>
-    </div>
-    <div class="cdm-grid" id="ldcGrid">
       <div class="skeleton-card"></div>
       <div class="skeleton-card"></div>
       <div class="skeleton-card"></div>
@@ -1745,13 +1729,10 @@
   }
   loadPronostics();
 
-  // ----- Scores en direct (ESPN) : ATP Washington + Ligue des Champions -----
+  // ----- Scores en direct (ESPN) : ATP Washington -----
   // (Les picks se règlent à la main.)
   const TENNIS_SCOREBOARD = 'https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard';
   const TENNIS_TOURNOI = 'dc open'; // nom ESPN du tournoi (Mubadala DC Open = ATP Washington)
-  // Qualifications Ligue des Champions = ligue ESPN « uefa.champions_qual »
-  // (uefa.champions est vide hors phase finale)
-  const LDC_LEAGUE = 'uefa.champions_qual';
 
   function playerName(c){
     const a = (c && c.athlete) || {};
@@ -1808,14 +1789,7 @@
 
   async function fetchLiveScores(){
     try{
-      // Plage J-2 → J+4 en une seule requête pour la LdC
-      const fmt = d => d.toISOString().slice(0,10).replace(/-/g,'');
-      const d1 = new Date(); d1.setDate(d1.getDate()-2);
-      const d2 = new Date(); d2.setDate(d2.getDate()+4);
-      const [tennisData, ldcData] = await Promise.all([
-        fetch(TENNIS_SCOREBOARD).then(r=>r.json()).catch(()=>({events:[]})),
-        fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${LDC_LEAGUE}/scoreboard?dates=${fmt(d1)}-${fmt(d2)}`).then(r=>r.json()).catch(()=>({events:[]}))
-      ]);
+      const tennisData = await fetch(TENNIS_SCOREBOARD).then(r=>r.json()).catch(()=>({events:[]}));
       // ── Section Tennis : simples de l'ATP Washington ──
       const tennisGrid = document.getElementById('tennisGrid');
       const evt = (tennisData.events||[]).find(e=>(e.name||'').toLowerCase().includes(TENNIS_TOURNOI)) || (tennisData.events||[])[0];
@@ -1830,22 +1804,6 @@
             `${esc(playerName(p1))} — ${esc(playerName(p2))}`, c.status, esc(setsLine(p1,p2)));
         });
         if(tennisCards.length) tennisGrid.innerHTML = tennisCards.join('');
-      }
-
-      // ── Section Football : Ligue des Champions (qualifications) ──
-      const ldcGrid = document.getElementById('ldcGrid');
-      const ldcEvents = ldcData.events||[];
-      if(ldcGrid && ldcEvents.length){
-        const ldcCards = pickDisplay(ldcEvents.map(e=>({...e.competitions[0], date:e.date})),3).map(comp=>{
-          const home = comp.competitors.find(c=>c.homeAway==='home')||comp.competitors[0];
-          const away = comp.competitors.find(c=>c.homeAway==='away')||comp.competitors[1];
-          const nm = t=>esc((t.team&&(t.team.shortDisplayName||t.team.displayName))||'—');
-          const isPre = comp.status.type.state==='pre';
-          const score = isPre ? '' : `${esc(home.score)} — ${esc(away.score)}`;
-          return matchCard('Ligue des Champions', comp.date,
-            `${nm(home)} — ${nm(away)}`, comp.status, score);
-        });
-        if(ldcCards.length) ldcGrid.innerHTML = ldcCards.join('');
       }
 
       const badge = document.querySelector('.cdm-badge');
